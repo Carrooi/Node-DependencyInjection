@@ -99,6 +99,17 @@ and other services will be automatically injected.
 
 Please, try to avoid circular dependencies (service A depends on service B and service B depends on service A).
 
+## Autowire factories
+
+You can also let DI to autowire factories. For example if you want to get factory for translator, you will add "Factory"
+to the end of translator.
+
+```
+MyClass.prototype.setTranslator = function(translatorFactory) {
+	// do something with translator
+};
+```
+
 ## Inject methods
 
 If your services using multiple inheritance and you want to inject some other services but it's parent need some different
@@ -127,3 +138,6 @@ di.addService('translator', '/path/to/translator')
 
 * 1.0.0
 	+ Initial version
+
+* 1.0.1
+	+ Added informations about autowiring factories

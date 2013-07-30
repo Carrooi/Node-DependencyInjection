@@ -163,3 +163,6 @@ service.instantiate = false;
 
 * 1.1.0
 	+ Support for not-instantiate services
+
+* 1.1.1
+	+ inject* methods are called before custom setup

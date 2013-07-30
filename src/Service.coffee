@@ -36,14 +36,12 @@ class Service
 		if @instantiate == true
 			service = new (wrapper(service, @di.autowireArguments(service, @arguments)))
 
-		called = []
+		for method of service
+			if method.match(/^inject/) != null
+				service[method].apply(service, @di.autowireArguments(service[method], []))
+
 		for method, args of @setup
 			service[method].apply(service, @di.autowireArguments(service[method], args))
-			called.push(method)
-
-		for method of service
-			if called.indexOf(method) == -1 && method.match(/^inject/) != null
-				service[method].apply(service, @di.autowireArguments(service[method], []))
 
 		return service
 

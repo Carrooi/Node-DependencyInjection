@@ -19,7 +19,7 @@ class DI
 
 		result = []
 		for arg, i in methodArgs
-			if typeof args[i] == 'undefined'
+			if typeof args[i] == 'undefined' || args[i] == '...'
 				if arg.match(/Factory$/) == null
 					result.push(@getByName(arg))
 				else

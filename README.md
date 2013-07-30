@@ -80,6 +80,22 @@ var application = di.getFactory('application');
 application = application();		// just call it
 ```
 
+## Not instantiate services
+
+When you want for example use jQuery as service, you will not want to automatically call something like `new jquery`.
+So you can tell DI, that this service will not be instantiate.
+
+```
+{
+	"services": {
+		"jquery": {
+			"service": "jquery"
+			"instantiate": false
+		}
+	}
+}
+```
+
 ## Autowiring
 
 Accessing some DI object is not so pretty like we want, so there is some nice way how to avoid it. You can let DI to "inject"
@@ -119,8 +135,8 @@ If DI find some methods with "inject" word in the beginning, it will automatical
 
 ## Without configuration
 
-Maybe it will be better for someone to use this DI without configuration, so here is example of application and translator
-definition.
+Maybe it will be better for someone to use this DI without configuration, so here is example of application, translator
+and jquery definition.
 
 ```
 var DI = require('dependency-injection');
@@ -132,6 +148,9 @@ di.addService('application', '/path/to/my/application/module', ['./www', 'someOt
 
 di.addService('translator', '/path/to/translator')
 	.addSetup('setLanguage', ['en']);
+
+var service = di.addService('jquery', 'jquery');
+service.instantiate = false;
 ```
 
 ## Changelog
@@ -141,3 +160,6 @@ di.addService('translator', '/path/to/translator')
 
 * 1.0.1
 	+ Added informations about autowiring factories
+
+* 1.1.0
+	+ Support for not-instantiate services

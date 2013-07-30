@@ -7,6 +7,8 @@ class Service
 
 	arguments: null
 
+	instantiate: true
+
 	setup: null
 
 	instance: null
@@ -29,8 +31,10 @@ class Service
 			f.prototype = service.prototype
 			return f
 
-		Service = require(@service)
-		service = new (wrapper(Service, @di.autowireArguments(Service, @arguments)))
+		service = require(@service)
+
+		if @instantiate == true
+			service = new (wrapper(service, @di.autowireArguments(service, @arguments)))
 
 		called = []
 		for method, args of @setup

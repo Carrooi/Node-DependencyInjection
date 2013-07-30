@@ -9,6 +9,7 @@ class DIConfigurator
 	defaultService:
 		service: null
 		arguments: []
+		instantiate: true
 		setup: {}
 
 
@@ -34,6 +35,7 @@ class DIConfigurator
 
 		for name, service of data
 			s = di.addService(name, service.service, service.arguments)
+			s.instantiate = service.instantiate
 
 			for method, arguments of service.setup
 				s.addSetup(method, arguments)

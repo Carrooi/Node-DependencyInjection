@@ -183,6 +183,9 @@ var super = di.createInstance(SuperClass, ['and some argument']);
 
 ## Changelog
 
+* 1.2.2
+	+ Added missing test
+
 * 1.2.1
 	+ Added ability to inject DI container itself
 

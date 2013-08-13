@@ -15,6 +15,8 @@
 
     Application.prototype.di = null;
 
+    Application.prototype.diFactory = null;
+
     function Application(array) {
       this.array = array;
     }
@@ -38,6 +40,10 @@
 
     Application.prototype.setDi = function(di) {
       this.di = di;
+    };
+
+    Application.prototype.setDiFactory = function(diFactory) {
+      this.diFactory = diFactory;
     };
 
     return Application;

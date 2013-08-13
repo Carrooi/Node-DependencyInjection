@@ -13,6 +13,8 @@ class Application
 
 	di: null
 
+	diFactory: null
+
 
 	constructor: (@array) ->
 
@@ -29,6 +31,9 @@ class Application
 
 
 	setDi: (@di) ->
+
+
+	setDiFactory: (@diFactory) ->
 
 
 module.exports = Application

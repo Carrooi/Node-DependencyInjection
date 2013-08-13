@@ -111,6 +111,13 @@ describe 'DI', ->
 					.addSetup('setDi')
 				di.getByName('application').di.should.be.equal(di)
 
+			it 'should autowire di container factory into Application instance', ->
+				di.findDefinitionByName('application')
+					.addSetup('setDiFactory')
+				factory = di.getByName('application').diFactory
+				factory.should.be.an.instanceOf(Function)
+				factory().should.be.equal(di)
+
 		describe '#create()', ->
 
 			it 'should return always new instance of Application', ->

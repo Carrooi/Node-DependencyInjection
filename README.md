@@ -72,7 +72,7 @@ Method create will just create new instance of service and will not store it.
 
 ### getFactory
 
-getFactory is almost the same like create method, but will return annonymous function, so if you then want to use it,
+getFactory is almost the same like create method, but will return anonymous function, so if you then want to use it,
 you have to call it.
 
 ```
@@ -115,6 +115,12 @@ and other services will be automatically injected.
 
 Please, try to avoid circular dependencies (service A depends on service B and service B depends on service A).
 
+### Disable autowiring
+
+If you want to disable autowiring for some service, you can set "autowired" option to false in your config (like instantiate).
+
+When you will try to autowire this service, DI will throw an error.
+
 ## Autowire factories
 
 You can also let DI to autowire factories. For example if you want to get factory for translator, you will add "Factory"
@@ -122,7 +128,7 @@ to the end of translator.
 
 ```
 MyClass.prototype.setTranslator = function(translatorFactory) {
-	// do something with translator
+	var translator = translatorFactory();			// now do something with translator
 };
 ```
 
@@ -142,27 +148,53 @@ and jquery definition.
 var DI = require('dependency-injection');
 var di = new DI;
 
-di.addService('application', '/path/to/my/application/module', ['./www', 'someOtherVariable'])
+di.addService('application', require('./path/to/my/application/module'), ['./www', 'someOtherVariable'])
 	.addSetup('setApplicationName', ['nameOfApplication'])
 	.addSetup('setSomethingOther', ['someUselessVariable', 'andAnotherOne']);
 
-di.addService('translator', '/path/to/translator')
+di.addService('translator', require('./path/to/translator'))
 	.addSetup('setLanguage', ['en']);
 
-var service = di.addService('jquery', 'jquery');
-service.instantiate = false;
+di.addService('jquery', 'jquery')
+	.setInstantiate(false);
+
+di.addService('private', '/my/private/service')
+	.setAutowired(false);
+```
+
+Instead of path to service (second parameter in addService method) you can also use string with path, but this path will be
+then relative to class of DI!
+
+## Create instance
+
+If you have got some other object which you want to use with other services, but can not use configuration or DI for this,
+you can use `createInstance` method and DI will create new instance of your object with dependencies defined in constructor
+or with inject methods.
+
+```
+var SuperClass = require('./mySuperClass');
+var super = di.createInstance(SuperClass, ['and some argument']);
 ```
 
 ## Changelog
 
-* 1.0.0
-	+ Initial version
+* 1.2.0
+	+ Added DI.createInstance method
+	+ DI.addService accepts also objects
+	+ Typos in README
+	+ Optimizations
+	+ Added mocha tests
+	+ Added setInstantiate method
+	+ Added autowired option
 
-* 1.0.1
-	+ Added informations about autowiring factories
+* 1.1.1
+	+ inject methods are called before custom setup
 
 * 1.1.0
 	+ Support for not-instantiate services
 
-* 1.1.1
-	+ inject* methods are called before custom setup
+* 1.0.1
+	+ Added information about autowiring factories
+
+* 1.0.0
+	+ Initial version

@@ -9,6 +9,8 @@ class Service
 
 	instantiate: true
 
+	autowired: true
+
 	setup: null
 
 	instance: null
@@ -26,19 +28,11 @@ class Service
 
 
 	create: ->
-		wrapper = (service, args = []) ->
-			f = -> return service.apply(@, args)
-			f.prototype = service.prototype
-			return f
+		service = @service
+		if Object.prototype.toString.call(service) == '[object String]'
+			service = require(service)
 
-		service = require(@service)
-
-		if @instantiate == true
-			service = new (wrapper(service, @di.autowireArguments(service, @arguments)))
-
-		for method of service
-			if method.match(/^inject/) != null
-				service[method].apply(service, @di.autowireArguments(service[method], []))
+		service = @di.createInstance(service, @arguments, @instantiate)
 
 		for method, args of @setup
 			service[method].apply(service, @di.autowireArguments(service[method], args))
@@ -48,6 +42,14 @@ class Service
 
 	addSetup: (method, args = []) ->
 		@setup[method] = args
+		return @
+
+
+	setInstantiate: (@instantiate) ->
+		return @
+
+
+	setAutowired: (@autowired) ->
 		return @
 
 

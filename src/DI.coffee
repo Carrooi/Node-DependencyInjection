@@ -3,7 +3,11 @@ Service = require './Service'
 class DI
 
 
-	services: {}
+	services: null
+
+
+	constructor: ->
+		@services = {}
 
 
 	addService: (name, service, args = []) ->
@@ -20,21 +24,45 @@ class DI
 		result = []
 		for arg, i in methodArgs
 			if typeof args[i] == 'undefined' || args[i] == '...'
-				if arg.match(/Factory$/) == null
-					result.push(@getByName(arg))
-				else
+				factory = false
+				if arg.match(/Factory$/) != null
 					arg = arg.substring(0, arg.length - 7)
+					factory = true
+
+				if @findDefinitionByName(arg).autowired == false
+					throw new Error "DI: service #{arg} can not be autowired"
+				else if factory == true
 					result.push(@getFactory(arg))
+				else
+					result.push(@getByName(arg))
+
 			else
 				result.push(args[i])
 
 		return result
 
 
+	@_newInstanceWrapper = (obj, args = []) ->
+		f = -> return obj.apply(@, args)
+		f.prototype = obj.prototype
+		return f
+
+
+	createInstance: (service, args = [], instantiate = true) ->
+		if instantiate == true
+			service = new (DI._newInstanceWrapper(service, @autowireArguments(service, args)))
+
+		for method of service
+			if method.match(/^inject/) != null
+				service[method].apply(service, @autowireArguments(service[method], []))
+
+		return service
+
+
 	findDefinitionByName: (name, need = true) ->
 		if typeof @services[name] == 'undefined'
 			if need == true
-				throw new Error 'DI: Service with name ' + name + ' was not found'
+				throw new Error "DI: Service '#{name}' was not found"
 			else
 				return null
 

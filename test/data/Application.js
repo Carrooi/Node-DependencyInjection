@@ -13,6 +13,8 @@
 
     Application.prototype.data = null;
 
+    Application.prototype.di = null;
+
     function Application(array) {
       this.array = array;
     }
@@ -32,6 +34,10 @@
         noArray = null;
       }
       return this.data = noArray;
+    };
+
+    Application.prototype.setDi = function(di) {
+      this.di = di;
     };
 
     return Application;

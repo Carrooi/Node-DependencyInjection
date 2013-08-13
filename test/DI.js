@@ -26,8 +26,13 @@
       it('should return instance of new Service class from object', function() {
         return di.addService('array', Array).should.be.instanceOf(Service);
       });
-      return it('should return instance of new Service class from path', function() {
+      it('should return instance of new Service class from path', function() {
         return di.addService('app', "" + dir + "/Application").should.be.instanceOf(Service);
+      });
+      return it('should throw an error if you try to register service with reserved name', function() {
+        return (function() {
+          return di.addService('di', DI);
+        }).should["throw"]();
       });
     });
     describe('#autowireArguments()', function() {
@@ -107,11 +112,15 @@
         it('should return info array without instantiating it', function() {
           return di.getByName('info').should.be.eql(['hello']);
         });
-        return it('should not set services which are not autowired', function() {
-          di.findDefinitionByName('application').addSetup('setData', []);
+        it('should not set services which are not autowired', function() {
+          di.findDefinitionByName('application').addSetup('setData');
           return (function() {
             return di.getByName('application');
           }).should["throw"]();
+        });
+        return it('should autowire di container into Application instance', function() {
+          di.findDefinitionByName('application').addSetup('setDi');
+          return di.getByName('application').di.should.be.equal(di);
         });
       });
       describe('#create()', function() {

@@ -132,6 +132,11 @@ MyClass.prototype.setTranslator = function(translatorFactory) {
 };
 ```
 
+## Autowiring DI
+
+Autowiring DI container is also possible. Only thing you need to do, is set argument with name "di" into your method or
+constructor. This also means that you can not register new service with name "di".
+
 ## Inject methods
 
 If your services using multiple inheritance and you want to inject some other services but it's parent need some different
@@ -177,6 +182,9 @@ var super = di.createInstance(SuperClass, ['and some argument']);
 ```
 
 ## Changelog
+
+* 1.2.1
+	+ Added ability to inject DI container itself
 
 * 1.2.0
 	+ Added DI.createInstance method

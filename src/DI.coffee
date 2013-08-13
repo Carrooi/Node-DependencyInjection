@@ -5,12 +5,17 @@ class DI
 
 	services: null
 
+	reserved: ['di']
+
 
 	constructor: ->
 		@services = {}
 
 
 	addService: (name, service, args = []) ->
+		if name in @reserved
+			throw new Error "DI: name '#{name}' is reserved by DI"
+
 		@services[name] = new Service(@, service, args)
 		return @services[name]
 
@@ -29,7 +34,10 @@ class DI
 					arg = arg.substring(0, arg.length - 7)
 					factory = true
 
-				if @findDefinitionByName(arg).autowired == false
+				if arg == 'di'
+					self = if factory == true then => return @ else @
+					result.push(self)
+				else if @findDefinitionByName(arg).autowired == false
 					throw new Error "DI: service #{arg} can not be autowired"
 				else if factory == true
 					result.push(@getFactory(arg))

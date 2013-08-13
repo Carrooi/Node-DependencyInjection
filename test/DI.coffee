@@ -23,6 +23,9 @@ describe 'DI', ->
 		it 'should return instance of new Service class from path', ->
 			di.addService('app', "#{dir}/Application").should.be.instanceOf(Service)
 
+		it 'should throw an error if you try to register service with reserved name', ->
+			( -> di.addService('di', DI) ).should.throw()
+
 	describe '#autowireArguments()', ->
 
 		it 'should return array with services for Application', ->
@@ -100,8 +103,13 @@ describe 'DI', ->
 
 			it 'should not set services which are not autowired', ->
 				di.findDefinitionByName('application')
-					.addSetup('setData', [])
+					.addSetup('setData')
 				( -> di.getByName('application') ).should.throw()
+
+			it 'should autowire di container into Application instance', ->
+				di.findDefinitionByName('application')
+					.addSetup('setDi')
+				di.getByName('application').di.should.be.equal(di)
 
 		describe '#create()', ->
 

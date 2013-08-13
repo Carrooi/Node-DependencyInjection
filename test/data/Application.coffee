@@ -11,6 +11,8 @@ class Application
 
 	data: null
 
+	di: null
+
 
 	constructor: (@array) ->
 
@@ -24,6 +26,9 @@ class Application
 
 	setData: (noArray = null) ->
 		@data = noArray
+
+
+	setDi: (@di) ->
 
 
 module.exports = Application

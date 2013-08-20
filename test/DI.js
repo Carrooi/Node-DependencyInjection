@@ -53,10 +53,15 @@
         app = new Application([]);
         return di.autowireArguments(app.prepare, ['simq']);
       });
-      return it('should throw an error if service to autowire does not exists', function() {
+      it('should throw an error if service to autowire does not exists', function() {
         return (function() {
           return di.autowireArguments(Application);
         }).should["throw"]();
+      });
+      return it('should return array with services from params if they are not in definition', function() {
+        var app;
+        app = new Application([]);
+        return di.autowireArguments(app.withoutDefinition, ['hello']).should.be.eql(['hello']);
       });
     });
     describe('#createInstance()', function() {

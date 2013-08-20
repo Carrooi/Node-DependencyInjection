@@ -15,6 +15,8 @@ class Application
 
 	diFactory: null
 
+	other: null
+
 
 	constructor: (@array) ->
 
@@ -34,6 +36,10 @@ class Application
 
 
 	setDiFactory: (@diFactory) ->
+
+
+	withoutDefinition: ->
+		@other = arguments
 
 
 module.exports = Application

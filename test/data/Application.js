@@ -17,6 +17,8 @@
 
     Application.prototype.diFactory = null;
 
+    Application.prototype.other = null;
+
     function Application(array) {
       this.array = array;
     }
@@ -44,6 +46,10 @@
 
     Application.prototype.setDiFactory = function(diFactory) {
       this.diFactory = diFactory;
+    };
+
+    Application.prototype.withoutDefinition = function() {
+      return this.other = arguments;
     };
 
     return Application;

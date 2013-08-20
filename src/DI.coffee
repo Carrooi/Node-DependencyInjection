@@ -22,30 +22,39 @@ class DI
 
 	autowireArguments: (method, args = []) ->
 		method = method.toString()
-		method = method.replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg, '')		# comments
+		method = method.replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg, '')		# remove comments
 		methodArgs = method.slice(method.indexOf('(') + 1, method.indexOf(')')).match(/([^\s,]+)/g)
 		methodArgs = if methodArgs == null then [] else methodArgs
+		num = if methodArgs.length > args.length then methodArgs.length else args.length
 
 		result = []
-		for arg, i in methodArgs
-			if typeof args[i] == 'undefined' || args[i] == '...'
-				factory = false
-				if arg.match(/Factory$/) != null
-					arg = arg.substring(0, arg.length - 7)
-					factory = true
 
-				if arg == 'di'
-					self = if factory == true then => return @ else @
-					result.push(self)
-				else if @findDefinitionByName(arg).autowired == false
-					throw new Error "DI: service #{arg} can not be autowired"
-				else if factory == true
-					result.push(@getFactory(arg))
-				else
-					result.push(@getByName(arg))
+		return result if num == 0
 
-			else
+		for i in [0..num - 1]
+			arg = if typeof methodArgs[i] == 'undefined' then null else methodArgs[i]
+
+			if arg == null
 				result.push(args[i])
+			else
+				if typeof args[i] == 'undefined' || args[i] == '...'
+					factory = false
+					if arg.match(/Factory$/) != null
+						arg = arg.substring(0, arg.length - 7)
+						factory = true
+
+					if arg == 'di'
+						self = if factory == true then => return @ else @
+						result.push(self)
+					else if @findDefinitionByName(arg).autowired == false
+						throw new Error "DI: service #{arg} can not be autowired"
+					else if factory == true
+						result.push(@getFactory(arg))
+					else
+						result.push(@getByName(arg))
+
+				else
+					result.push(args[i])
 
 		return result
 

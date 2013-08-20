@@ -46,6 +46,10 @@ describe 'DI', ->
 		it 'should throw an error if service to autowire does not exists', ->
 			( -> di.autowireArguments(Application) ).should.throw()
 
+		it 'should return array with services from params if they are not in definition', ->
+			app = new Application([])
+			di.autowireArguments(app.withoutDefinition, ['hello']).should.be.eql(['hello'])
+
 	describe '#createInstance()', ->
 
 		beforeEach( ->

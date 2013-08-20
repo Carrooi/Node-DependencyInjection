@@ -183,6 +183,9 @@ var super = di.createInstance(SuperClass, ['and some argument']);
 
 ## Changelog
 
+* 1.2.3
+	+ Autowiring parameters even if they are not in function definition
+
 * 1.2.2
 	+ Added missing test
 

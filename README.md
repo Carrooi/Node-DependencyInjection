@@ -98,6 +98,22 @@ So you can tell DI, that this service will not be instantiate.
 }
 ```
 
+## Auto run services
+
+When you are using configuration with json files, you can set some services to be started automatically after calling
+the `create` method.
+
+```
+{
+	"services": {
+		"setup": {
+			"service": "./path/to/setup",
+			"run": true
+		}
+	}
+}
+```
+
 ## Autowiring
 
 Accessing some DI object is not so pretty like we want, so there is some nice way how to avoid it. You can let DI to "inject"
@@ -129,22 +145,6 @@ When you will try to autowire this service, DI will throw an error.
 		"setup": {
 			"someName": "./path/to/this/service",
 			"autowired": false
-		}
-	}
-}
-```
-
-### Auto run services
-
-When you are using configuration with json files, you can set some services to be started automatically after calling
-the `create` method.
-
-```
-{
-	"services": {
-		"setup": {
-			"service": "./path/to/setup",
-			"run": true
 		}
 	}
 }
@@ -211,6 +211,9 @@ var super = di.createInstance(SuperClass, ['and some argument']);
 ```
 
 ## Changelog
+
+* 1.3.1
+	+ Just some mistake in readme
 
 * 1.3.0
 	+ Added auto run option into configuration

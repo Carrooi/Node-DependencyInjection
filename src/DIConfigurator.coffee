@@ -4,7 +4,13 @@ Configuration = require 'easy-configuration'
 class DIConfigurator
 
 
+	@EXPOSE_NAME = 'di'
+
+
 	path: null
+
+	defaultSetup:
+		windowExpose: false
 
 	defaultService:
 		service: null
@@ -21,23 +27,30 @@ class DIConfigurator
 	create: ->
 		config = new Configuration(@path)
 
-		defaults = @defaultService
-
-		services = config.addSection('services')
-		services.loadConfiguration = ->
+		defaultService = @defaultService
+		config.addSection('services').loadConfiguration = ->
 			config = @getConfig()
 
 			for name of config
-				config[name] = @configurator.merge(config[name], defaults)
+				config[name] = @configurator.merge(config[name], defaultService)
 
 			return config
 
-		data = config.load().services
+		defaultSetup = @defaultSetup
+		config.addSetup('setup').loadConfiguration = ->
+			return @getConfig(defaultSetup)
+
+		configuration = config.load()
 		di = new DI
+
+		expose = configuration.setup.windowExpose
+		if expose != false && typeof window != 'undefined'
+			name = if typeof expose == 'string' then expose else DIConfigurator.EXPOSE_NAME
+			window[name] = di
 
 		run = []
 
-		for name, service of data
+		for name, service of configuration.services
 			s = di.addService(name, service.service, service.arguments)
 			s.setInstantiate(service.instantiate)
 			s.setAutowired(service.autowired)

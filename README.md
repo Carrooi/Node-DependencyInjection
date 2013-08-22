@@ -61,6 +61,28 @@ di.create('application');
 di.getFactory('application');
 ```
 
+## Auto exposing into window
+
+DI can be automatically exposed into window object (when on browser). Default name for this object is `di`.
+
+```
+{
+	"setup": {
+		"windowExpose": true
+	}
+}
+```
+
+Custom name:
+
+```
+{
+	"setup": {
+		"windowExpose": "configurator"
+	}
+}
+```
+
 ### getByName
 
 Some services may be "singleton" type (not really singleton but with one instance in whole application), which application
@@ -211,6 +233,9 @@ var super = di.createInstance(SuperClass, ['and some argument']);
 ```
 
 ## Changelog
+
+* 1.4.0
+	+ Option for exposing di into
 
 * 1.3.2 - 1.3.3
 	+ Bug with run option

@@ -234,6 +234,9 @@ var super = di.createInstance(SuperClass, ['and some argument']);
 
 ## Changelog
 
+* 1.4.1
+	+ Bug
+
 * 1.4.0
 	+ Option for exposing di into
 

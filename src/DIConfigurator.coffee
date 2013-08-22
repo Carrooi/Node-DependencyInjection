@@ -37,7 +37,7 @@ class DIConfigurator
 			return config
 
 		defaultSetup = @defaultSetup
-		config.addSetup('setup').loadConfiguration = ->
+		config.addSection('setup').loadConfiguration = ->
 			return @getConfig(defaultSetup)
 
 		configuration = config.load()

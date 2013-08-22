@@ -44,7 +44,7 @@ class DIConfigurator
 				s.addSetup(method, arguments)
 
 			if service.run == true
-				di.getByName 'name'
+				di.getByName name
 
 		return di
 

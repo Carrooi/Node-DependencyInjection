@@ -24,13 +24,15 @@ is used for configuration your services (classes).
 
 ```
 {
-	"application": {
-		"service": "/path/to/my/application/module",
-		"arguments": ["./www", "someOtherVariable"],
-		"setup": {
-			"setApplicationName": ["nameOfApplication"],
-			"setSomethingOther": ["someUselessVariable", "andAnotherOne"]
-		}
+	"services": {
+		"application": {
+    		"service": "/path/to/my/application/module",
+    		"arguments": ["./www", "someOtherVariable"],
+    		"setup": {
+    			"setApplicationName": ["nameOfApplication"],
+    			"setSomethingOther": ["someUselessVariable", "andAnotherOne"]
+    		}
+    	}
 	}
 }
 ```
@@ -121,6 +123,33 @@ If you want to disable autowiring for some service, you can set "autowired" opti
 
 When you will try to autowire this service, DI will throw an error.
 
+```
+{
+	"services": {
+		"setup": {
+			"someName": "./path/to/this/service",
+			"autowired": false
+		}
+	}
+}
+```
+
+### Auto run services
+
+When you are using configuration with json files, you can set some services to be started automatically after calling
+the `create` method.
+
+```
+{
+	"services": {
+		"setup": {
+			"service": "./path/to/setup",
+			"run": true
+		}
+	}
+}
+```
+
 ## Autowire factories
 
 You can also let DI to autowire factories. For example if you want to get factory for translator, you will add "Factory"
@@ -182,6 +211,10 @@ var super = di.createInstance(SuperClass, ['and some argument']);
 ```
 
 ## Changelog
+
+* 1.3.0
+	+ Added auto run option into configuration
+	+ Really huge mistake in readme
 
 * 1.2.3
 	+ Autowiring parameters even if they are not in function definition

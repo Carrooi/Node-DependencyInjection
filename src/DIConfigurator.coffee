@@ -11,6 +11,7 @@ class DIConfigurator
 		arguments: []
 		instantiate: true
 		autowired: true
+		run: false
 		setup: {}
 
 
@@ -41,6 +42,9 @@ class DIConfigurator
 
 			for method, arguments of service.setup
 				s.addSetup(method, arguments)
+
+			if service.run == true
+				di.getByName 'name'
 
 		return di
 

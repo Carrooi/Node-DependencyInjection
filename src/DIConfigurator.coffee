@@ -35,6 +35,8 @@ class DIConfigurator
 		data = config.load().services
 		di = new DI
 
+		run = []
+
 		for name, service of data
 			s = di.addService(name, service.service, service.arguments)
 			s.setInstantiate(service.instantiate)
@@ -44,7 +46,10 @@ class DIConfigurator
 				s.addSetup(method, arguments)
 
 			if service.run == true
-				di.getByName name
+				run.push(name)
+
+		for name in run
+			di.getByName(name)
 
 		return di
 

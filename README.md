@@ -212,7 +212,7 @@ var super = di.createInstance(SuperClass, ['and some argument']);
 
 ## Changelog
 
-* 1.3.2
+* 1.3.2 - 1.3.3
 	+ Bug with run option
 
 * 1.3.1

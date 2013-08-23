@@ -122,6 +122,11 @@ describe 'DI', ->
 				factory.should.be.an.instanceOf(Function)
 				factory().should.be.equal(di)
 
+			it 'should set info property directly', ->
+				di.findDefinitionByName('application')
+					.addSetup('info', 'by property')
+				di.getByName('application').info.should.be.equal('by property')
+
 		describe '#create()', ->
 
 			it 'should return always new instance of Application', ->

@@ -42,6 +42,9 @@ you will need this service, it will have got these arguments and all setup funct
 
 Section service is path for module require (common js).
 
+DI automatically look into values from setup in your module (service). If it is function, then it will be called, otherwise
+argument will be passed into this object property.
+
 ## Usage
 
 ```
@@ -233,6 +236,9 @@ var super = di.createInstance(SuperClass, ['and some argument']);
 ```
 
 ## Changelog
+
+* 1.5.2
+	+ Add setup into properties
 
 * 1.4.1
 	+ Bug

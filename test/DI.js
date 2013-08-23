@@ -127,12 +127,16 @@
           di.findDefinitionByName('application').addSetup('setDi');
           return di.getByName('application').di.should.be.equal(di);
         });
-        return it('should autowire di container factory into Application instance', function() {
+        it('should autowire di container factory into Application instance', function() {
           var factory;
           di.findDefinitionByName('application').addSetup('setDiFactory');
           factory = di.getByName('application').diFactory;
           factory.should.be.an.instanceOf(Function);
           return factory().should.be.equal(di);
+        });
+        return it('should set info property directly', function() {
+          di.findDefinitionByName('application').addSetup('info', 'by property');
+          return di.getByName('application').info.should.be.equal('by property');
         });
       });
       describe('#create()', function() {

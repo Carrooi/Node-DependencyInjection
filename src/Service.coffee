@@ -35,7 +35,10 @@ class Service
 		service = @di.createInstance(service, @arguments, @instantiate)
 
 		for method, args of @setup
-			service[method].apply(service, @di.autowireArguments(service[method], args))
+			if typeof service[method] == 'function'
+				service[method].apply(service, @di.autowireArguments(service[method], args))
+			else
+				service[method] = args
 
 		return service
 

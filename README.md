@@ -59,7 +59,7 @@ This will create new instance of DI class which holding all your services.
 In example below, you can see how to get your services.
 
 ```
-di.getByName('application');
+di.get('application');
 di.create('application');
 di.getFactory('application');
 ```
@@ -86,7 +86,7 @@ Custom name:
 }
 ```
 
-### getByName
+### get
 
 Some services may be "singleton" type (not really singleton but with one instance in whole application), which application
 service is clearly is.
@@ -153,7 +153,7 @@ and DI will give you these services.
 
 This is quite similar to dependency injection in [angular](http://angularjs.org/).
 
-Now in most cases you just have to use getByName method just once for create instance of your base application service
+Now in most cases you just have to use `get` method just once for create instance of your base application service
 and other services will be automatically injected.
 
 Please, try to avoid circular dependencies (service A depends on service B and service B depends on service A).
@@ -236,6 +236,9 @@ var super = di.createInstance(SuperClass, ['and some argument']);
 ```
 
 ## Changelog
+
+* 1.6.0
+	+ Added `get` method, `getByName` is now deprecated
 
 * 1.5.2
 	+ Add setup into properties

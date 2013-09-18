@@ -102,41 +102,41 @@
         di.addService('noArray', ['not this one']).setInstantiate(false).setAutowired(false);
         return di.addService('application', Application).addSetup('prepare', ['simq', '...']);
       });
-      describe('#getByName()', function() {
+      describe('#get()', function() {
         it('should return instance of Application with all dependencies', function() {
           var app;
-          app = di.getByName('application');
+          app = di.get('application');
           app.should.be.an.instanceOf(Application);
           app.namespace.should.be.equal('simq');
           app.array.should.be.eql([]);
           return app.http.should.be.an.instanceOf(Http);
         });
         it('should return always the same instance of Application', function() {
-          return di.getByName('application').should.be.equal(di.getByName('application'));
+          return di.get('application').should.be.equal(di.get('application'));
         });
         it('should return info array without instantiating it', function() {
-          return di.getByName('info').should.be.eql(['hello']);
+          return di.get('info').should.be.eql(['hello']);
         });
         it('should not set services which are not autowired', function() {
           di.findDefinitionByName('application').addSetup('setData');
           return (function() {
-            return di.getByName('application');
+            return di.get('application');
           }).should["throw"]();
         });
         it('should autowire di container into Application instance', function() {
           di.findDefinitionByName('application').addSetup('setDi');
-          return di.getByName('application').di.should.be.equal(di);
+          return di.get('application').di.should.be.equal(di);
         });
         it('should autowire di container factory into Application instance', function() {
           var factory;
           di.findDefinitionByName('application').addSetup('setDiFactory');
-          factory = di.getByName('application').diFactory;
+          factory = di.get('application').diFactory;
           factory.should.be.an.instanceOf(Function);
           return factory().should.be.equal(di);
         });
         return it('should set info property directly', function() {
           di.findDefinitionByName('application').addSetup('info', 'by property');
-          return di.getByName('application').info.should.be.equal('by property');
+          return di.get('application').info.should.be.equal('by property');
         });
       });
       describe('#create()', function() {

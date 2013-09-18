@@ -86,7 +86,12 @@ class DI
 		return @services[name]
 
 
+	# deprecated
 	getByName: (name) ->
+		return @get(name)
+
+
+	get: (name) ->
 		return @findDefinitionByName(name).getInstance()
 
 

@@ -90,42 +90,42 @@ describe 'DI', ->
 				.addSetup('prepare', ['simq', '...'])
 		)
 
-		describe '#getByName()', ->
+		describe '#get()', ->
 
 			it 'should return instance of Application with all dependencies', ->
-				app = di.getByName('application')
+				app = di.get('application')
 				app.should.be.an.instanceOf(Application)
 				app.namespace.should.be.equal('simq')
 				app.array.should.be.eql([])
 				app.http.should.be.an.instanceOf(Http)
 
 			it 'should return always the same instance of Application', ->
-				di.getByName('application').should.be.equal(di.getByName('application'))
+				di.get('application').should.be.equal(di.get('application'))
 
 			it 'should return info array without instantiating it', ->
-				di.getByName('info').should.be.eql(['hello'])
+				di.get('info').should.be.eql(['hello'])
 
 			it 'should not set services which are not autowired', ->
 				di.findDefinitionByName('application')
 					.addSetup('setData')
-				( -> di.getByName('application') ).should.throw()
+				( -> di.get('application') ).should.throw()
 
 			it 'should autowire di container into Application instance', ->
 				di.findDefinitionByName('application')
 					.addSetup('setDi')
-				di.getByName('application').di.should.be.equal(di)
+				di.get('application').di.should.be.equal(di)
 
 			it 'should autowire di container factory into Application instance', ->
 				di.findDefinitionByName('application')
 					.addSetup('setDiFactory')
-				factory = di.getByName('application').diFactory
+				factory = di.get('application').diFactory
 				factory.should.be.an.instanceOf(Function)
 				factory().should.be.equal(di)
 
 			it 'should set info property directly', ->
 				di.findDefinitionByName('application')
 					.addSetup('info', 'by property')
-				di.getByName('application').info.should.be.equal('by property')
+				di.get('application').info.should.be.equal('by property')
 
 		describe '#create()', ->
 

@@ -138,3 +138,15 @@ describe 'DI', ->
 				factory = di.getFactory('application')
 				factory.should.be.an.instanceOf(Function)
 				factory().should.be.an.instanceOf(Application)
+
+		describe '#inject()', ->
+
+			it 'should inject some service into annonymous function', (done) ->
+				di.addService('array', Array)
+				di.inject( (array) ->
+					array.should.be.eql([])
+					done()
+				)
+
+			it 'should throw an error if inject method is not called on function', ->
+				( -> di.inject('') ).should.throw()

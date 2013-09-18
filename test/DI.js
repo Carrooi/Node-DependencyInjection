@@ -144,12 +144,26 @@
           return di.create('application').should.not.be.equal(di.create('application'));
         });
       });
-      return describe('#getFactory()', function() {
+      describe('#getFactory()', function() {
         return it('should return callable factory for Application', function() {
           var factory;
           factory = di.getFactory('application');
           factory.should.be.an.instanceOf(Function);
           return factory().should.be.an.instanceOf(Application);
+        });
+      });
+      return describe('#inject()', function() {
+        it('should inject some service into annonymous function', function(done) {
+          di.addService('array', Array);
+          return di.inject(function(array) {
+            array.should.be.eql([]);
+            return done();
+          });
+        });
+        return it('should throw an error if inject method is not called on function', function() {
+          return (function() {
+            return di.inject('');
+          }).should["throw"]();
         });
       });
     });

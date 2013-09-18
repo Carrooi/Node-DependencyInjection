@@ -71,9 +71,17 @@ class DI
 
 		for method of service
 			if method.match(/^inject/) != null
-				service[method].apply(service, @autowireArguments(service[method], []))
+				@inject(service[method], service)
 
 		return service
+
+
+	inject: (fn, scope = {}) ->
+		if fn !instanceof Function
+			throw new Error 'Inject method can be called only on functions.'
+
+		args = @autowireArguments(fn, [])
+		return fn.apply(scope, args)
 
 
 	findDefinitionByName: (name, need = true) ->

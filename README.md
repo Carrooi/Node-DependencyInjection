@@ -235,10 +235,21 @@ var SuperClass = require('./mySuperClass');
 var super = di.createInstance(SuperClass, ['and some argument']);
 ```
 
+## Inject method
+
+For simple injecting services into your functions, you can use method `inject`.
+
+```
+di.inject(function(application) {
+	application.doSomeMagic();
+});
+```
+
 ## Changelog
 
 * 1.6.0
 	+ Added `get` method, `getByName` is now deprecated
+	+ Added `inject` method
 
 * 1.5.2
 	+ Add setup into properties

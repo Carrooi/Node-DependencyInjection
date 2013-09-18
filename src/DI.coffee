@@ -37,7 +37,11 @@ class DI
 			if arg == null
 				result.push(args[i])
 			else
-				if typeof args[i] == 'undefined' || args[i] == '...'
+				customArg = typeof args[i] != 'undefined'
+				if !customArg || (customArg && (args[i] == '...' || args[i][0] == '@'))
+					if customArg && args[i][0] == '@'
+						arg = args[i].substr(1)
+
 					factory = false
 					if arg.match(/Factory$/) != null
 						arg = arg.substring(0, arg.length - 7)

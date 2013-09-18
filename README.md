@@ -186,6 +186,28 @@ MyClass.prototype.setTranslator = function(translatorFactory) {
 };
 ```
 
+## Links to other services
+
+When you have got for example foreign library registered as service in this DI and want to autowire some other service into
+it, you have to use their names of methods arguments.
+
+Another possibility is to set these services in your config.
+
+```
+{
+	"services": {
+		"foreignLibrary": {
+			"service": "path/to/service",
+			"arguments": [
+				"@translator"
+			]
+		}
+	}
+}
+```
+
+Now this `foreignLibrary` will gets your `translator` service in constructor.
+
 ## Autowiring DI
 
 Autowiring DI container is also possible. Only thing you need to do, is set argument with name "di" into your method or
@@ -250,6 +272,7 @@ di.inject(function(application) {
 * 1.6.0
 	+ Added `get` method, `getByName` is now deprecated
 	+ Added `inject` method
+	+ Autowiring with @
 
 * 1.5.2
 	+ Add setup into properties

@@ -58,10 +58,18 @@
           return di.autowireArguments(Application);
         }).should["throw"]();
       });
-      return it('should return array with services from params if they are not in definition', function() {
+      it('should return array with services from params if they are not in definition', function() {
         var app;
         app = new Application([]);
         return di.autowireArguments(app.withoutDefinition, ['hello']).should.be.eql(['hello']);
+      });
+      return it('should inject another service by at char', function() {
+        var fn;
+        fn = function(variable) {
+          return variable;
+        };
+        di.addService('array', Array);
+        return di.autowireArguments(fn, ['@array']).should.be.eql([[]]);
       });
     });
     describe('#createInstance()', function() {

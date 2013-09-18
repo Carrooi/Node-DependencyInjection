@@ -50,6 +50,12 @@ describe 'DI', ->
 			app = new Application([])
 			di.autowireArguments(app.withoutDefinition, ['hello']).should.be.eql(['hello'])
 
+		it 'should inject another service by at char', ->
+			fn = (variable) -> return variable
+			di.addService('array', Array)
+			di.autowireArguments(fn, ['@array']).should.be.eql([[]])
+
+
 	describe '#createInstance()', ->
 
 		beforeEach( ->

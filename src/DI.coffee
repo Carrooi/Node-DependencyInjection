@@ -38,7 +38,7 @@ class DI
 				result.push(args[i])
 			else
 				customArg = typeof args[i] != 'undefined'
-				if !customArg || (customArg && (args[i] == '...' || args[i][0] == '@'))
+				if !customArg || (customArg && typeof args[i] == 'string' && (args[i] == '...' || args[i][0] == '@'))
 					if customArg && args[i][0] == '@'
 						arg = args[i].substr(1)
 

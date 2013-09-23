@@ -14,13 +14,13 @@
 
   Http = require('./data/Http');
 
-  di = new DI;
+  di = null;
 
   dir = path.resolve(__dirname + '/data');
 
   describe('DI', function() {
-    afterEach(function() {
-      return di.services = {};
+    beforeEach(function() {
+      return di = new DI;
     });
     describe('#addService()', function() {
       it('should return instance of new Service class from object', function() {
@@ -29,10 +29,15 @@
       it('should return instance of new Service class from path', function() {
         return di.addService('app', "" + dir + "/Application").should.be.instanceOf(Service);
       });
-      return it('should throw an error if you try to register service with reserved name', function() {
+      it('should throw an error if you try to register service with reserved name', function() {
         return (function() {
           return di.addService('di', DI);
         }).should["throw"]();
+      });
+      return it('should create service with null as arguments', function() {
+        di.addService('http', "" + dir + "/Http");
+        di.addService('app', "" + dir + "/Application", [null]);
+        return should.not.exists(di.get('app').array);
       });
     });
     describe('#autowireArguments()', function() {

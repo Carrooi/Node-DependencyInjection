@@ -6,13 +6,13 @@ Service = require '../lib/Service'
 Application = require './data/Application'
 Http = require './data/Http'
 
-di = new DI
+di = null
 dir = path.resolve(__dirname + '/data')
 
 describe 'DI', ->
 
-	afterEach( ->
-		di.services = {}
+	beforeEach( ->
+		di = new DI
 	)
 
 	describe '#addService()', ->
@@ -25,6 +25,11 @@ describe 'DI', ->
 
 		it 'should throw an error if you try to register service with reserved name', ->
 			( -> di.addService('di', DI) ).should.throw()
+
+		it 'should create service with null as arguments', ->
+			di.addService('http', "#{dir}/Http")
+			di.addService('app', "#{dir}/Application", [null])
+			should.not.exists(di.get('app').array)
 
 	describe '#autowireArguments()', ->
 

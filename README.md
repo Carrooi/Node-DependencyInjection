@@ -269,6 +269,9 @@ di.inject(function(application) {
 
 ## Changelog
 
+* 1.6.1
+	+ Bug with setting other arguments than strings
+
 * 1.6.0
 	+ Added `get` method, `getByName` is now deprecated
 	+ Added `inject` method

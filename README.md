@@ -13,9 +13,11 @@ But with this package, you can configure your classes at one place and then let'
 
 This package is inspired by dependency injection in [Nette framework](http://doc.nette.org/en/dependency-injection).
 
-## Changelog
+## Installation
 
-Changelog is at the end of this readme.
+```
+$ npm install dependency-injection
+```
 
 ## Configuration
 
@@ -265,6 +267,12 @@ For simple injecting services into your functions, you can use method `inject`.
 di.inject(function(application) {
 	application.doSomeMagic();
 });
+```
+
+## Tests
+
+```
+$ npm test
 ```
 
 ## Changelog

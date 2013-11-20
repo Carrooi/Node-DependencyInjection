@@ -1,4 +1,4 @@
-should = require 'should'
+expect = require('chai').expect
 path = require 'path'
 
 DI = require '../lib/DI'
@@ -18,47 +18,47 @@ describe 'DI', ->
 	describe '#addService()', ->
 
 		it 'should return instance of new Service class from object', ->
-			di.addService('array', Array).should.be.instanceOf(Service)
+			expect(di.addService('array', Array)).to.be.an.instanceof(Service)
 
 		it 'should return instance of new Service class from path', ->
-			di.addService('app', "#{dir}/Application").should.be.instanceOf(Service)
+			expect(di.addService('app', "#{dir}/Application")).to.be.an.instanceof(Service)
 
 		it 'should throw an error if you try to register service with reserved name', ->
-			( -> di.addService('di', DI) ).should.throw()
+			expect( -> di.addService('di', DI)).to.throw(Error, "DI: name 'di' is reserved by DI.")
 
 		it 'should create service with null as arguments', ->
 			di.addService('http', "#{dir}/Http")
 			di.addService('app', "#{dir}/Application", [null])
-			should.not.exists(di.get('app').array)
+			expect(di.get('app').array).to.not.exists
 
 	describe '#autowireArguments()', ->
 
 		it 'should return array with services for Application', ->
 			di.addService('array', Array)
-			di.autowireArguments(Application).should.be.eql([[]])
+			expect(di.autowireArguments(Application)).to.be.eql([[]])
 
 		it 'should return array with services for inject method', ->
 			di.addService('http', Http)
 			args = di.autowireArguments((new Application([])).injectHttp)
-			args.should.have.length(1)
-			args[0].should.be.an.instanceOf(Http)
+			expect(args).to.have.length(1)
+			expect(args[0]).to.be.an.instanceof(Http)
 
 		it 'should return array with services for Application with custom ones', ->
 			di.addService('info', ['hello']).setInstantiate(false)
 			app = new Application([])
-			di.autowireArguments(app.prepare, ['simq'])
+			expect(di.autowireArguments(app.prepare, ['simq'])).to.be.eql(['simq', ['hello']])
 
 		it 'should throw an error if service to autowire does not exists', ->
-			( -> di.autowireArguments(Application) ).should.throw()
+			expect( -> di.autowireArguments(Application) ).to.throw(Error, "DI: Service 'array' was not found.")
 
 		it 'should return array with services from params if they are not in definition', ->
 			app = new Application([])
-			di.autowireArguments(app.withoutDefinition, ['hello']).should.be.eql(['hello'])
+			expect(di.autowireArguments(app.withoutDefinition, ['hello'])).to.be.eql(['hello'])
 
 		it 'should inject another service by at char', ->
 			fn = (variable) -> return variable
 			di.addService('array', Array)
-			di.autowireArguments(fn, ['@array']).should.be.eql([[]])
+			expect(di.autowireArguments(fn, ['@array'])).to.be.eql([[]])
 
 
 	describe '#createInstance()', ->
@@ -70,22 +70,22 @@ describe 'DI', ->
 
 		it 'should return new instance of Application with all dependencies', ->
 			app = di.createInstance(Application)
-			app.should.be.an.instanceOf(Application)
-			app.array.should.be.an.instanceOf(Array)
-			app.http.should.be.an.instanceOf(Http)
+			expect(app).to.be.an.instanceof(Application)
+			expect(app.array).to.be.an.instanceof(Array)
+			expect(app.http).to.be.an.instanceof(Http)
 
 		it 'should throw an error when service to inject does not exists', ->
 			delete di.services.http
-			( -> di.createInstance(Application) ).should.throw()
+			expect( -> di.createInstance(Application)).to.throw(Error, "DI: Service 'http' was not found.")
 
 	describe '#findDefinitionByName()', ->
 
 		it 'should return definition of Array service', ->
 			di.addService('array', Array)
-			di.findDefinitionByName('array').should.be.an.instanceOf(Service)
+			expect(di.findDefinitionByName('array')).to.be.an.instanceof(Service)
 
 		it 'should throw an error if service is not registered', ->
-			( -> di.findDefinitionByName('array') ).should.throw()
+			expect( -> di.findDefinitionByName('array')).to.throw(Error, "DI: Service 'array' was not found.")
 
 	describe 'Loaders', ->
 
@@ -105,59 +105,59 @@ describe 'DI', ->
 
 			it 'should return instance of Application with all dependencies', ->
 				app = di.get('application')
-				app.should.be.an.instanceOf(Application)
-				app.namespace.should.be.equal('simq')
-				app.array.should.be.eql([])
-				app.http.should.be.an.instanceOf(Http)
+				expect(app).to.be.an.instanceof(Application)
+				expect(app.namespace).to.be.equal('simq')
+				expect(app.array).to.be.eql([])
+				expect(app.http).to.be.an.instanceof(Http)
 
 			it 'should return always the same instance of Application', ->
-				di.get('application').should.be.equal(di.get('application'))
+				expect(di.get('application')).to.be.equal(di.get('application'))
 
 			it 'should return info array without instantiating it', ->
-				di.get('info').should.be.eql(['hello'])
+				expect(di.get('info')).to.be.eql(['hello'])
 
 			it 'should not set services which are not autowired', ->
 				di.findDefinitionByName('application')
 					.addSetup('setData')
-				( -> di.get('application') ).should.throw()
+				expect( -> di.get('application')).to.throw(Error, "DI: Service 'noArray' can not be autowired.")
 
 			it 'should autowire di container into Application instance', ->
 				di.findDefinitionByName('application')
 					.addSetup('setDi')
-				di.get('application').di.should.be.equal(di)
+				expect(di.get('application').di).to.be.equal(di)
 
 			it 'should autowire di container factory into Application instance', ->
 				di.findDefinitionByName('application')
 					.addSetup('setDiFactory')
 				factory = di.get('application').diFactory
-				factory.should.be.an.instanceOf(Function)
-				factory().should.be.equal(di)
+				expect(factory).to.be.an.instanceof(Function)
+				expect(factory()).to.be.equal(di)
 
 			it 'should set info property directly', ->
 				di.findDefinitionByName('application')
 					.addSetup('info', 'by property')
-				di.get('application').info.should.be.equal('by property')
+				expect(di.get('application').info).to.be.equal('by property')
 
 		describe '#create()', ->
 
 			it 'should return always new instance of Application', ->
-				di.create('application').should.not.be.equal(di.create('application'))
+				expect(di.create('application')).to.not.be.equal(di.create('application'))
 
 		describe '#getFactory()', ->
 
 			it 'should return callable factory for Application', ->
 				factory = di.getFactory('application')
-				factory.should.be.an.instanceOf(Function)
-				factory().should.be.an.instanceOf(Application)
+				expect(factory).to.be.an.instanceof(Function)
+				expect(factory()).to.be.an.instanceof(Application)
 
 		describe '#inject()', ->
 
 			it 'should inject some service into annonymous function', (done) ->
 				di.addService('array', Array)
 				di.inject( (array) ->
-					array.should.be.eql([])
+					expect(array).to.be.eql([])
 					done()
 				)
 
 			it 'should throw an error if inject method is not called on function', ->
-				( -> di.inject('') ).should.throw()
+				expect( -> di.inject('')).to.throw(Error, "DI: Inject method can be called only on functions.")

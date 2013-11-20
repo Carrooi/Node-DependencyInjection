@@ -14,7 +14,7 @@ class DI
 
 	addService: (name, service, args = []) ->
 		if name in @reserved
-			throw new Error "DI: name '#{name}' is reserved by DI"
+			throw new Error "DI: name '#{name}' is reserved by DI."
 
 		@services[name] = new Service(@, service, args)
 		return @services[name]
@@ -51,7 +51,7 @@ class DI
 						self = if factory == true then => return @ else @
 						result.push(self)
 					else if @findDefinitionByName(arg).autowired == false
-						throw new Error "DI: service #{arg} can not be autowired"
+						throw new Error "DI: Service '#{arg}' can not be autowired."
 					else if factory == true
 						result.push(@getFactory(arg))
 					else
@@ -82,7 +82,7 @@ class DI
 
 	inject: (fn, scope = {}) ->
 		if fn !instanceof Function
-			throw new Error 'Inject method can be called only on functions.'
+			throw new Error 'DI: Inject method can be called only on functions.'
 
 		args = @autowireArguments(fn, [])
 		return fn.apply(scope, args)
@@ -91,7 +91,7 @@ class DI
 	findDefinitionByName: (name, need = true) ->
 		if typeof @services[name] == 'undefined'
 			if need == true
-				throw new Error "DI: Service '#{name}' was not found"
+				throw new Error "DI: Service '#{name}' was not found."
 			else
 				return null
 

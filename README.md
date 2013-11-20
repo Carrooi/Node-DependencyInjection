@@ -279,6 +279,8 @@ $ npm test
 
 * 1.6.2
 	+ Some optimizations
+	+ Should assert module replaced with chai
+	+ Better error messages
 
 * 1.6.1
 	+ Bug with setting other arguments than strings

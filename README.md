@@ -277,7 +277,7 @@ $ npm test
 
 ## Changelog
 
-* 1.6.2 - 1.6.4
+* 1.6.2 - 1.6.5
 	+ Some optimizations
 	+ Should assert module replaced with chai
 	+ Better error messages

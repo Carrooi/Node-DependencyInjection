@@ -73,9 +73,10 @@ class DI
 		if instantiate == true
 			service = new (DI._newInstanceWrapper(service, @autowireArguments(service, args)))
 
-		for method of service
-			if method.match(/^inject/) != null
-				@inject(service[method], service)
+		if Object.prototype.toString.call(service) == '[object Object]'
+			for method of service
+				if method.match(/^inject/) != null
+					@inject(service[method], service)
 
 		return service
 

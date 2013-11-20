@@ -32,7 +32,8 @@ class DIConfigurator
 			config = @getConfig()
 
 			for name of config
-				config[name] = @configurator.merge(config[name], defaultService)
+				if config.hasOwnProperty(name)
+					config[name] = @configurator.merge(config[name], defaultService)
 
 			return config
 
@@ -51,15 +52,17 @@ class DIConfigurator
 		run = []
 
 		for name, service of configuration.services
-			s = di.addService(name, service.service, service.arguments)
-			s.setInstantiate(service.instantiate)
-			s.setAutowired(service.autowired)
+			if configuration.services.hasOwnProperty(name)
+				s = di.addService(name, service.service, service.arguments)
+				s.setInstantiate(service.instantiate)
+				s.setAutowired(service.autowired)
 
-			for method, arguments of service.setup
-				s.addSetup(method, arguments)
+				for method, arguments of service.setup
+					if service.setup.hasOwnProperty(method)
+						s.addSetup(method, arguments)
 
-			if service.run == true
-				run.push(name)
+				if service.run == true
+					run.push(name)
 
 		for name in run
 			di.getByName(name)

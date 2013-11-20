@@ -1,7 +1,7 @@
 {
 	"name": "dependency-injection",
 	"description": "Dependency injection with configuration and autowire for node js and browser",
-	"version": "1.6.1",
+	"version": "1.6.2",
 	"author": {
 		"name": "David Kudera",
 		"email": "sakren@gmail.com"
@@ -22,10 +22,10 @@
 	},
 	"main": "./lib/DI",
 	"dependencies": {
-		"easy-configuration": "latest"
+		"easy-configuration": "~1.5.4"
 	},
 	"devDependencies": {
-		"should": "1.2.2"
+		"should": "~1.2.2"
 	},
 	"scripts": {
 		"test": "cd ./test; mocha ./index.js --reporter spec;"

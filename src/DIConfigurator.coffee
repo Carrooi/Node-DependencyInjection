@@ -52,7 +52,7 @@ class DIConfigurator
 		run = []
 
 		for name, service of configuration.services
-			if configuration.services.hasOwnProperty(name)
+			if configuration.services.hasOwnProperty(name) && name not in ['__proto__']
 				s = di.addService(name, service.service, service.arguments)
 				s.setInstantiate(service.instantiate)
 				s.setAutowired(service.autowired)

@@ -277,6 +277,9 @@ $ npm test
 
 ## Changelog
 
+* 1.6.6
+	+ Bugs in Internet Explorer 8
+
 * 1.6.2 - 1.6.5
 	+ Some optimizations
 	+ Should assert module replaced with chai

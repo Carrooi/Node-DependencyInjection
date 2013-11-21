@@ -32,7 +32,7 @@ class DIConfigurator
 			config = @getConfig()
 
 			for name of config
-				if config.hasOwnProperty(name)
+				if config.hasOwnProperty(name) && name not in ['__proto__']
 					config[name] = @configurator.merge(config[name], defaultService)
 
 			return config

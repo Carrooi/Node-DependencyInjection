@@ -1,0 +1,16 @@
+{
+	"packages": {
+		"application": {
+			"base": "../../",
+			"application": "./test/browser/application.js",
+			"modules": [
+				"./test/browser/tests/*.coffee",
+				"./lib/*.js",
+				"./test/data/*.coffee"
+			],
+			"run": [
+				"/test/browser/tests/DI"
+			]
+		}
+	}
+}

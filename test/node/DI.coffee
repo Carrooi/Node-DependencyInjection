@@ -1,13 +1,14 @@
 expect = require('chai').expect
 path = require 'path'
 
-DI = require '../lib/DI'
-Service = require '../lib/Service'
-Application = require './data/Application'
-Http = require './data/Http'
+DI = require '../../lib/DI'
+Service = require '../../lib/Service'
+
+Application = require '../data/Application'
+Http = require '../data/Http'
 
 di = null
-dir = path.resolve(__dirname + '/data')
+dir = path.resolve(__dirname + '/../data')
 
 describe 'DI', ->
 

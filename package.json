@@ -25,9 +25,10 @@
 		"easy-configuration": "~1.6.2"
 	},
 	"devDependencies": {
-		"chai": "~1.8.1"
+		"chai": "~1.8.1",
+		"mocha": "~1.14.0"
 	},
 	"scripts": {
-		"test": "cd ./test; mocha ./index.js --reporter spec;"
+		"test": "cd ./test; echo \"Testing in node:\"; mocha ./node/index.js --reporter spec; cd browser; echo \"Testing in browser:\"; simq build; mocha-phantomjs ./index.html"
 	}
 }

@@ -55,7 +55,7 @@ class DI
 					else if factory == true
 						result.push(@getFactory(arg))
 					else
-						result.push(@getByName(arg))
+						result.push(@get(arg))
 
 				else
 					result.push(args[i])
@@ -101,6 +101,7 @@ class DI
 
 	# deprecated
 	getByName: (name) ->
+		console.log 'DI: Method getByName is deprecated, use get method.'
 		return @get(name)
 
 

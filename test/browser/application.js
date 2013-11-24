@@ -329,7 +329,7 @@
 	            } else if (factory === true) {
 	              result.push(this.getFactory(arg));
 	            } else {
-	              result.push(this.getByName(arg));
+	              result.push(this.get(arg));
 	            }
 	          } else {
 	            result.push(args[i]);
@@ -399,6 +399,7 @@
 	    };
 	
 	    DI.prototype.getByName = function(name) {
+	      console.log('DI: Method getByName is deprecated, use get method.');
 	      return this.get(name);
 	    };
 	
@@ -1158,7 +1159,7 @@
 	      }
 	      for (_i = 0, _len = run.length; _i < _len; _i++) {
 	        name = run[_i];
-	        di.getByName(name);
+	        di.get(name);
 	      }
 	      return di;
 	    };
@@ -1388,7 +1389,7 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1385319527000,"mtime":1385319503000,"ctime":1385319503000},"/lib/DI.js":{"atime":1385319527000,"mtime":1385319503000,"ctime":1385319503000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1385320305000,"mtime":1385308588000,"ctime":1385314591000},"recursive-merge/lib/Merge.js":{"atime":1385320305000,"mtime":1375346181000,"ctime":1385314593000},"easy-configuration/lib/Extension.js":{"atime":1385320305000,"mtime":1385299528000,"ctime":1385314591000},"easy-configuration/lib/Helpers.js":{"atime":1385320305000,"mtime":1385300070000,"ctime":1385314591000},"/test/browser/tests/DI.coffee":{"atime":1385320305000,"mtime":1385319742000,"ctime":1385319742000},"/lib/DIConfigurator.js":{"atime":1385319550000,"mtime":1385319503000,"ctime":1385319503000},"/test/data/Application.coffee":{"atime":1385314540000,"mtime":1385309217000,"ctime":1385309217000},"/test/data/Http.coffee":{"atime":1385314540000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1385320075000,"mtime":1385320068000,"ctime":1385320068000},"easy-configuration/package.json":{"atime":1385314619000,"mtime":1385314591000,"ctime":1385314591000}});
+require.__setStats({"/lib/Service.js":{"atime":1385321866000,"mtime":1385321864000,"ctime":1385321864000},"/lib/DI.js":{"atime":1385322220000,"mtime":1385322206000,"ctime":1385322206000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1385320305000,"mtime":1385308588000,"ctime":1385314591000},"recursive-merge/lib/Merge.js":{"atime":1385320305000,"mtime":1375346181000,"ctime":1385314593000},"easy-configuration/lib/Extension.js":{"atime":1385320305000,"mtime":1385299528000,"ctime":1385314591000},"easy-configuration/lib/Helpers.js":{"atime":1385320305000,"mtime":1385300070000,"ctime":1385314591000},"/test/browser/tests/DI.coffee":{"atime":1385320305000,"mtime":1385319742000,"ctime":1385319742000},"/lib/DIConfigurator.js":{"atime":1385322221000,"mtime":1385322215000,"ctime":1385322215000},"/test/data/Application.coffee":{"atime":1385314540000,"mtime":1385309217000,"ctime":1385309217000},"/test/data/Http.coffee":{"atime":1385314540000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1385320075000,"mtime":1385320068000,"ctime":1385320068000},"easy-configuration/package.json":{"atime":1385314619000,"mtime":1385314591000,"ctime":1385314591000}});
 require.version = '5.1.2';
 
 /** run section **/

@@ -65,7 +65,7 @@ class DIConfigurator
 					run.push(name)
 
 		for name in run
-			di.getByName(name)
+			di.get(name)
 
 		return di
 

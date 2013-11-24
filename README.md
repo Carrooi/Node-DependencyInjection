@@ -277,6 +277,9 @@ $ npm test
 
 ## Changelog
 
+* 1.7.0
+	+ Updated dependencies
+
 * 1.6.6 - 1.6.7
 	+ Bugs in Internet Explorer 8
 

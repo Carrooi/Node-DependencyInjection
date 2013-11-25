@@ -1,4 +1,5 @@
 Service = require './Service'
+Helpers = require './Helpers'
 
 class DI
 
@@ -9,7 +10,12 @@ class DI
 
 
 	constructor: ->
-		@services = {}
+		di = new Service(@, @)
+		di.instantiate = false
+		di.injectMethods = false
+
+		@services =
+			di: di
 
 
 	addService: (name, service, args = []) ->
@@ -21,46 +27,7 @@ class DI
 
 
 	autowireArguments: (method, args = []) ->
-		method = method.toString()
-		method = method.replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg, '')		# remove comments
-		methodArgs = method.slice(method.indexOf('(') + 1, method.indexOf(')')).match(/([^\s,]+)/g)
-		methodArgs = if methodArgs == null then [] else methodArgs
-		num = if methodArgs.length > args.length then methodArgs.length else args.length
-
-		result = []
-
-		return result if num == 0
-
-		for i in [0..num - 1]
-			arg = if typeof methodArgs[i] == 'undefined' then null else methodArgs[i]
-
-			if arg == null
-				result.push(args[i])
-			else
-				customArg = typeof args[i] != 'undefined'
-				if !customArg || (customArg && typeof args[i] == 'string' && (args[i] == '...' || args[i][0] == '@'))
-					if customArg && args[i][0] == '@'
-						arg = args[i].substr(1)
-
-					factory = false
-					if arg.match(/Factory$/) != null
-						arg = arg.substring(0, arg.length - 7)
-						factory = true
-
-					if arg == 'di'
-						self = if factory == true then => return @ else @
-						result.push(self)
-					else if @findDefinitionByName(arg).autowired == false
-						throw new Error "DI: Service '#{arg}' can not be autowired."
-					else if factory == true
-						result.push(@getFactory(arg))
-					else
-						result.push(@get(arg))
-
-				else
-					result.push(args[i])
-
-		return result
+		return Helpers.autowireArguments(method, args, @)
 
 
 	@_newInstanceWrapper = (obj, args = []) ->
@@ -69,11 +36,11 @@ class DI
 		return f
 
 
-	createInstance: (service, args = [], instantiate = true) ->
+	createInstance: (service, args = [], instantiate = true, injectMethods = true) ->
 		if instantiate == true
 			service = new (DI._newInstanceWrapper(service, @autowireArguments(service, args)))
 
-		if Object.prototype.toString.call(service) == '[object Object]'
+		if Object.prototype.toString.call(service) == '[object Object]' && injectMethods
 			for method of service
 				if method.match(/^inject/) != null
 					@inject(service[method], service)
@@ -89,8 +56,12 @@ class DI
 		return fn.apply(scope, args)
 
 
+	hasDefinition: (name) ->
+		return typeof @services[name] != 'undefined'
+
+
 	findDefinitionByName: (name, need = true) ->
-		if typeof @services[name] == 'undefined'
+		if !@hasDefinition(name)
 			if need == true
 				throw new Error "DI: Service '#{name}' was not found."
 			else

@@ -48,7 +48,7 @@
       this.diFactory = diFactory;
     };
 
-    Application.prototype.withoutDefinition = function() {
+    Application.prototype.withoutDefinition = function(param) {
       return this.other = arguments;
     };
 

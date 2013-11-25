@@ -11,6 +11,8 @@ class Service
 
 	autowired: true
 
+	injectMethods: true
+
 	setup: null
 
 	instance: null
@@ -32,7 +34,7 @@ class Service
 		if Object.prototype.toString.call(service) == '[object String]'
 			service = require(service)
 
-		service = @di.createInstance(service, @arguments, @instantiate)
+		service = @di.createInstance(service, @arguments, @instantiate, @injectMethods)
 
 		for method, args of @setup
 			if @setup.hasOwnProperty(method)

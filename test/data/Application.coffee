@@ -38,7 +38,7 @@ class Application
 	setDiFactory: (@diFactory) ->
 
 
-	withoutDefinition: ->
+	withoutDefinition: (param) ->
 		@other = arguments
 
 

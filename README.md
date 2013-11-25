@@ -160,6 +160,72 @@ and other services will be automatically injected.
 
 Please, try to avoid circular dependencies (service A depends on service B and service B depends on service A).
 
+## Examples
+
+In your configuration, you can use three dots as replacement for services.
+
+Services:
+```
+var serviceA = function(serviceB, serviceC) { ... };
+var serviceB = function(serviceC, namespace, item) { ... };
+var serviceC = function(namespace, item, serviceD) { ... };
+var serviceD = function() { ... };
+```
+
+Configuration:
+```
+{
+	"services": {
+		"serviceA": {
+			"service": "path/to/service/A",
+			"instantiate": false
+		},
+		"serviceB": {
+			"service": "path/to/service/B",
+			"arguments": ["...", "some namespace", "some item"],
+			"instantiate": false
+		},
+		"serviceC": {
+			"service": "path/to/service/C",
+			"arguments": ["some namespace", "some item"],
+			"instantiate": false
+		},
+		"serviceD": {
+			"service": "path/to/service/D",
+			"instantiate": false
+		}
+	}
+}
+```
+
+or more expanded:
+```
+{
+	"services": {
+		"serviceA": {
+			"service": "path/to/service/A",
+			"arguments": ["..."],
+			"instantiate": false
+		},
+		"serviceB": {
+			"service": "path/to/service/B",
+			"arguments": ["...", "some namespace", "some item"],
+			"instantiate": false
+		},
+		"serviceC": {
+			"service": "path/to/service/C",
+			"arguments": ["some namespace", "some item", "..."],
+			"instantiate": false
+		},
+		"serviceD": {
+			"service": "path/to/service/D",
+			"arguments": ["..."],
+			"instantiate": false
+		}
+	}
+}
+```
+
 ### Disable autowiring
 
 If you want to disable autowiring for some service, you can set "autowired" option to false in your config (like instantiate).
@@ -214,6 +280,10 @@ Now this `foreignLibrary` will gets your `translator` service in constructor.
 
 Autowiring DI container is also possible. Only thing you need to do, is set argument with name "di" into your method or
 constructor. This also means that you can not register new service with name "di".
+
+```
+di.get('di');
+```
 
 ## Inject methods
 
@@ -279,6 +349,8 @@ $ npm test
 
 * 1.7.0
 	+ Updated dependencies
+	+ Added `injectMethods` to services
+	+ Refactored autowiring
 
 * 1.6.6 - 1.6.7
 	+ Bugs in Internet Explorer 8

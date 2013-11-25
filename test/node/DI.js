@@ -68,13 +68,31 @@
         app = new Application([]);
         return expect(di.autowireArguments(app.withoutDefinition, ['hello'])).to.be.eql(['hello']);
       });
-      return it('should inject another service by at char', function() {
+      it('should inject another service by at char', function() {
         var fn;
         fn = function(variable) {
           return variable;
         };
         di.addService('array', Array);
         return expect(di.autowireArguments(fn, ['@array'])).to.be.eql([[]]);
+      });
+      it('should inject services replaced with dots in the end', function() {
+        var fn;
+        fn = function(first, second, third) {
+          return arguments;
+        };
+        di.addService('second', ['second item']).instantiate = false;
+        di.addService('third', ['third item']).instantiate = false;
+        return expect(di.autowireArguments(fn, ['test', '...'])).to.be.eql(['test', ['second item'], ['third item']]);
+      });
+      return it('should inject services replaced with dots in the beginning', function() {
+        var fn;
+        fn = function(first, second, third) {
+          return arguments;
+        };
+        di.addService('first', ['first item']).instantiate = false;
+        di.addService('second', ['second item']).instantiate = false;
+        return expect(di.autowireArguments(fn, ['...', 'test'])).to.be.eql([['first item'], ['second item'], 'test']);
       });
     });
     describe('#createInstance()', function() {
@@ -134,7 +152,7 @@
           di.findDefinitionByName('application').addSetup('setData');
           return expect(function() {
             return di.get('application');
-          }).to["throw"](Error, "DI: Service 'noArray' can not be autowired.");
+          }).to["throw"](Error, "DI: Service 'noArray' in not autowired.");
         });
         it('should autowire di container into Application instance', function() {
           di.findDefinitionByName('application').addSetup('setDi');

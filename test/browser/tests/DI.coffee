@@ -58,6 +58,18 @@ describe 'DI', ->
 			di.addService('array', Array)
 			expect(di.autowireArguments(fn, ['@array'])).to.be.eql([[]])
 
+		it 'should inject services replaced with dots in the end', ->
+			fn = (first, second, third) -> return arguments
+			di.addService('second', ['second item']).instantiate = false
+			di.addService('third', ['third item']).instantiate = false
+			expect(di.autowireArguments(fn, ['test', '...'])).to.be.eql(['test', ['second item'], ['third item']])
+
+		it 'should inject services replaced with dots in the beginning', ->
+			fn = (first, second, third) -> return arguments
+			di.addService('first', ['first item']).instantiate = false
+			di.addService('second', ['second item']).instantiate = false
+			expect(di.autowireArguments(fn, ['...', 'test'])).to.be.eql([['first item'], ['second item'], 'test'])
+
 
 	describe '#createInstance()', ->
 
@@ -91,12 +103,12 @@ describe 'DI', ->
 			di.addService('array', Array)
 			di.addService('http', Http)
 			di.addService('info', ['hello'])
-				.setInstantiate(false)
+			.setInstantiate(false)
 			di.addService('noArray', ['not this one'])
-				.setInstantiate(false)
-				.setAutowired(false)
+			.setInstantiate(false)
+			.setAutowired(false)
 			di.addService('application', Application)
-				.addSetup('prepare', ['simq', '...'])
+			.addSetup('prepare', ['simq', '...'])
 		)
 
 		describe '#get()', ->
@@ -116,24 +128,24 @@ describe 'DI', ->
 
 			it 'should not set services which are not autowired', ->
 				di.findDefinitionByName('application')
-					.addSetup('setData')
-				expect( -> di.get('application')).to.throw(Error, "DI: Service 'noArray' can not be autowired.")
+				.addSetup('setData')
+				expect( -> di.get('application')).to.throw(Error, "DI: Service 'noArray' in not autowired.")
 
 			it 'should autowire di container into Application instance', ->
 				di.findDefinitionByName('application')
-					.addSetup('setDi')
+				.addSetup('setDi')
 				expect(di.get('application').di).to.be.equal(di)
 
 			it 'should autowire di container factory into Application instance', ->
 				di.findDefinitionByName('application')
-					.addSetup('setDiFactory')
+				.addSetup('setDiFactory')
 				factory = di.get('application').diFactory
 				expect(factory).to.be.an.instanceof(Function)
 				expect(factory()).to.be.equal(di)
 
 			it 'should set info property directly', ->
 				di.findDefinitionByName('application')
-					.addSetup('info', 'by property')
+				.addSetup('info', 'by property')
 				expect(di.get('application').info).to.be.equal('by property')
 
 		describe '#create()', ->

@@ -61,6 +61,18 @@ describe 'DI', ->
 			di.addService('array', Array)
 			expect(di.autowireArguments(fn, ['@array'])).to.be.eql([[]])
 
+		it 'should inject services replaced with dots in the end', ->
+			fn = (first, second, third) -> return arguments
+			di.addService('second', ['second item']).instantiate = false
+			di.addService('third', ['third item']).instantiate = false
+			expect(di.autowireArguments(fn, ['test', '...'])).to.be.eql(['test', ['second item'], ['third item']])
+
+		it 'should inject services replaced with dots in the beginning', ->
+			fn = (first, second, third) -> return arguments
+			di.addService('first', ['first item']).instantiate = false
+			di.addService('second', ['second item']).instantiate = false
+			expect(di.autowireArguments(fn, ['...', 'test'])).to.be.eql([['first item'], ['second item'], 'test'])
+
 
 	describe '#createInstance()', ->
 
@@ -120,7 +132,7 @@ describe 'DI', ->
 			it 'should not set services which are not autowired', ->
 				di.findDefinitionByName('application')
 					.addSetup('setData')
-				expect( -> di.get('application')).to.throw(Error, "DI: Service 'noArray' can not be autowired.")
+				expect( -> di.get('application')).to.throw(Error, "DI: Service 'noArray' in not autowired.")
 
 			it 'should autowire di container into Application instance', ->
 				di.findDefinitionByName('application')

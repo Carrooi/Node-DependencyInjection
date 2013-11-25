@@ -351,6 +351,7 @@ $ npm test
 	+ Updated dependencies
 	+ Added `injectMethods` to services
 	+ Refactored autowiring
+	+ Some optimizations
 
 * 1.6.6 - 1.6.7
 	+ Bugs in Internet Explorer 8

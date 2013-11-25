@@ -30,15 +30,9 @@ class DI
 		return Helpers.autowireArguments(method, args, @)
 
 
-	@_newInstanceWrapper = (obj, args = []) ->
-		f = -> return obj.apply(@, args)
-		f.prototype = obj.prototype
-		return f
-
-
 	createInstance: (service, args = [], instantiate = true, injectMethods = true) ->
 		if instantiate == true
-			service = new (DI._newInstanceWrapper(service, @autowireArguments(service, args)))
+			service = Helpers.createInstance(service, args, @)
 
 		if Object.prototype.toString.call(service) == '[object Object]' && injectMethods
 			for method of service

@@ -25,6 +25,14 @@ class Helpers
 		return result
 
 
+	@createInstance: (service, args = [], container) ->
+		wrapper = (obj, args = []) ->
+			f = -> return obj.apply(@, args)
+			f.prototype = obj.prototype
+			return f
+
+		return new (wrapper(service, Helpers.autowireArguments(service, args, container)))
+
 
 	@getArguments: (method) ->
 		method = method.toString()

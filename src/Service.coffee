@@ -1,3 +1,5 @@
+Helpers = require './Helpers'
+
 class Service
 
 
@@ -39,7 +41,7 @@ class Service
 		for method, args of @setup
 			if @setup.hasOwnProperty(method)
 				if typeof service[method] == 'function'
-					service[method].apply(service, @di.autowireArguments(service[method], args))
+					service[method].apply(service, Helpers.autowireArguments(service[method], args, @di))
 				else
 					service[method] = args
 

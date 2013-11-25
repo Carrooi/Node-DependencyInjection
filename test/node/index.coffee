@@ -1,1 +1,2 @@
+require './Helpers'
 require './DI'

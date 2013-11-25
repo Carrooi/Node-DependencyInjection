@@ -26,7 +26,9 @@ class DI
 		return @services[name]
 
 
+	# deprecated
 	autowireArguments: (method, args = []) ->
+		console.log 'Method autowireArguments is deprecated, use the same method in Helpers class.'
 		return Helpers.autowireArguments(method, args, @)
 
 
@@ -46,7 +48,7 @@ class DI
 		if fn !instanceof Function
 			throw new Error 'DI: Inject method can be called only on functions.'
 
-		args = @autowireArguments(fn, [])
+		args = Helpers.autowireArguments(fn, [], @)
 		return fn.apply(scope, args)
 
 

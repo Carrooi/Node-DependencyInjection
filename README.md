@@ -352,6 +352,7 @@ $ npm test
 	+ Added `injectMethods` to services
 	+ Refactored autowiring
 	+ Some optimizations
+	+ `DI.autowireArguments` moved to `Helpers.autowireArguments`
 
 * 1.6.6 - 1.6.7
 	+ Bugs in Internet Explorer 8

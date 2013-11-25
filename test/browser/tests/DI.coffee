@@ -29,47 +29,6 @@ describe 'DI', ->
 			di.addService('app', "#{dir}/Application", [null])
 			expect(di.get('app').array).to.not.exists
 
-	describe '#autowireArguments()', ->
-
-		it 'should return array with services for Application', ->
-			di.addService('array', Array)
-			expect(di.autowireArguments(Application)).to.be.eql([[]])
-
-		it 'should return array with services for inject method', ->
-			di.addService('http', Http)
-			args = di.autowireArguments((new Application([])).injectHttp)
-			expect(args).to.have.length(1)
-			expect(args[0]).to.be.an.instanceof(Http)
-
-		it 'should return array with services for Application with custom ones', ->
-			di.addService('info', ['hello']).setInstantiate(false)
-			app = new Application([])
-			expect(di.autowireArguments(app.prepare, ['simq'])).to.be.eql(['simq', ['hello']])
-
-		it 'should throw an error if service to autowire does not exists', ->
-			expect( -> di.autowireArguments(Application) ).to.throw(Error, "DI: Service 'array' was not found.")
-
-		it 'should return array with services from params if they are not in definition', ->
-			app = new Application([])
-			expect(di.autowireArguments(app.withoutDefinition, ['hello'])).to.be.eql(['hello'])
-
-		it 'should inject another service by at char', ->
-			fn = (variable) -> return variable
-			di.addService('array', Array)
-			expect(di.autowireArguments(fn, ['@array'])).to.be.eql([[]])
-
-		it 'should inject services replaced with dots in the end', ->
-			fn = (first, second, third) -> return arguments
-			di.addService('second', ['second item']).instantiate = false
-			di.addService('third', ['third item']).instantiate = false
-			expect(di.autowireArguments(fn, ['test', '...'])).to.be.eql(['test', ['second item'], ['third item']])
-
-		it 'should inject services replaced with dots in the beginning', ->
-			fn = (first, second, third) -> return arguments
-			di.addService('first', ['first item']).instantiate = false
-			di.addService('second', ['second item']).instantiate = false
-			expect(di.autowireArguments(fn, ['...', 'test'])).to.be.eql([['first item'], ['second item'], 'test'])
-
 
 	describe '#createInstance()', ->
 

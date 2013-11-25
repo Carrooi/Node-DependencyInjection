@@ -476,7 +476,7 @@
 	      if (!(fn instanceof Function)) {
 	        throw new Error('DI: Inject method can be called only on functions.');
 	      }
-	      args = this.autowireArguments(fn, []);
+	      args = Helpers.autowireArguments(fn, [], this);
 	      return fn.apply(scope, args);
 	    };
 	
@@ -1025,61 +1025,6 @@
 	        return expect(di.get('app').array).to.not.exists;
 	      });
 	    });
-	    describe('#autowireArguments()', function() {
-	      it('should return array with services for Application', function() {
-	        di.addService('array', Array);
-	        return expect(di.autowireArguments(Application)).to.be.eql([[]]);
-	      });
-	      it('should return array with services for inject method', function() {
-	        var args;
-	        di.addService('http', Http);
-	        args = di.autowireArguments((new Application([])).injectHttp);
-	        expect(args).to.have.length(1);
-	        return expect(args[0]).to.be.an["instanceof"](Http);
-	      });
-	      it('should return array with services for Application with custom ones', function() {
-	        var app;
-	        di.addService('info', ['hello']).setInstantiate(false);
-	        app = new Application([]);
-	        return expect(di.autowireArguments(app.prepare, ['simq'])).to.be.eql(['simq', ['hello']]);
-	      });
-	      it('should throw an error if service to autowire does not exists', function() {
-	        return expect(function() {
-	          return di.autowireArguments(Application);
-	        }).to["throw"](Error, "DI: Service 'array' was not found.");
-	      });
-	      it('should return array with services from params if they are not in definition', function() {
-	        var app;
-	        app = new Application([]);
-	        return expect(di.autowireArguments(app.withoutDefinition, ['hello'])).to.be.eql(['hello']);
-	      });
-	      it('should inject another service by at char', function() {
-	        var fn;
-	        fn = function(variable) {
-	          return variable;
-	        };
-	        di.addService('array', Array);
-	        return expect(di.autowireArguments(fn, ['@array'])).to.be.eql([[]]);
-	      });
-	      it('should inject services replaced with dots in the end', function() {
-	        var fn;
-	        fn = function(first, second, third) {
-	          return arguments;
-	        };
-	        di.addService('second', ['second item']).instantiate = false;
-	        di.addService('third', ['third item']).instantiate = false;
-	        return expect(di.autowireArguments(fn, ['test', '...'])).to.be.eql(['test', ['second item'], ['third item']]);
-	      });
-	      return it('should inject services replaced with dots in the beginning', function() {
-	        var fn;
-	        fn = function(first, second, third) {
-	          return arguments;
-	        };
-	        di.addService('first', ['first item']).instantiate = false;
-	        di.addService('second', ['second item']).instantiate = false;
-	        return expect(di.autowireArguments(fn, ['...', 'test'])).to.be.eql([['first item'], ['second item'], 'test']);
-	      });
-	    });
 	    describe('#createInstance()', function() {
 	      beforeEach(function() {
 	        di.addService('array', Array);
@@ -1181,6 +1126,99 @@
 	            return di.inject('');
 	          }).to["throw"](Error, "DI: Inject method can be called only on functions.");
 	        });
+	      });
+	    });
+	  });
+	
+	}).call(this);
+	
+
+}, '/test/browser/tests/Helpers.coffee': function(exports, module) {
+
+	/** node globals **/
+	var require = function(name) {return window.require(name, '/test/browser/tests/Helpers.coffee');};
+	require.resolve = function(name, parent) {if (parent === null) {parent = '/test/browser/tests/Helpers.coffee';} return window.require.resolve(name, parent);};
+	require.define = function(bundle) {window.require.define(bundle);};
+	require.cache = window.require.cache;
+	var __filename = '/test/browser/tests/Helpers.coffee';
+	var __dirname = '/test/browser/tests';
+	var process = {cwd: function() {return '/';}, argv: ['node', '/test/browser/tests/Helpers.coffee'], env: {}};
+
+	/** code **/
+	(function() {
+	  var Application, DI, Helpers, Http, Service, di, dir;
+	
+	  DI = require('/lib/DI');
+	
+	  Service = require('/lib/Service');
+	
+	  Helpers = require('/lib/Helpers');
+	
+	  Application = require('/test/data/Application');
+	
+	  Http = require('/test/data/Http');
+	
+	  di = null;
+	
+	  dir = '/test/data';
+	
+	  describe('Helpers', function() {
+	    beforeEach(function() {
+	      return di = new DI;
+	    });
+	    return describe('#autowireArguments()', function() {
+	      it('should return array with services for Application', function() {
+	        di.addService('array', Array);
+	        return expect(Helpers.autowireArguments(Application, [], di)).to.be.eql([[]]);
+	      });
+	      it('should return array with services for inject method', function() {
+	        var args;
+	        di.addService('http', Http);
+	        args = Helpers.autowireArguments((new Application([])).injectHttp, [], di);
+	        expect(args).to.have.length(1);
+	        return expect(args[0]).to.be.an["instanceof"](Http);
+	      });
+	      it('should return array with services for Application with custom ones', function() {
+	        var app;
+	        di.addService('info', ['hello']).setInstantiate(false);
+	        app = new Application([]);
+	        return expect(Helpers.autowireArguments(app.prepare, ['simq'], di)).to.be.eql(['simq', ['hello']]);
+	      });
+	      it('should throw an error if service to autowire does not exists', function() {
+	        return expect(function() {
+	          return Helpers.autowireArguments(Application, [], di);
+	        }).to["throw"](Error, "DI: Service 'array' was not found.");
+	      });
+	      it('should return array with services from params if they are not in definition', function() {
+	        var app;
+	        app = new Application([]);
+	        return expect(Helpers.autowireArguments(app.withoutDefinition, ['hello'], di)).to.be.eql(['hello']);
+	      });
+	      it('should inject another service by at char', function() {
+	        var fn;
+	        fn = function(variable) {
+	          return variable;
+	        };
+	        di.addService('array', Array);
+	        return expect(Helpers.autowireArguments(fn, ['@array'], di)).to.be.eql([[]]);
+	      });
+	      it('should inject services replaced with dots in the end', function() {
+	        var fn;
+	        fn = function(first, second, third) {
+	          return arguments;
+	        };
+	        di.addService('second', ['second item']).instantiate = false;
+	        di.addService('third', ['third item']).instantiate = false;
+	        return expect(Helpers.autowireArguments(fn, ['test', '...'], di)).to.be.eql(['test', ['second item'], ['third item']]);
+	      });
+	      return it('should inject services replaced with dots in the beginning', function() {
+	        var fn;
+	        fn = function(first, second, third) {
+	          return arguments;
+	        };
+	        di.addService('first', ['first item']).instantiate = false;
+	        di.addService('second', ['second item']).instantiate = false;
+	        return expect(Helpers.autowireArguments(fn, ['...', 'test'], di)).to.be.eql([['first item'], ['second item'], 'test']);
 	      });
 	    });
 	  });
@@ -1507,10 +1545,13 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1385372885000,"mtime":1385372882000,"ctime":1385372882000},"/lib/Helpers.js":{"atime":1385374431000,"mtime":1385374407000,"ctime":1385374407000},"/lib/DI.js":{"atime":1385374431000,"mtime":1385374417000,"ctime":1385374417000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1385320305000,"mtime":1385308588000,"ctime":1385314591000},"recursive-merge/lib/Merge.js":{"atime":1385320305000,"mtime":1375346181000,"ctime":1385314593000},"easy-configuration/lib/Extension.js":{"atime":1385320305000,"mtime":1385299528000,"ctime":1385314591000},"easy-configuration/lib/Helpers.js":{"atime":1385320305000,"mtime":1385300070000,"ctime":1385314591000},"/test/browser/tests/DI.coffee":{"atime":1385372983000,"mtime":1385372961000,"ctime":1385372961000},"/lib/DIConfigurator.js":{"atime":1385366325000,"mtime":1385366206000,"ctime":1385366206000},"/test/data/Application.coffee":{"atime":1385367948000,"mtime":1385367948000,"ctime":1385367948000},"/test/data/Http.coffee":{"atime":1385314540000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1385372976000,"mtime":1385372975000,"ctime":1385372975000},"easy-configuration/package.json":{"atime":1385314619000,"mtime":1385314591000,"ctime":1385314591000}});
+require.__setStats({"/lib/Service.js":{"atime":1385372885000,"mtime":1385372882000,"ctime":1385372882000},"/lib/Helpers.js":{"atime":1385374431000,"mtime":1385374407000,"ctime":1385374407000},"/lib/DI.js":{"atime":1385374676000,"mtime":1385374673000,"ctime":1385374673000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1385320305000,"mtime":1385308588000,"ctime":1385314591000},"recursive-merge/lib/Merge.js":{"atime":1385320305000,"mtime":1375346181000,"ctime":1385314593000},"easy-configuration/lib/Extension.js":{"atime":1385320305000,"mtime":1385299528000,"ctime":1385314591000},"easy-configuration/lib/Helpers.js":{"atime":1385320305000,"mtime":1385300070000,"ctime":1385314591000},"/test/browser/tests/DI.coffee":{"atime":1385375031000,"mtime":1385375000000,"ctime":1385375000000},"/test/browser/tests/Helpers.coffee":{"atime":1385375031000,"mtime":1385375028000,"ctime":1385375028000},"/lib/DIConfigurator.js":{"atime":1385366325000,"mtime":1385366206000,"ctime":1385366206000},"/test/data/Application.coffee":{"atime":1385367948000,"mtime":1385367948000,"ctime":1385367948000},"/test/data/Http.coffee":{"atime":1385314540000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1385372976000,"mtime":1385372975000,"ctime":1385372975000},"easy-configuration/package.json":{"atime":1385314619000,"mtime":1385314591000,"ctime":1385314591000}});
 require.version = '5.1.2';
 
 /** run section **/
+
+/** /test/browser/tests/Helpers **/
+require('/test/browser/tests/Helpers');
 
 /** /test/browser/tests/DI **/
 require('/test/browser/tests/DI');

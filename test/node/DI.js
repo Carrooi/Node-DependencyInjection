@@ -40,61 +40,6 @@
         return expect(di.get('app').array).to.not.exists;
       });
     });
-    describe('#autowireArguments()', function() {
-      it('should return array with services for Application', function() {
-        di.addService('array', Array);
-        return expect(di.autowireArguments(Application)).to.be.eql([[]]);
-      });
-      it('should return array with services for inject method', function() {
-        var args;
-        di.addService('http', Http);
-        args = di.autowireArguments((new Application([])).injectHttp);
-        expect(args).to.have.length(1);
-        return expect(args[0]).to.be.an["instanceof"](Http);
-      });
-      it('should return array with services for Application with custom ones', function() {
-        var app;
-        di.addService('info', ['hello']).setInstantiate(false);
-        app = new Application([]);
-        return expect(di.autowireArguments(app.prepare, ['simq'])).to.be.eql(['simq', ['hello']]);
-      });
-      it('should throw an error if service to autowire does not exists', function() {
-        return expect(function() {
-          return di.autowireArguments(Application);
-        }).to["throw"](Error, "DI: Service 'array' was not found.");
-      });
-      it('should return array with services from params if they are not in definition', function() {
-        var app;
-        app = new Application([]);
-        return expect(di.autowireArguments(app.withoutDefinition, ['hello'])).to.be.eql(['hello']);
-      });
-      it('should inject another service by at char', function() {
-        var fn;
-        fn = function(variable) {
-          return variable;
-        };
-        di.addService('array', Array);
-        return expect(di.autowireArguments(fn, ['@array'])).to.be.eql([[]]);
-      });
-      it('should inject services replaced with dots in the end', function() {
-        var fn;
-        fn = function(first, second, third) {
-          return arguments;
-        };
-        di.addService('second', ['second item']).instantiate = false;
-        di.addService('third', ['third item']).instantiate = false;
-        return expect(di.autowireArguments(fn, ['test', '...'])).to.be.eql(['test', ['second item'], ['third item']]);
-      });
-      return it('should inject services replaced with dots in the beginning', function() {
-        var fn;
-        fn = function(first, second, third) {
-          return arguments;
-        };
-        di.addService('first', ['first item']).instantiate = false;
-        di.addService('second', ['second item']).instantiate = false;
-        return expect(di.autowireArguments(fn, ['...', 'test'])).to.be.eql([['first item'], ['second item'], 'test']);
-      });
-    });
     describe('#createInstance()', function() {
       beforeEach(function() {
         di.addService('array', Array);

@@ -9,6 +9,7 @@
 				"./test/data/*.coffee"
 			],
 			"run": [
+				"/test/browser/tests/Helpers",
 				"/test/browser/tests/DI"
 			]
 		}

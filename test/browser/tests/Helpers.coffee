@@ -21,6 +21,14 @@ describe 'Helpers', ->
 			expect(app).to.be.an.instanceof(Application)
 			expect(app.array).to.be.equal('test')
 
+	describe '#getArguments()', ->
+
+		it 'should return an empty array', ->
+			expect(Helpers.getArguments( -> )).to.be.eql([])
+
+		it 'should return an array with arguments', ->
+			expect(Helpers.getArguments( (first, second, third) -> )).to.be.eql(['first', 'second', 'third'])
+
 	describe '#autowireArguments()', ->
 
 		it 'should return array with services for Application', ->

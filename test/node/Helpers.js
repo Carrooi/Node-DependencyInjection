@@ -32,6 +32,14 @@
         return expect(app.array).to.be.equal('test');
       });
     });
+    describe('#getArguments()', function() {
+      it('should return an empty array', function() {
+        return expect(Helpers.getArguments(function() {})).to.be.eql([]);
+      });
+      return it('should return an array with arguments', function() {
+        return expect(Helpers.getArguments(function(first, second, third) {})).to.be.eql(['first', 'second', 'third']);
+      });
+    });
     return describe('#autowireArguments()', function() {
       it('should return array with services for Application', function() {
         di.addService('array', Array);

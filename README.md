@@ -353,6 +353,7 @@ $ npm test
 	+ Refactored autowiring
 	+ Some optimizations
 	+ `DI.autowireArguments` moved to `Helpers.autowireArguments`
+	+ Throwing an error if circular reference is found
 
 * 1.6.6 - 1.6.7
 	+ Bugs in Internet Explorer 8

@@ -8,21 +8,25 @@ class DI
 
 	reserved: ['di']
 
+	creating: null
+
 
 	constructor: ->
-		di = new Service(@, @)
+		di = new Service(@, 'di', @)
 		di.instantiate = false
 		di.injectMethods = false
 
 		@services =
 			di: di
 
+		@creating = []
+
 
 	addService: (name, service, args = []) ->
 		if name in @reserved
 			throw new Error "DI: name '#{name}' is reserved by DI."
 
-		@services[name] = new Service(@, service, args)
+		@services[name] = new Service(@, name, service, args)
 		return @services[name]
 
 
@@ -35,6 +39,8 @@ class DI
 	createInstance: (service, args = [], instantiate = true, injectMethods = true) ->
 		if instantiate == true
 			service = Helpers.createInstance(service, args, @)
+		else if Object.prototype.toString.call(service) == '[object Function]'
+			service = @inject(service, {}, args)
 
 		if Object.prototype.toString.call(service) == '[object Object]' && injectMethods
 			for method of service
@@ -44,11 +50,11 @@ class DI
 		return service
 
 
-	inject: (fn, scope = {}) ->
+	inject: (fn, scope = {}, args = []) ->
 		if fn !instanceof Function
 			throw new Error 'DI: Inject method can be called only on functions.'
 
-		args = Helpers.autowireArguments(fn, [], @)
+		args = Helpers.autowireArguments(fn, args, @)
 		return fn.apply(scope, args)
 
 

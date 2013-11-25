@@ -110,9 +110,31 @@
           expect(factory).to.be.an["instanceof"](Function);
           return expect(factory()).to.be.equal(di);
         });
-        return it('should set info property directly', function() {
+        it('should set info property directly', function() {
           di.findDefinitionByName('application').addSetup('info', 'by property');
           return expect(di.get('application').info).to.be.equal('by property');
+        });
+        it('should throw an error if circular reference was found', function() {
+          di.addService('first', function(second) {}).instantiate = false;
+          di.addService('second', function(first) {}).instantiate = false;
+          return expect(function() {
+            return di.get('first');
+          }).to["throw"](Error, 'Circular reference detected for services: first, second.');
+        });
+        it('should throw an error with simple circular reference', function() {
+          di.addService('first', function(first) {}).instantiate = false;
+          return expect(function() {
+            return di.get('first');
+          }).to["throw"](Error, 'Circular reference detected for service: first.');
+        });
+        return it('should throw an error with advanced circular reference', function() {
+          di.addService('first', function(second) {}).instantiate = false;
+          di.addService('second', function(third) {}).instantiate = false;
+          di.addService('third', function(fourth) {}).instantiate = false;
+          di.addService('fourth', function(first) {}).instantiate = false;
+          return expect(function() {
+            return di.get('first');
+          }).to["throw"](Error, 'Circular reference detected for services: first, second, third, fourth.');
         });
       });
       describe('#create()', function() {

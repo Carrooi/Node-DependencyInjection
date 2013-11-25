@@ -110,6 +110,22 @@ describe 'DI', ->
 					.addSetup('info', 'by property')
 				expect(di.get('application').info).to.be.equal('by property')
 
+			it 'should throw an error if circular reference was found', ->
+				di.addService('first', (second) ->).instantiate = false
+				di.addService('second', (first) ->).instantiate = false
+				expect( -> di.get('first')).to.throw(Error, 'Circular reference detected for services: first, second.')
+
+			it 'should throw an error with simple circular reference', ->
+				di.addService('first', (first) ->).instantiate = false
+				expect( -> di.get('first')).to.throw(Error, 'Circular reference detected for service: first.')
+
+			it 'should throw an error with advanced circular reference', ->
+				di.addService('first', (second) ->).instantiate = false
+				di.addService('second', (third) ->).instantiate = false
+				di.addService('third', (fourth) ->).instantiate = false
+				di.addService('fourth', (first) ->).instantiate = false
+				expect( -> di.get('first')).to.throw(Error, 'Circular reference detected for services: first, second, third, fourth.')
+
 		describe '#create()', ->
 
 			it 'should return always new instance of Application', ->

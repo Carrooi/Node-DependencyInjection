@@ -5,6 +5,8 @@ class Service
 
 	di: null
 
+	name: null
+
 	service: null
 
 	arguments: null
@@ -20,7 +22,7 @@ class Service
 	instance: null
 
 
-	constructor: (@di, @service, @arguments = []) ->
+	constructor: (@di, @name, @service, @arguments = []) ->
 		@setup = {}
 
 
@@ -32,18 +34,31 @@ class Service
 
 
 	create: ->
+		if Helpers.arrayIndexOf(@di.creating, @name) != -1
+			s = if @di.creating.length == 1 then '' else 's'
+			names = @di.creating.join(', ')
+			throw new Error "Circular reference detected for service#{s}: #{names}."
+
+		@di.creating.push(@name)
+
 		service = @service
 		if Object.prototype.toString.call(service) == '[object String]'
 			service = require(service)
 
-		service = @di.createInstance(service, @arguments, @instantiate, @injectMethods)
+		try
+			service = @di.createInstance(service, @arguments, @instantiate, @injectMethods)
 
-		for method, args of @setup
-			if @setup.hasOwnProperty(method)
-				if typeof service[method] == 'function'
-					service[method].apply(service, Helpers.autowireArguments(service[method], args, @di))
-				else
-					service[method] = args
+			for method, args of @setup
+				if @setup.hasOwnProperty(method)
+					if typeof service[method] == 'function'
+						service[method].apply(service, Helpers.autowireArguments(service[method], args, @di))
+					else
+						service[method] = args
+		catch e
+			@di.creating.splice(Helpers.arrayIndexOf(@di.creating, @name), 1)
+			throw e
+
+		@di.creating.splice(Helpers.arrayIndexOf(@di.creating, @name), 1)
 
 		return service
 

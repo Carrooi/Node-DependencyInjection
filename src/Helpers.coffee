@@ -25,6 +25,20 @@ class Helpers
 		return result
 
 
+	@arrayIndexOf: (array, search) ->
+		if typeof Array.prototype.indexOf != 'undefined'
+			return array.indexOf(search)
+
+		if array.length == 0
+			return -1
+
+		for element, i in array
+			if element == search
+				return i
+
+		return -1
+
+
 	@createInstance: (service, args = [], container) ->
 		wrapper = (obj, args = []) ->
 			f = -> return obj.apply(@, args)

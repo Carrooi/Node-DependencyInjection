@@ -178,6 +178,8 @@
 	  Service = (function() {
 	    Service.prototype.di = null;
 	
+	    Service.prototype.name = null;
+	
 	    Service.prototype.service = null;
 	
 	    Service.prototype["arguments"] = null;
@@ -192,8 +194,9 @@
 	
 	    Service.prototype.instance = null;
 	
-	    function Service(di, service, _arguments) {
+	    function Service(di, name, service, _arguments) {
 	      this.di = di;
+	      this.name = name;
 	      this.service = service;
 	      this["arguments"] = _arguments != null ? _arguments : [];
 	      this.setup = {};
@@ -207,23 +210,36 @@
 	    };
 	
 	    Service.prototype.create = function() {
-	      var args, method, service, _ref;
+	      var args, e, method, names, s, service, _ref;
+	      if (Helpers.arrayIndexOf(this.di.creating, this.name) !== -1) {
+	        s = this.di.creating.length === 1 ? '' : 's';
+	        names = this.di.creating.join(', ');
+	        throw new Error("Circular reference detected for service" + s + ": " + names + ".");
+	      }
+	      this.di.creating.push(this.name);
 	      service = this.service;
 	      if (Object.prototype.toString.call(service) === '[object String]') {
 	        service = require(service);
 	      }
-	      service = this.di.createInstance(service, this["arguments"], this.instantiate, this.injectMethods);
-	      _ref = this.setup;
-	      for (method in _ref) {
-	        args = _ref[method];
-	        if (this.setup.hasOwnProperty(method)) {
-	          if (typeof service[method] === 'function') {
-	            service[method].apply(service, Helpers.autowireArguments(service[method], args, this.di));
-	          } else {
-	            service[method] = args;
+	      try {
+	        service = this.di.createInstance(service, this["arguments"], this.instantiate, this.injectMethods);
+	        _ref = this.setup;
+	        for (method in _ref) {
+	          args = _ref[method];
+	          if (this.setup.hasOwnProperty(method)) {
+	            if (typeof service[method] === 'function') {
+	              service[method].apply(service, Helpers.autowireArguments(service[method], args, this.di));
+	            } else {
+	              service[method] = args;
+	            }
 	          }
 	        }
+	      } catch (_error) {
+	        e = _error;
+	        this.di.creating.splice(Helpers.arrayIndexOf(this.di.creating, this.name), 1);
+	        throw e;
 	      }
+	      this.di.creating.splice(Helpers.arrayIndexOf(this.di.creating, this.name), 1);
 	      return service;
 	    };
 	
@@ -303,6 +319,23 @@
 	          return obj;
 	      }
 	      return result;
+	    };
+	
+	    Helpers.arrayIndexOf = function(array, search) {
+	      var element, i, _i, _len;
+	      if (typeof Array.prototype.indexOf !== 'undefined') {
+	        return array.indexOf(search);
+	      }
+	      if (array.length === 0) {
+	        return -1;
+	      }
+	      for (i = _i = 0, _len = array.length; _i < _len; i = ++_i) {
+	        element = array[i];
+	        if (element === search) {
+	          return i;
+	        }
+	      }
+	      return -1;
 	    };
 	
 	    Helpers.createInstance = function(service, args, container) {
@@ -418,14 +451,17 @@
 	
 	    DI.prototype.reserved = ['di'];
 	
+	    DI.prototype.creating = null;
+	
 	    function DI() {
 	      var di;
-	      di = new Service(this, this);
+	      di = new Service(this, 'di', this);
 	      di.instantiate = false;
 	      di.injectMethods = false;
 	      this.services = {
 	        di: di
 	      };
+	      this.creating = [];
 	    }
 	
 	    DI.prototype.addService = function(name, service, args) {
@@ -435,7 +471,7 @@
 	      if (__indexOf.call(this.reserved, name) >= 0) {
 	        throw new Error("DI: name '" + name + "' is reserved by DI.");
 	      }
-	      this.services[name] = new Service(this, service, args);
+	      this.services[name] = new Service(this, name, service, args);
 	      return this.services[name];
 	    };
 	
@@ -460,6 +496,8 @@
 	      }
 	      if (instantiate === true) {
 	        service = Helpers.createInstance(service, args, this);
+	      } else if (Object.prototype.toString.call(service) === '[object Function]') {
+	        service = this.inject(service, {}, args);
 	      }
 	      if (Object.prototype.toString.call(service) === '[object Object]' && injectMethods) {
 	        for (method in service) {
@@ -471,15 +509,17 @@
 	      return service;
 	    };
 	
-	    DI.prototype.inject = function(fn, scope) {
-	      var args;
+	    DI.prototype.inject = function(fn, scope, args) {
 	      if (scope == null) {
 	        scope = {};
+	      }
+	      if (args == null) {
+	        args = [];
 	      }
 	      if (!(fn instanceof Function)) {
 	        throw new Error('DI: Inject method can be called only on functions.');
 	      }
-	      args = Helpers.autowireArguments(fn, [], this);
+	      args = Helpers.autowireArguments(fn, args, this);
 	      return fn.apply(scope, args);
 	    };
 	
@@ -1098,9 +1138,31 @@
 	          expect(factory).to.be.an["instanceof"](Function);
 	          return expect(factory()).to.be.equal(di);
 	        });
-	        return it('should set info property directly', function() {
+	        it('should set info property directly', function() {
 	          di.findDefinitionByName('application').addSetup('info', 'by property');
 	          return expect(di.get('application').info).to.be.equal('by property');
+	        });
+	        it('should throw an error if circular reference was found', function() {
+	          di.addService('first', function(second) {}).instantiate = false;
+	          di.addService('second', function(first) {}).instantiate = false;
+	          return expect(function() {
+	            return di.get('first');
+	          }).to["throw"](Error, 'Circular reference detected for services: first, second.');
+	        });
+	        it('should throw an error with simple circular reference', function() {
+	          di.addService('first', function(first) {}).instantiate = false;
+	          return expect(function() {
+	            return di.get('first');
+	          }).to["throw"](Error, 'Circular reference detected for service: first.');
+	        });
+	        return it('should throw an error with advanced circular reference', function() {
+	          di.addService('first', function(second) {}).instantiate = false;
+	          di.addService('second', function(third) {}).instantiate = false;
+	          di.addService('third', function(fourth) {}).instantiate = false;
+	          di.addService('fourth', function(first) {}).instantiate = false;
+	          return expect(function() {
+	            return di.get('first');
+	          }).to["throw"](Error, 'Circular reference detected for services: first, second, third, fourth.');
 	        });
 	      });
 	      describe('#create()', function() {
@@ -1564,7 +1626,7 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1385375578000,"mtime":1385375572000,"ctime":1385375572000},"/lib/Helpers.js":{"atime":1385374431000,"mtime":1385374407000,"ctime":1385374407000},"/lib/DI.js":{"atime":1385375266000,"mtime":1385375216000,"ctime":1385375216000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1385320305000,"mtime":1385308588000,"ctime":1385314591000},"recursive-merge/lib/Merge.js":{"atime":1385320305000,"mtime":1375346181000,"ctime":1385314593000},"easy-configuration/lib/Extension.js":{"atime":1385320305000,"mtime":1385299528000,"ctime":1385314591000},"easy-configuration/lib/Helpers.js":{"atime":1385320305000,"mtime":1385300070000,"ctime":1385314591000},"/test/browser/tests/DI.coffee":{"atime":1385375031000,"mtime":1385375000000,"ctime":1385375000000},"/test/browser/tests/Helpers.coffee":{"atime":1385375714000,"mtime":1385375712000,"ctime":1385375712000},"/lib/DIConfigurator.js":{"atime":1385366325000,"mtime":1385366206000,"ctime":1385366206000},"/test/data/Application.coffee":{"atime":1385367948000,"mtime":1385367948000,"ctime":1385367948000},"/test/data/Http.coffee":{"atime":1385314540000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1385372976000,"mtime":1385372975000,"ctime":1385372975000},"easy-configuration/package.json":{"atime":1385314619000,"mtime":1385314591000,"ctime":1385314591000}});
+require.__setStats({"/lib/Service.js":{"atime":1385377036000,"mtime":1385377034000,"ctime":1385377034000},"/lib/Helpers.js":{"atime":1385376517000,"mtime":1385376430000,"ctime":1385376430000},"/lib/DI.js":{"atime":1385376610000,"mtime":1385376583000,"ctime":1385376583000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1385320305000,"mtime":1385308588000,"ctime":1385314591000},"recursive-merge/lib/Merge.js":{"atime":1385320305000,"mtime":1375346181000,"ctime":1385314593000},"easy-configuration/lib/Extension.js":{"atime":1385320305000,"mtime":1385299528000,"ctime":1385314591000},"easy-configuration/lib/Helpers.js":{"atime":1385320305000,"mtime":1385300070000,"ctime":1385314591000},"/test/browser/tests/DI.coffee":{"atime":1385377202000,"mtime":1385377199000,"ctime":1385377199000},"/test/browser/tests/Helpers.coffee":{"atime":1385375714000,"mtime":1385375712000,"ctime":1385375712000},"/lib/DIConfigurator.js":{"atime":1385366325000,"mtime":1385366206000,"ctime":1385366206000},"/test/data/Application.coffee":{"atime":1385367948000,"mtime":1385367948000,"ctime":1385367948000},"/test/data/Http.coffee":{"atime":1385314540000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1385372976000,"mtime":1385372975000,"ctime":1385372975000},"easy-configuration/package.json":{"atime":1385314619000,"mtime":1385314591000,"ctime":1385314591000}});
 require.version = '5.1.2';
 
 /** run section **/

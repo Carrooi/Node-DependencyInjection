@@ -24,6 +24,14 @@
     beforeEach(function() {
       return di = new DI;
     });
+    describe('#createInstance()', function() {
+      return it('should create new instance of object with given arguments', function() {
+        var app;
+        app = Helpers.createInstance(Application, ['test'], di);
+        expect(app).to.be.an["instanceof"](Application);
+        return expect(app.array).to.be.equal('test');
+      });
+    });
     return describe('#autowireArguments()', function() {
       it('should return array with services for Application', function() {
         di.addService('array', Array);

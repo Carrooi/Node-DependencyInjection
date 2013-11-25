@@ -441,6 +441,7 @@
 	      if (args == null) {
 	        args = [];
 	      }
+	      console.log('Method autowireArguments is deprecated, use the same method in Helpers class.');
 	      return Helpers.autowireArguments(method, args, this);
 	    };
 	
@@ -1166,6 +1167,14 @@
 	    beforeEach(function() {
 	      return di = new DI;
 	    });
+	    describe('#createInstance()', function() {
+	      return it('should create new instance of object with given arguments', function() {
+	        var app;
+	        app = Helpers.createInstance(Application, ['test'], di);
+	        expect(app).to.be.an["instanceof"](Application);
+	        return expect(app.array).to.be.equal('test');
+	      });
+	    });
 	    return describe('#autowireArguments()', function() {
 	      it('should return array with services for Application', function() {
 	        di.addService('array', Array);
@@ -1545,7 +1554,7 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1385372885000,"mtime":1385372882000,"ctime":1385372882000},"/lib/Helpers.js":{"atime":1385374431000,"mtime":1385374407000,"ctime":1385374407000},"/lib/DI.js":{"atime":1385374676000,"mtime":1385374673000,"ctime":1385374673000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1385320305000,"mtime":1385308588000,"ctime":1385314591000},"recursive-merge/lib/Merge.js":{"atime":1385320305000,"mtime":1375346181000,"ctime":1385314593000},"easy-configuration/lib/Extension.js":{"atime":1385320305000,"mtime":1385299528000,"ctime":1385314591000},"easy-configuration/lib/Helpers.js":{"atime":1385320305000,"mtime":1385300070000,"ctime":1385314591000},"/test/browser/tests/DI.coffee":{"atime":1385375031000,"mtime":1385375000000,"ctime":1385375000000},"/test/browser/tests/Helpers.coffee":{"atime":1385375031000,"mtime":1385375028000,"ctime":1385375028000},"/lib/DIConfigurator.js":{"atime":1385366325000,"mtime":1385366206000,"ctime":1385366206000},"/test/data/Application.coffee":{"atime":1385367948000,"mtime":1385367948000,"ctime":1385367948000},"/test/data/Http.coffee":{"atime":1385314540000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1385372976000,"mtime":1385372975000,"ctime":1385372975000},"easy-configuration/package.json":{"atime":1385314619000,"mtime":1385314591000,"ctime":1385314591000}});
+require.__setStats({"/lib/Service.js":{"atime":1385372885000,"mtime":1385372882000,"ctime":1385372882000},"/lib/Helpers.js":{"atime":1385374431000,"mtime":1385374407000,"ctime":1385374407000},"/lib/DI.js":{"atime":1385375266000,"mtime":1385375216000,"ctime":1385375216000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1385320305000,"mtime":1385308588000,"ctime":1385314591000},"recursive-merge/lib/Merge.js":{"atime":1385320305000,"mtime":1375346181000,"ctime":1385314593000},"easy-configuration/lib/Extension.js":{"atime":1385320305000,"mtime":1385299528000,"ctime":1385314591000},"easy-configuration/lib/Helpers.js":{"atime":1385320305000,"mtime":1385300070000,"ctime":1385314591000},"/test/browser/tests/DI.coffee":{"atime":1385375031000,"mtime":1385375000000,"ctime":1385375000000},"/test/browser/tests/Helpers.coffee":{"atime":1385375532000,"mtime":1385375530000,"ctime":1385375530000},"/lib/DIConfigurator.js":{"atime":1385366325000,"mtime":1385366206000,"ctime":1385366206000},"/test/data/Application.coffee":{"atime":1385367948000,"mtime":1385367948000,"ctime":1385367948000},"/test/data/Http.coffee":{"atime":1385314540000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1385372976000,"mtime":1385372975000,"ctime":1385372975000},"easy-configuration/package.json":{"atime":1385314619000,"mtime":1385314591000,"ctime":1385314591000}});
 require.version = '5.1.2';
 
 /** run section **/

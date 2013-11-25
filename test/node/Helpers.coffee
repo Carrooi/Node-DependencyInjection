@@ -17,6 +17,13 @@ describe 'Helpers', ->
 		di = new DI
 	)
 
+	describe '#createInstance()', ->
+
+		it 'should create new instance of object with given arguments', ->
+			app = Helpers.createInstance(Application, ['test'], di)
+			expect(app).to.be.an.instanceof(Application)
+			expect(app.array).to.be.equal('test')
+
 	describe '#autowireArguments()', ->
 
 		it 'should return array with services for Application', ->

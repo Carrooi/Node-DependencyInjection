@@ -347,6 +347,9 @@ $ npm test
 
 ## Changelog
 
+* 1.7.3
+	+ Bug with no-string arguments
+
 * 1.7.2
 	+ Bug with functions as services
 

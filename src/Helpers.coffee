@@ -101,7 +101,7 @@ class Helpers
 			else
 
 				# link to another service
-				if args[0] != null && args[0].match(/^@/) != null
+				if args[0] != null && typeof args[0] == 'string' && args[0].match(/^@/) != null
 					args[0] = args[0].substr(1)
 					result.push(container.get(args[0]))
 

@@ -32,7 +32,7 @@ class DI
 
 	# deprecated
 	autowireArguments: (method, args = []) ->
-		console.log 'Method autowireArguments is deprecated, use the same method in Helpers class.'
+		Helpers.log 'Method autowireArguments is deprecated, use the same method in Helpers class.'
 		return Helpers.autowireArguments(method, args, @)
 
 
@@ -74,7 +74,7 @@ class DI
 
 	# deprecated
 	getByName: (name) ->
-		console.log 'DI: Method getByName is deprecated, use get method.'
+		Helpers.log 'DI: Method getByName is deprecated, use get method.'
 		return @get(name)
 
 

@@ -25,6 +25,11 @@ class Helpers
 		return result
 
 
+	@log: (message) ->
+		if console?.log?
+			console.log(message)
+
+
 	@arrayIndexOf: (array, search) ->
 		if typeof Array.prototype.indexOf != 'undefined'
 			return array.indexOf(search)

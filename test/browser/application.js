@@ -28,7 +28,7 @@
           parent: null,
           children: null
         };
-        modules[fullName].apply(modules[fullName], [m.exports, m]);
+        modules[fullName].apply(window, [m.exports, m]);
         m.loaded = true;
         cache[fullName] = m;
       }
@@ -319,6 +319,12 @@
 	          return obj;
 	      }
 	      return result;
+	    };
+	
+	    Helpers.log = function(message) {
+	      if ((typeof console !== "undefined" && console !== null ? console.log : void 0) != null) {
+	        return console.log(message);
+	      }
 	    };
 	
 	    Helpers.arrayIndexOf = function(array, search) {
@@ -1570,7 +1576,7 @@
 	return {
 		"name": "dependency-injection",
 		"description": "Dependency injection with configuration and autowire for node js and browser",
-		"version": "1.7.0",
+		"version": "1.7.1",
 		"author": {
 			"name": "David Kudera",
 			"email": "sakren@gmail.com"
@@ -1659,7 +1665,11 @@
 	  },
 	  "homepage": "https://github.com/sakren/node-easy-configuration",
 	  "_id": "easy-configuration@1.6.6",
-	  "_from": "easy-configuration@~1.6.6"
+	  "dist": {
+	    "shasum": "db0587409da1302eaefac9c89e1a752d1df18ada"
+	  },
+	  "_from": "easy-configuration@~1.6.6",
+	  "_resolved": "https://registry.npmjs.org/easy-configuration/-/easy-configuration-1.6.6.tgz"
 	}
 	
 	}).call(this);
@@ -1669,8 +1679,8 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1385411968000,"mtime":1385411929000,"ctime":1385411929000},"/lib/Helpers.js":{"atime":1385411968000,"mtime":1385411929000,"ctime":1385411929000},"/lib/DI.js":{"atime":1385411968000,"mtime":1385411929000,"ctime":1385411929000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1385411968000,"mtime":1385411214000,"ctime":1385411940000},"recursive-merge/lib/Merge.js":{"atime":1385411968000,"mtime":1385409966000,"ctime":1385411941000},"easy-configuration/lib/Extension.js":{"atime":1385411968000,"mtime":1385411214000,"ctime":1385411940000},"easy-configuration/lib/Helpers.js":{"atime":1385411968000,"mtime":1385411214000,"ctime":1385411940000},"/test/browser/tests/DI.coffee":{"atime":1385377202000,"mtime":1385377199000,"ctime":1385377199000},"/test/browser/tests/Helpers.coffee":{"atime":1385375714000,"mtime":1385375712000,"ctime":1385375712000},"/lib/DIConfigurator.js":{"atime":1385411968000,"mtime":1385411929000,"ctime":1385411929000},"/test/data/Application.coffee":{"atime":1385367948000,"mtime":1385367948000,"ctime":1385367948000},"/test/data/Http.coffee":{"atime":1385411960000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1385411890000,"mtime":1385411889000,"ctime":1385411889000},"easy-configuration/package.json":{"atime":1385411968000,"mtime":1385411940000,"ctime":1385411940000}});
-require.version = '5.1.2';
+require.__setStats({"/lib/Service.js":{"atime":1385450842000,"mtime":1385450834000,"ctime":1385450834000},"/lib/Helpers.js":{"atime":1385451171000,"mtime":1385451134000,"ctime":1385451134000},"/lib/DI.js":{"atime":1385450842000,"mtime":1385450834000,"ctime":1385450834000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1385451228000,"mtime":1385411214000,"ctime":1385450928000},"recursive-merge/lib/Merge.js":{"atime":1385451229000,"mtime":1385409966000,"ctime":1385450932000},"easy-configuration/lib/Extension.js":{"atime":1385451229000,"mtime":1385411214000,"ctime":1385450928000},"easy-configuration/lib/Helpers.js":{"atime":1385451229000,"mtime":1385411214000,"ctime":1385450928000},"/test/browser/tests/DI.coffee":{"atime":1385450794000,"mtime":1385450793000,"ctime":1385450793000},"/test/browser/tests/Helpers.coffee":{"atime":1385450794000,"mtime":1385450793000,"ctime":1385450793000},"/lib/DIConfigurator.js":{"atime":1385450842000,"mtime":1385450834000,"ctime":1385450834000},"/test/data/Application.coffee":{"atime":1385450794000,"mtime":1385450793000,"ctime":1385450793000},"/test/data/Http.coffee":{"atime":1385450855000,"mtime":1384940373000,"ctime":1384940373000},"/package.json":{"atime":1385451227000,"mtime":1385451225000,"ctime":1385451225000},"easy-configuration/package.json":{"atime":1385450943000,"mtime":1385450929000,"ctime":1385450929000}});
+require.version = '5.1.3';
 
 /** run section **/
 

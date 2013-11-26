@@ -347,6 +347,9 @@ $ npm test
 
 ## Changelog
 
+* 1.7.1
+	+ Potential bug in IE
+
 * 1.7.0
 	+ Updated dependencies
 	+ Added `injectMethods` to services

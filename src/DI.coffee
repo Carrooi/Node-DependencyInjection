@@ -38,9 +38,10 @@ class DI
 
 	createInstance: (service, args = [], instantiate = true, injectMethods = true) ->
 		if instantiate == true
-			service = Helpers.createInstance(service, args, @)
-		else if Object.prototype.toString.call(service) == '[object Function]'
-			service = @inject(service, {}, args)
+			if Object.prototype.toString.call(service.prototype.constructor) == '[Function]'
+				service = @inject(service, {}, args)
+			else
+				service = Helpers.createInstance(service, args, @)
 
 		if Object.prototype.toString.call(service) == '[object Object]' && injectMethods
 			for method of service

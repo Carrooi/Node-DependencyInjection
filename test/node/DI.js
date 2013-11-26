@@ -115,23 +115,23 @@
           return expect(di.get('application').info).to.be.equal('by property');
         });
         it('should throw an error if circular reference was found', function() {
-          di.addService('first', function(second) {}).instantiate = false;
-          di.addService('second', function(first) {}).instantiate = false;
+          di.addService('first', function(second) {});
+          di.addService('second', function(first) {});
           return expect(function() {
             return di.get('first');
           }).to["throw"](Error, 'Circular reference detected for services: first, second.');
         });
         it('should throw an error with simple circular reference', function() {
-          di.addService('first', function(first) {}).instantiate = false;
+          di.addService('first', function(first) {});
           return expect(function() {
             return di.get('first');
           }).to["throw"](Error, 'Circular reference detected for service: first.');
         });
         return it('should throw an error with advanced circular reference', function() {
-          di.addService('first', function(second) {}).instantiate = false;
-          di.addService('second', function(third) {}).instantiate = false;
-          di.addService('third', function(fourth) {}).instantiate = false;
-          di.addService('fourth', function(first) {}).instantiate = false;
+          di.addService('first', function(second) {});
+          di.addService('second', function(third) {});
+          di.addService('third', function(fourth) {});
+          di.addService('fourth', function(first) {});
           return expect(function() {
             return di.get('first');
           }).to["throw"](Error, 'Circular reference detected for services: first, second, third, fourth.');

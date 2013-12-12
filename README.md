@@ -1,5 +1,6 @@
 [![NPM version](https://badge.fury.io/js/dependency-injection.png)](http://badge.fury.io/js/dependency-injection)
 [![Dependency Status](https://gemnasium.com/sakren/node-dependency-injection.png)](https://gemnasium.com/sakren/node-dependency-injection)
+[![Build Status](https://travis-ci.org/sakren/node-dependency-injection.png?branch=master)](https://travis-ci.org/sakren/node-dependency-injection)
 
 # Dependency injection
 

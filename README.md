@@ -1,3 +1,6 @@
+[![NPM version](https://badge.fury.io/js/dependency-injection.png)](http://badge.fury.io/js/dependency-injection)
+[![Dependency Status](https://gemnasium.com/sakren/node-dependency-injection.png)](https://gemnasium.com/sakren/node-dependency-injection)
+
 # Dependency injection
 
 Dependency injection with configuration and autowire for node js and browser (for example in combination with [simq](https://npmjs.org/package/simq)).
@@ -350,6 +353,7 @@ $ npm test
 * 1.8.0
 	+ Better tests (mocha does not need to be installed globally)
 	+ Updated dependencies
+	+ Added badges
 
 * 1.7.3
 	+ Bug with no-string arguments

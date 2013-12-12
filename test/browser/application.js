@@ -483,6 +483,8 @@
 	  DI = (function() {
 	    DI.prototype.services = null;
 	
+	    DI.prototype.paths = null;
+	
 	    DI.prototype.reserved = ['di'];
 	
 	    DI.prototype.creating = null;
@@ -494,6 +496,7 @@
 	      this.services = {
 	        di: di
 	      };
+	      this.paths = {};
 	      this.creating = [];
 	    }
 	
@@ -503,6 +506,10 @@
 	      }
 	      if (__indexOf.call(this.reserved, name) >= 0) {
 	        throw new Error("DI: name '" + name + "' is reserved by DI.");
+	      }
+	      if (typeof service === 'string') {
+	        service = require.resolve(service);
+	        this.paths[service] = name;
 	      }
 	      this.services[name] = new Service(this, name, service, args);
 	      return this.services[name];
@@ -568,6 +575,21 @@
 	    DI.prototype.getByName = function(name) {
 	      Helpers.log('DI: Method getByName is deprecated, use get method.');
 	      return this.get(name);
+	    };
+	
+	    DI.prototype.getByPath = function(path) {
+	      var e, error;
+	      error = false;
+	      try {
+	        path = require.resolve(path);
+	      } catch (_error) {
+	        e = _error;
+	        error = true;
+	      }
+	      if (typeof this.paths[path] !== 'undefined' && !error) {
+	        return this.get(this.paths[path]);
+	      }
+	      return null;
 	    };
 	
 	    DI.prototype.get = function(name) {
@@ -1234,6 +1256,16 @@
 	          }).to["throw"](Error, 'Circular reference detected for services: first, second, third, fourth.');
 	        });
 	      });
+	      describe('#getByPath()', function() {
+	        it('should return service by require path', function() {
+	          di.addService('app', "" + dir + "/Application");
+	          return expect(di.getByPath("" + dir + "/Application")).to.be.an["instanceof"](Application);
+	        });
+	        return it('should return null for not auto required services', function() {
+	          di.addService('info', ['hello']).setInstantiate(false);
+	          return expect(di.getByPath('info')).to.not.exists;
+	        });
+	      });
 	      describe('#create()', function() {
 	        return it('should return always new instance of Application', function() {
 	          return expect(di.create('application')).to.not.be.equal(di.create('application'));
@@ -1596,7 +1628,7 @@
 	return {
 		"name": "dependency-injection",
 		"description": "Dependency injection with configuration and autowire for node js and browser",
-		"version": "1.8.0",
+		"version": "2.0.0",
 		"author": {
 			"name": "David Kudera",
 			"email": "sakren@gmail.com"
@@ -1704,7 +1736,7 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1386858310000,"mtime":1386858307000,"ctime":1386858307000},"/lib/Helpers.js":{"atime":1386856820000,"mtime":1386856806000,"ctime":1386856806000},"/lib/DI.js":{"atime":1386858310000,"mtime":1386858307000,"ctime":1386858307000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1386835303000,"mtime":1385411214000,"ctime":1385450928000},"recursive-merge/lib/Merge.js":{"atime":1386835303000,"mtime":1385409966000,"ctime":1385450932000},"easy-configuration/lib/Extension.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"easy-configuration/lib/Helpers.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"/test/browser/tests/DI.coffee":{"atime":1386857629000,"mtime":1386857625000,"ctime":1386857625000},"/test/browser/tests/Helpers.coffee":{"atime":1386857560000,"mtime":1386857556000,"ctime":1386857556000},"/lib/DIConfigurator.js":{"atime":1386856820000,"mtime":1386856806000,"ctime":1386856806000},"/test/data/Application.coffee":{"atime":1386857310000,"mtime":1386857310000,"ctime":1386857310000},"/test/data/Http.coffee":{"atime":1386835304000,"mtime":1384940373000,"ctime":1384940373000},"/package.json":{"atime":1386857523000,"mtime":1386857522000,"ctime":1386857522000},"easy-configuration/package.json":{"atime":1386835040000,"mtime":1385450929000,"ctime":1385450929000}});
+require.__setStats({"/lib/Service.js":{"atime":1386858310000,"mtime":1386858307000,"ctime":1386858307000},"/lib/Helpers.js":{"atime":1386856820000,"mtime":1386856806000,"ctime":1386856806000},"/lib/DI.js":{"atime":1386862672000,"mtime":1386862668000,"ctime":1386862668000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1386835303000,"mtime":1385411214000,"ctime":1385450928000},"recursive-merge/lib/Merge.js":{"atime":1386835303000,"mtime":1385409966000,"ctime":1385450932000},"easy-configuration/lib/Extension.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"easy-configuration/lib/Helpers.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"/test/browser/tests/DI.coffee":{"atime":1386862718000,"mtime":1386862696000,"ctime":1386862696000},"/test/browser/tests/Helpers.coffee":{"atime":1386857560000,"mtime":1386857556000,"ctime":1386857556000},"/lib/DIConfigurator.js":{"atime":1386856820000,"mtime":1386856806000,"ctime":1386856806000},"/test/data/Application.coffee":{"atime":1386861722000,"mtime":1386861722000,"ctime":1386861722000},"/test/data/Http.coffee":{"atime":1386835304000,"mtime":1384940373000,"ctime":1384940373000},"/package.json":{"atime":1386862710000,"mtime":1386862710000,"ctime":1386862710000},"easy-configuration/package.json":{"atime":1386835040000,"mtime":1385450929000,"ctime":1385450929000}});
 require.version = '5.5.1';
 
 /** run section **/

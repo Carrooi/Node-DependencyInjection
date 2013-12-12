@@ -139,6 +139,16 @@
           }).to["throw"](Error, 'Circular reference detected for services: first, second, third, fourth.');
         });
       });
+      describe('#getByPath()', function() {
+        it('should return service by require path', function() {
+          di.addService('app', "" + dir + "/Application");
+          return expect(di.getByPath("" + dir + "/Application")).to.be.an["instanceof"](Application);
+        });
+        return it('should return null for not auto required services', function() {
+          di.addService('info', ['hello']).setInstantiate(false);
+          return expect(di.getByPath('info')).to.not.exists;
+        });
+      });
       describe('#create()', function() {
         return it('should return always new instance of Application', function() {
           return expect(di.create('application')).to.not.be.equal(di.create('application'));

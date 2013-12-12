@@ -6,6 +6,8 @@ class DI
 
 	services: null
 
+	paths: null
+
 	reserved: ['di']
 
 	creating: null
@@ -18,12 +20,17 @@ class DI
 		@services =
 			di: di
 
+		@paths = {}
 		@creating = []
 
 
 	addService: (name, service, args = []) ->
 		if name in @reserved
 			throw new Error "DI: name '#{name}' is reserved by DI."
+
+		if typeof service == 'string'
+			service = require.resolve(service)
+			@paths[service] = name
 
 		@services[name] = new Service(@, name, service, args)
 		return @services[name]
@@ -71,6 +78,19 @@ class DI
 	getByName: (name) ->
 		Helpers.log 'DI: Method getByName is deprecated, use get method.'
 		return @get(name)
+
+
+	getByPath: (path) ->
+		error = false
+		try
+			path = require.resolve(path)
+		catch e
+			error = true
+
+		if typeof @paths[path] != 'undefined' && !error
+			return @get(@paths[path])
+
+		return null
 
 
 	get: (name) ->

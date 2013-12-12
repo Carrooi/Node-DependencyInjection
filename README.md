@@ -99,6 +99,10 @@ service is clearly is.
 
 This method will create one instance of service and store it. Every other time, this instance will be returned.
 
+### getByPath
+
+Same as `get` method, but this accepts path to node module (like in your service configuration)
+
 ### create
 
 Method create will just create new instance of service and will not store it.
@@ -345,6 +349,7 @@ $ npm test
 
 * 2.0.0
 	+ Removed autowiring into `inject` methods (BC break!)
+	+ Added method `getByPath`
 
 * 1.8.0
 	+ Better tests (mocha does not need to be installed globally)

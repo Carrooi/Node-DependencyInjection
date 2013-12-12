@@ -127,6 +127,16 @@ describe 'DI', ->
 				di.addService('fourth', (first) ->)
 				expect( -> di.get('first')).to.throw(Error, 'Circular reference detected for services: first, second, third, fourth.')
 
+		describe '#getByPath()', ->
+
+			it 'should return service by require path', ->
+				di.addService('app', "#{dir}/Application")
+				expect(di.getByPath("#{dir}/Application")).to.be.an.instanceof(Application)
+
+			it 'should return null for not auto required services', ->
+				di.addService('info', ['hello']).setInstantiate(false)
+				expect(di.getByPath('info')).to.not.exists
+
 		describe '#create()', ->
 
 			it 'should return always new instance of Application', ->

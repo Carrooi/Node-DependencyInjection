@@ -1,7 +1,7 @@
 {
 	"name": "dependency-injection",
 	"description": "Dependency injection with configuration and autowire for node js and browser",
-	"version": "1.7.3",
+	"version": "1.8.0",
 	"author": {
 		"name": "David Kudera",
 		"email": "sakren@gmail.com"
@@ -34,6 +34,6 @@
 		"test": "npm run test-node && npm run test-browser",
 		"test-build": "cd ./test/browser; simq build;",
 		"test-node": "mocha ./test/node/index.js --reporter spec",
-		"test-browser": "npm run test-build; mocha-phantomjs ./test/browser/index.html"
+		"test-browser": "mocha-phantomjs ./test/browser/index.html"
 	}
 }

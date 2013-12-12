@@ -15,8 +15,6 @@ class Service
 
 	autowired: true
 
-	injectMethods: true
-
 	setup: null
 
 	instance: null
@@ -46,7 +44,7 @@ class Service
 			service = require(service)
 
 		try
-			service = @di.createInstance(service, @arguments, @instantiate, @injectMethods)
+			service = @di.createInstance(service, @arguments, @instantiate)
 
 			for method, args of @setup
 				if @setup.hasOwnProperty(method)

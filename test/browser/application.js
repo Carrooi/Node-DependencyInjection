@@ -218,8 +218,6 @@
 	
 	    Service.prototype.autowired = true;
 	
-	    Service.prototype.injectMethods = true;
-	
 	    Service.prototype.setup = null;
 	
 	    Service.prototype.instance = null;
@@ -252,7 +250,7 @@
 	        service = require(service);
 	      }
 	      try {
-	        service = this.di.createInstance(service, this["arguments"], this.instantiate, this.injectMethods);
+	        service = this.di.createInstance(service, this["arguments"], this.instantiate);
 	        _ref = this.setup;
 	        for (method in _ref) {
 	          args = _ref[method];
@@ -493,7 +491,6 @@
 	      var di;
 	      di = new Service(this, 'di', this);
 	      di.instantiate = false;
-	      di.injectMethods = false;
 	      this.services = {
 	        di: di
 	      };
@@ -519,15 +516,12 @@
 	      return Helpers.autowireArguments(method, args, this);
 	    };
 	
-	    DI.prototype.createInstance = function(service, args, instantiate, injectMethods) {
+	    DI.prototype.createInstance = function(service, args, instantiate) {
 	      if (args == null) {
 	        args = [];
 	      }
 	      if (instantiate == null) {
 	        instantiate = true;
-	      }
-	      if (injectMethods == null) {
-	        injectMethods = true;
 	      }
 	      if (instantiate === true) {
 	        if (Object.prototype.toString.call(service.prototype.constructor) === '[Function]') {
@@ -1710,7 +1704,7 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1386857223000,"mtime":1386857221000,"ctime":1386857221000},"/lib/Helpers.js":{"atime":1386856820000,"mtime":1386856806000,"ctime":1386856806000},"/lib/DI.js":{"atime":1386857268000,"mtime":1386857265000,"ctime":1386857265000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1386835303000,"mtime":1385411214000,"ctime":1385450928000},"recursive-merge/lib/Merge.js":{"atime":1386835303000,"mtime":1385409966000,"ctime":1385450932000},"easy-configuration/lib/Extension.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"easy-configuration/lib/Helpers.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"/test/browser/tests/DI.coffee":{"atime":1386857629000,"mtime":1386857625000,"ctime":1386857625000},"/test/browser/tests/Helpers.coffee":{"atime":1386857560000,"mtime":1386857556000,"ctime":1386857556000},"/lib/DIConfigurator.js":{"atime":1386856820000,"mtime":1386856806000,"ctime":1386856806000},"/test/data/Application.coffee":{"atime":1386857310000,"mtime":1386857310000,"ctime":1386857310000},"/test/data/Http.coffee":{"atime":1386835304000,"mtime":1384940373000,"ctime":1384940373000},"/package.json":{"atime":1386857523000,"mtime":1386857522000,"ctime":1386857522000},"easy-configuration/package.json":{"atime":1386835040000,"mtime":1385450929000,"ctime":1385450929000}});
+require.__setStats({"/lib/Service.js":{"atime":1386858310000,"mtime":1386858307000,"ctime":1386858307000},"/lib/Helpers.js":{"atime":1386856820000,"mtime":1386856806000,"ctime":1386856806000},"/lib/DI.js":{"atime":1386858310000,"mtime":1386858307000,"ctime":1386858307000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1386835303000,"mtime":1385411214000,"ctime":1385450928000},"recursive-merge/lib/Merge.js":{"atime":1386835303000,"mtime":1385409966000,"ctime":1385450932000},"easy-configuration/lib/Extension.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"easy-configuration/lib/Helpers.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"/test/browser/tests/DI.coffee":{"atime":1386857629000,"mtime":1386857625000,"ctime":1386857625000},"/test/browser/tests/Helpers.coffee":{"atime":1386857560000,"mtime":1386857556000,"ctime":1386857556000},"/lib/DIConfigurator.js":{"atime":1386856820000,"mtime":1386856806000,"ctime":1386856806000},"/test/data/Application.coffee":{"atime":1386857310000,"mtime":1386857310000,"ctime":1386857310000},"/test/data/Http.coffee":{"atime":1386835304000,"mtime":1384940373000,"ctime":1384940373000},"/package.json":{"atime":1386857523000,"mtime":1386857522000,"ctime":1386857522000},"easy-configuration/package.json":{"atime":1386835040000,"mtime":1385450929000,"ctime":1385450929000}});
 require.version = '5.5.1';
 
 /** run section **/

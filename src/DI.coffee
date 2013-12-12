@@ -14,7 +14,6 @@ class DI
 	constructor: ->
 		di = new Service(@, 'di', @)
 		di.instantiate = false
-		di.injectMethods = false
 
 		@services =
 			di: di
@@ -36,7 +35,7 @@ class DI
 		return Helpers.autowireArguments(method, args, @)
 
 
-	createInstance: (service, args = [], instantiate = true, injectMethods = true) ->
+	createInstance: (service, args = [], instantiate = true) ->
 		if instantiate == true
 			if Object.prototype.toString.call(service.prototype.constructor) == '[Function]'
 				service = @inject(service, {}, args)

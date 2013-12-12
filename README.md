@@ -347,6 +347,10 @@ $ npm test
 
 ## Changelog
 
+* 1.8.0
+	+ Better tests (mocha does not need to be installed globally)
+	+ Updated dependencies
+
 * 1.7.3
 	+ Bug with no-string arguments
 

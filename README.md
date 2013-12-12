@@ -282,6 +282,20 @@ Another possibility is to set these services in your config.
 }
 ```
 
+or with full module path:
+```
+{
+	"services": {
+		"foreignLibrary": {
+			"service": "path/to/service",
+			"arguments": [
+				"$/path/to/translator/module"
+			]
+		}
+	}
+}
+```
+
 Now this `foreignLibrary` will gets your `translator` service in constructor.
 
 ## Autowiring DI

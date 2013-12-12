@@ -105,6 +105,11 @@ class Helpers
 					args[0] = args[0].substr(1)
 					result.push(container.get(args[0]))
 
+				# link to another services via module path
+				else if args[0] != null && typeof args[0] == 'string' && args[0].match(/^$/) != null
+					args[0] = args[0].substr(1)
+					result.push(container.getByPath(args[0]))
+
 				# custom parameter
 				else
 					result.push(args[0])

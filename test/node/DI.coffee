@@ -44,11 +44,12 @@ describe 'DI', ->
 			app = di.createInstance(Application)
 			expect(app).to.be.an.instanceof(Application)
 			expect(app.array).to.be.an.instanceof(Array)
-			expect(app.http).to.be.an.instanceof(Http)
+			expect(app.http).to.not.exists
 
 		it 'should throw an error when service to inject does not exists', ->
 			delete di.services.http
-			expect( -> di.createInstance(Application)).to.throw(Error, "DI: Service 'http' was not found.")
+			app = di.createInstance(Application)
+			expect( -> di.inject(app.setHttp, app)).to.throw(Error, "DI: Service 'http' was not found.")
 
 	describe '#findDefinitionByName()', ->
 
@@ -80,7 +81,7 @@ describe 'DI', ->
 				expect(app).to.be.an.instanceof(Application)
 				expect(app.namespace).to.be.equal('simq')
 				expect(app.array).to.be.eql([])
-				expect(app.http).to.be.an.instanceof(Http)
+				expect(app.http).to.not.exists
 
 			it 'should return always the same instance of Application', ->
 				expect(di.get('application')).to.be.equal(di.get('application'))

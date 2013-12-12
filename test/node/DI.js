@@ -50,12 +50,14 @@
         app = di.createInstance(Application);
         expect(app).to.be.an["instanceof"](Application);
         expect(app.array).to.be.an["instanceof"](Array);
-        return expect(app.http).to.be.an["instanceof"](Http);
+        return expect(app.http).to.not.exists;
       });
       return it('should throw an error when service to inject does not exists', function() {
+        var app;
         delete di.services.http;
+        app = di.createInstance(Application);
         return expect(function() {
-          return di.createInstance(Application);
+          return di.inject(app.setHttp, app);
         }).to["throw"](Error, "DI: Service 'http' was not found.");
       });
     });
@@ -85,7 +87,7 @@
           expect(app).to.be.an["instanceof"](Application);
           expect(app.namespace).to.be.equal('simq');
           expect(app.array).to.be.eql([]);
-          return expect(app.http).to.be.an["instanceof"](Http);
+          return expect(app.http).to.not.exists;
         });
         it('should return always the same instance of Application', function() {
           return expect(di.get('application')).to.be.equal(di.get('application'));

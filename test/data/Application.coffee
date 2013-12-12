@@ -21,7 +21,7 @@ class Application
 	constructor: (@array) ->
 
 
-	injectHttp: (@http) ->
+	setHttp: (@http) ->
 
 
 	prepare: (@namespace, @info) ->

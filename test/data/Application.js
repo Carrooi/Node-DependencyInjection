@@ -23,7 +23,7 @@
       this.array = array;
     }
 
-    Application.prototype.injectHttp = function(http) {
+    Application.prototype.setHttp = function(http) {
       this.http = http;
     };
 

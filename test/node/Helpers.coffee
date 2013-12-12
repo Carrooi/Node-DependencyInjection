@@ -40,7 +40,7 @@ describe 'Helpers', ->
 
 		it 'should return array with services for inject method', ->
 			di.addService('http', Http)
-			args = Helpers.autowireArguments((new Application([])).injectHttp, [], di)
+			args = Helpers.autowireArguments((new Application([])).setHttp, [], di)
 			expect(args).to.have.length(1)
 			expect(args[0]).to.be.an.instanceof(Http)
 

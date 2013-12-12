@@ -289,13 +289,6 @@ constructor. This also means that you can not register new service with name "di
 di.get('di');
 ```
 
-## Inject methods
-
-If your services using multiple inheritance and you want to inject some other services but it's parent need some different
-services, then it is quite uncomfortable to set your services via constructor.
-
-If DI find some methods with "inject" word in the beginning, it will automatically call and autowire these methods.
-
 ## Without configuration
 
 Maybe it will be better for someone to use this DI without configuration, so here is example of application, translator
@@ -325,8 +318,7 @@ then relative to class of DI!
 ## Create instance
 
 If you have got some other object which you want to use with other services, but can not use configuration or DI for this,
-you can use `createInstance` method and DI will create new instance of your object with dependencies defined in constructor
-or with inject methods.
+you can use `createInstance` method and DI will create new instance of your object with dependencies defined in constructor.
 
 ```
 var SuperClass = require('./mySuperClass');
@@ -350,6 +342,9 @@ $ npm test
 ```
 
 ## Changelog
+
+* 2.0.0
+	+ Removed autowiring into `inject` methods (BC break!)
 
 * 1.8.0
 	+ Better tests (mocha does not need to be installed globally)

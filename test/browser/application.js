@@ -520,7 +520,6 @@
 	    };
 	
 	    DI.prototype.createInstance = function(service, args, instantiate, injectMethods) {
-	      var method;
 	      if (args == null) {
 	        args = [];
 	      }
@@ -535,13 +534,6 @@
 	          service = this.inject(service, {}, args);
 	        } else {
 	          service = Helpers.createInstance(service, args, this);
-	        }
-	      }
-	      if (Object.prototype.toString.call(service) === '[object Object]' && injectMethods) {
-	        for (method in service) {
-	          if (method.match(/^inject/) !== null) {
-	            this.inject(service[method], service);
-	          }
 	        }
 	      }
 	      return service;
@@ -1159,12 +1151,14 @@
 	        app = di.createInstance(Application);
 	        expect(app).to.be.an["instanceof"](Application);
 	        expect(app.array).to.be.an["instanceof"](Array);
-	        return expect(app.http).to.be.an["instanceof"](Http);
+	        return expect(app.http).to.not.exists;
 	      });
 	      return it('should throw an error when service to inject does not exists', function() {
+	        var app;
 	        delete di.services.http;
+	        app = di.createInstance(Application);
 	        return expect(function() {
-	          return di.createInstance(Application);
+	          return di.inject(app.setHttp, app);
 	        }).to["throw"](Error, "DI: Service 'http' was not found.");
 	      });
 	    });
@@ -1194,7 +1188,7 @@
 	          expect(app).to.be.an["instanceof"](Application);
 	          expect(app.namespace).to.be.equal('simq');
 	          expect(app.array).to.be.eql([]);
-	          return expect(app.http).to.be.an["instanceof"](Http);
+	          return expect(app.http).to.not.exists;
 	        });
 	        it('should return always the same instance of Application', function() {
 	          return expect(di.get('application')).to.be.equal(di.get('application'));
@@ -1336,7 +1330,7 @@
 	      it('should return array with services for inject method', function() {
 	        var args;
 	        di.addService('http', Http);
-	        args = Helpers.autowireArguments((new Application([])).injectHttp, [], di);
+	        args = Helpers.autowireArguments((new Application([])).setHttp, [], di);
 	        expect(args).to.have.length(1);
 	        return expect(args[0]).to.be.an["instanceof"](Http);
 	      });
@@ -1527,7 +1521,7 @@
 	      this.array = array;
 	    }
 	
-	    Application.prototype.injectHttp = function(http) {
+	    Application.prototype.setHttp = function(http) {
 	      this.http = http;
 	    };
 	
@@ -1608,7 +1602,7 @@
 	return {
 		"name": "dependency-injection",
 		"description": "Dependency injection with configuration and autowire for node js and browser",
-		"version": "1.7.3",
+		"version": "1.8.0",
 		"author": {
 			"name": "David Kudera",
 			"email": "sakren@gmail.com"
@@ -1716,7 +1710,7 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1386834783000,"mtime":1386834781000,"ctime":1386834781000},"/lib/Helpers.js":{"atime":1386834783000,"mtime":1386834781000,"ctime":1386834781000},"/lib/DI.js":{"atime":1386834783000,"mtime":1386834781000,"ctime":1386834781000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1386835303000,"mtime":1385411214000,"ctime":1385450928000},"recursive-merge/lib/Merge.js":{"atime":1386835303000,"mtime":1385409966000,"ctime":1385450932000},"easy-configuration/lib/Extension.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"easy-configuration/lib/Helpers.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"/test/browser/tests/DI.coffee":{"atime":1386835304000,"mtime":1385452984000,"ctime":1385452984000},"/test/browser/tests/Helpers.coffee":{"atime":1386835304000,"mtime":1385450793000,"ctime":1385450793000},"/lib/DIConfigurator.js":{"atime":1386834783000,"mtime":1386834781000,"ctime":1386834781000},"/test/data/Application.coffee":{"atime":1386835304000,"mtime":1385450793000,"ctime":1385450793000},"/test/data/Http.coffee":{"atime":1386835304000,"mtime":1384940373000,"ctime":1384940373000},"/package.json":{"atime":1386835281000,"mtime":1386835278000,"ctime":1386835278000},"easy-configuration/package.json":{"atime":1386835040000,"mtime":1385450929000,"ctime":1385450929000}});
+require.__setStats({"/lib/Service.js":{"atime":1386857223000,"mtime":1386857221000,"ctime":1386857221000},"/lib/Helpers.js":{"atime":1386856820000,"mtime":1386856806000,"ctime":1386856806000},"/lib/DI.js":{"atime":1386857268000,"mtime":1386857265000,"ctime":1386857265000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1386835303000,"mtime":1385411214000,"ctime":1385450928000},"recursive-merge/lib/Merge.js":{"atime":1386835303000,"mtime":1385409966000,"ctime":1385450932000},"easy-configuration/lib/Extension.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"easy-configuration/lib/Helpers.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"/test/browser/tests/DI.coffee":{"atime":1386857629000,"mtime":1386857625000,"ctime":1386857625000},"/test/browser/tests/Helpers.coffee":{"atime":1386857560000,"mtime":1386857556000,"ctime":1386857556000},"/lib/DIConfigurator.js":{"atime":1386856820000,"mtime":1386856806000,"ctime":1386856806000},"/test/data/Application.coffee":{"atime":1386857310000,"mtime":1386857310000,"ctime":1386857310000},"/test/data/Http.coffee":{"atime":1386835304000,"mtime":1384940373000,"ctime":1384940373000},"/package.json":{"atime":1386857523000,"mtime":1386857522000,"ctime":1386857522000},"easy-configuration/package.json":{"atime":1386835040000,"mtime":1385450929000,"ctime":1385450929000}});
 require.version = '5.5.1';
 
 /** run section **/

@@ -43,11 +43,6 @@ class DI
 			else
 				service = Helpers.createInstance(service, args, @)
 
-		if Object.prototype.toString.call(service) == '[object Object]' && injectMethods
-			for method of service
-				if method.match(/^inject/) != null
-					@inject(service[method], service)
-
 		return service
 
 

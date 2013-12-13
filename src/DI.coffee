@@ -99,6 +99,19 @@ class DI
 		return null
 
 
+	getFactoryByPath: (path) ->
+		error = false
+		try
+			path = require.resolve(@getPath(path))
+		catch e
+			error = true
+
+		if typeof @paths[path] != 'undefined' && !error
+			return @getFactory(@paths[path])
+
+		return null
+
+
 	get: (name) ->
 		return @findDefinitionByName(name).getInstance()
 

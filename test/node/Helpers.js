@@ -89,6 +89,18 @@
         di.addService('someRandomName', 'test/data/AutowirePath');
         return expect(Helpers.autowireArguments(fn, null, di)[0]).to.be.an["instanceof"](AutowirePath);
       });
+      it('should inject factory with hint', function() {
+        var args, fn;
+        fn = function(arg) {
+          return {
+            '@di:inject': ['factory:$test/data/AutowirePath']
+          };
+        };
+        di.addService('greatService', 'test/data/AutowirePath');
+        args = Helpers.autowireArguments(fn, null, di);
+        expect(args[0]).to.be.a('function');
+        return expect(args[0]()).to.be.an["instanceof"](AutowirePath);
+      });
       it('should inject services replaced with dots in the end', function() {
         var fn;
         fn = function(first, second, third) {

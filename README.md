@@ -250,10 +250,19 @@ var someFunction = function(otherNameForApplicationService) {
 };
 ```
 
-or you can also include services by their full paths
+or you can also include services by their full paths:
 ```
 var someFunction = function(otherNameForApplicationService) {
 	{'@di:inject': ['$path/to/application/service']};		// services' paths are prepended with '$'
+
+	otherNameForApplicationService.run();
+};
+```
+
+or if you need factory:
+```
+var someFunction = function(otherNameForApplicationService) {
+	{'@di:inject': ['factory:$path/to/application/service']};		// can also be name of service: "factory:@application"
 
 	otherNameForApplicationService.run();
 };
@@ -388,7 +397,7 @@ $ npm test
 
 * 2.0.0
 	+ Removed autowiring into `inject` methods (BC break!)
-	+ Added method `getByPath`
+	+ Added methods `getByPath` and `getFactoryByPath`
 	+ Added basePath option
 	+ Better docs
 	+ Added hints for autowiring

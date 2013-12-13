@@ -65,9 +65,15 @@ describe 'Helpers', ->
 
 		it 'should inject service by full path', ->
 			fn = (something) -> {'@di:inject': ['$test/data/AutowirePath']}
-
 			di.addService('someRandomName', 'test/data/AutowirePath')
 			expect(Helpers.autowireArguments(fn, null, di)[0]).to.be.an.instanceof(AutowirePath)
+
+		it 'should inject factory with hint', ->
+			fn = (arg) -> {'@di:inject': ['factory:$test/data/AutowirePath']}
+			di.addService('greatService', 'test/data/AutowirePath')
+			args = Helpers.autowireArguments(fn, null, di)
+			expect(args[0]).to.be.a('function')
+			expect(args[0]()).to.be.an.instanceof(AutowirePath)
 
 		it 'should inject services replaced with dots in the end', ->
 			fn = (first, second, third) -> return arguments

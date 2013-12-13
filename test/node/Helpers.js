@@ -113,6 +113,16 @@
         expect(args[0]).to.be.a('function');
         return expect(args[0]()).to.be.an["instanceof"](AutowirePath);
       });
+      it('should inject services to another service with argument and hint', function() {
+        var fn;
+        fn = function(something, sameThing) {
+          return {
+            '@di:inject': ['...', '@data']
+          };
+        };
+        di.addService('data', ['one']).setInstantiate(false);
+        return expect(Helpers.autowireArguments(fn, ['@data'], di)).to.be.eql([['one'], ['one']]);
+      });
       it('should inject services replaced with dots in the end', function() {
         var fn;
         fn = function(first, second, third) {

@@ -395,6 +395,9 @@ $ npm test
 
 ## Changelog
 
+* 2.0.1
+	+ Injecting by arguments and hints was not working
+
 * 2.0.0
 	+ Removed autowiring into `inject` methods (BC break!)
 	+ Added methods `getByPath` and `getFactoryByPath`

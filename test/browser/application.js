@@ -426,7 +426,7 @@
 	    };
 	
 	    Helpers.autowireArguments = function(method, args, container) {
-	      var dots, factory, parameter, previousDots, result, service, _i, _len, _ref;
+	      var dots, factory, hints, i, originalArgs, parameter, previousDots, result, service, _i, _len, _ref;
 	      if (args == null) {
 	        args = [];
 	      }
@@ -435,15 +435,17 @@
 	      dots = false;
 	      previousDots = false;
 	      args = Helpers.clone(args);
-	      if (args.length === 0) {
-	        args = Helpers.getHintArguments(method);
-	        if (args === null) {
-	          args = [];
-	        }
+	      originalArgs = args;
+	      hints = Helpers.getHintArguments(method);
+	      if (hints !== null) {
+	        args = Helpers.clone(hints);
 	      }
 	      _ref = Helpers.getArguments(method);
-	      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	        parameter = _ref[_i];
+	      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+	        parameter = _ref[i];
+	        if (args[0] === '...' && hints !== null) {
+	          args[0] = originalArgs[i];
+	        }
 	        if (typeof args[0] !== 'undefined' && args[0] === '...') {
 	          dots = true;
 	        }
@@ -1487,6 +1489,16 @@
 	        expect(args[0]).to.be.a('function');
 	        return expect(args[0]()).to.be.an["instanceof"](AutowirePath);
 	      });
+	      it('should inject services to another service with argument and hint', function() {
+	        var fn;
+	        fn = function(something, sameThing) {
+	          return {
+	            '@di:inject': ['...', '@data']
+	          };
+	        };
+	        di.addService('data', ['one']).setInstantiate(false);
+	        return expect(Helpers.autowireArguments(fn, ['@data'], di)).to.be.eql([['one'], ['one']]);
+	      });
 	      it('should inject services replaced with dots in the end', function() {
 	        var fn;
 	        fn = function(first, second, third) {
@@ -1802,7 +1814,7 @@
 			"test": "npm run test-node && npm run test-browser",
 			"test-build": "cd ./test/browser; simq build;",
 			"test-node": "mocha ./test/node/index.js --reporter spec",
-			"test-browser": "npm run test-build; mocha-phantomjs ./test/browser/index.html"
+			"test-browser": "mocha-phantomjs ./test/browser/index.html"
 		}
 	}
 	}).call(this);
@@ -1877,7 +1889,7 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1386929552000,"mtime":1386929491000,"ctime":1386929491000},"/lib/Helpers.js":{"atime":1386936343000,"mtime":1386936339000,"ctime":1386936339000},"/lib/DI.js":{"atime":1386935910000,"mtime":1386935908000,"ctime":1386935908000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1386923382000,"mtime":1385411214000,"ctime":1385450928000},"recursive-merge/lib/Merge.js":{"atime":1386923382000,"mtime":1385409966000,"ctime":1385450932000},"easy-configuration/lib/Extension.js":{"atime":1386923382000,"mtime":1385411214000,"ctime":1385450928000},"easy-configuration/lib/Helpers.js":{"atime":1386923382000,"mtime":1385411214000,"ctime":1385450928000},"/test/browser/tests/DI.coffee":{"atime":1386926495000,"mtime":1386926494000,"ctime":1386926494000},"/test/browser/tests/Helpers.coffee":{"atime":1386936539000,"mtime":1386936535000,"ctime":1386936535000},"/lib/DIConfigurator.js":{"atime":1386935492000,"mtime":1386935476000,"ctime":1386935476000},"/test/data/Application.coffee":{"atime":1386925844000,"mtime":1386925844000,"ctime":1386925844000},"/test/data/AutowirePath.coffee":{"atime":1386934815000,"mtime":1386934815000,"ctime":1386934815000},"/test/data/Http.coffee":{"atime":1386923382000,"mtime":1384940373000,"ctime":1384940373000},"/package.json":{"atime":1386935057000,"mtime":1386935054000,"ctime":1386935054000},"easy-configuration/package.json":{"atime":1386923382000,"mtime":1385450929000,"ctime":1385450929000}});
+require.__setStats({"/lib/Service.js":{"atime":1386938679000,"mtime":1386938648000,"ctime":1386938648000},"/lib/Helpers.js":{"atime":1386939051000,"mtime":1386939049000,"ctime":1386939049000},"/lib/DI.js":{"atime":1386938679000,"mtime":1386938648000,"ctime":1386938648000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1386923382000,"mtime":1385411214000,"ctime":1385450928000},"recursive-merge/lib/Merge.js":{"atime":1386923382000,"mtime":1385409966000,"ctime":1385450932000},"easy-configuration/lib/Extension.js":{"atime":1386923382000,"mtime":1385411214000,"ctime":1385450928000},"easy-configuration/lib/Helpers.js":{"atime":1386923382000,"mtime":1385411214000,"ctime":1385450928000},"/test/browser/tests/DI.coffee":{"atime":1386926495000,"mtime":1386926494000,"ctime":1386926494000},"/test/browser/tests/Helpers.coffee":{"atime":1386939387000,"mtime":1386939364000,"ctime":1386939364000},"/lib/DIConfigurator.js":{"atime":1386938683000,"mtime":1386938648000,"ctime":1386938648000},"/test/data/Application.coffee":{"atime":1386925844000,"mtime":1386925844000,"ctime":1386925844000},"/test/data/AutowirePath.coffee":{"atime":1386934815000,"mtime":1386934815000,"ctime":1386934815000},"/test/data/Http.coffee":{"atime":1386923382000,"mtime":1384940373000,"ctime":1384940373000},"/package.json":{"atime":1386936604000,"mtime":1386936602000,"ctime":1386936602000},"easy-configuration/package.json":{"atime":1386923382000,"mtime":1385450929000,"ctime":1385450929000}});
 require.version = '5.5.1';
 
 /** run section **/

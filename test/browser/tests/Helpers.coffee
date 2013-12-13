@@ -4,6 +4,7 @@ Helpers = require '/lib/Helpers'
 
 Application = require '/test/data/Application'
 Http = require '/test/data/Http'
+AutowirePath = require '/test/data/AutowirePath'
 
 di = null
 dir = '/test/data'
@@ -57,6 +58,12 @@ describe 'Helpers', ->
 			fn = (variable) -> return variable
 			di.addService('array', Array)
 			expect(Helpers.autowireArguments(fn, ['@array'], di)).to.be.eql([[]])
+
+		it 'should inject service by full path', ->
+			fn = (something) -> {'@di:inject': ['$/test/data/AutowirePath']}
+
+			di.addService('someRandomName', '/test/data/AutowirePath')
+			expect(Helpers.autowireArguments(fn, null, di)[0]).to.be.an.instanceof(AutowirePath)
 
 		it 'should inject services replaced with dots in the end', ->
 			fn = (first, second, third) -> return arguments

@@ -34,6 +34,6 @@
 		"test": "npm run test-node && npm run test-browser",
 		"test-build": "cd ./test/browser; simq build;",
 		"test-node": "mocha ./test/node/index.js --reporter spec",
-		"test-browser": "mocha-phantomjs ./test/browser/index.html"
+		"test-browser": "npm run test-build; mocha-phantomjs ./test/browser/index.html"
 	}
 }

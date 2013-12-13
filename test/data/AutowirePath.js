@@ -5,6 +5,8 @@
   AutowirePath = (function() {
     function AutowirePath() {}
 
+    AutowirePath.prototype.greeting = 'hello';
+
     return AutowirePath;
 
   })();

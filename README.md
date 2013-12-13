@@ -243,16 +243,16 @@ for DI container.
 
 ```
 var someFunction = function(otherNameForApplicationService) {
-	{'@di:inject': ['@application']};
+	{'@di:inject': ['@application']};			// services' names are prepended with '@'
 
 	otherNameForApplicationService.run();		// this will call method run on service application
 };
 ```
 
-or you can also include services with their full paths
+or you can also include services by their full paths
 ```
 var someFunction = function(otherNameForApplicationService) {
-	{'@di:inject': ['$path/to/application/service']};
+	{'@di:inject': ['$path/to/application/service']};		// services' paths are prepended with '$'
 
 	otherNameForApplicationService.run();
 };
@@ -390,6 +390,7 @@ $ npm test
 	+ Added method `getByPath`
 	+ Added basePath option
 	+ Better docs
+	+ Added hints for autowiring
 
 * 1.8.0
 	+ Better tests (mocha does not need to be installed globally)

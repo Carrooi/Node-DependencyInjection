@@ -74,14 +74,15 @@ di.create('application');
 di.getFactory('application');
 ```
 
-## Auto exposing into window
+## Auto exposing into global
 
-DI can be automatically exposed into window object (when on browser). Default name for this object is `di`.
+DI can be automatically exposed into window object (when on browser) or into global object (in node). Default name for
+this object is `di`.
 
 ```
 {
 	"setup": {
-		"windowExpose": true
+		"expose": true
 	}
 }
 ```
@@ -91,7 +92,7 @@ Custom name:
 ```
 {
 	"setup": {
-		"windowExpose": "secondDI"
+		"expose": "secondDI"
 	}
 }
 ```

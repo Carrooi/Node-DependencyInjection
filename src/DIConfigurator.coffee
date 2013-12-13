@@ -10,7 +10,8 @@ class DIConfigurator
 	path: null
 
 	defaultSetup:
-		windowExpose: false
+		windowExpose: null		# deprecated
+		expose: false
 
 	defaultService:
 		service: null
@@ -44,10 +45,17 @@ class DIConfigurator
 		configuration = config.load()
 		di = new DI
 
-		expose = configuration.setup.windowExpose
-		if expose != false && typeof window != 'undefined'
+		if configuration.setup.windowExpose != null
+			console.log 'Option windowExpose is deprecated. Please use expose.'
+			configuration.setup.expose = configuration.setup.windowExpose
+
+		expose = configuration.setup.wxpose
+		if expose != false
 			name = if typeof expose == 'string' then expose else DIConfigurator.EXPOSE_NAME
-			window[name] = di
+			if typeof window != 'undefined'
+				window[name] = di
+			else if typeof global != 'undefined'
+				global[name] = di
 
 		run = []
 

@@ -234,6 +234,26 @@ or more expanded:
 }
 ```
 
+Only problem is with minified javascript files which changes variable names. Solution for this is write some kind of hint
+for DI container.
+
+```
+var someFunction = function(otherNameForApplicationService) {
+	{'@di:inject': ['@application']}
+
+	otherNameForApplicationService.run();		// this will call method run on service application
+};
+```
+
+or you can also include services with their full paths
+```
+var someFunction = function(otherNameForApplicationService) {
+	{'@di:inject': ['$/path/to/application/service']}
+
+	otherNameForApplicationService.run();
+};
+```
+
 ### Disable autowiring
 
 If you want to disable autowiring for some service, you can set "autowired" option to false in your config (like instantiate).

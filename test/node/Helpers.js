@@ -24,7 +24,8 @@
 
   describe('Helpers', function() {
     beforeEach(function() {
-      return di = new DI;
+      di = new DI;
+      return di.basePath = path.resolve(__dirname + '/../..');
     });
     describe('#createInstance()', function() {
       return it('should create new instance of object with given arguments', function() {
@@ -79,15 +80,14 @@
         return expect(Helpers.autowireArguments(fn, ['@array'], di)).to.be.eql([[]]);
       });
       it.skip('should inject service by full path', function() {
-        var fn, name;
+        var fn;
         fn = function(something) {
           ({
-            '@di:inject': ['$/test/data/AutowirePath']
+            '@di:inject': ['$test/data/AutowirePath']
           });
           return something;
         };
-        name = require.resolve('../data/AutowirePath');
-        di.addService('someRandomName', name);
+        di.addService('someRandomName', 'test/data/AutowirePath');
         return console.log(Helpers.autowireArguments(fn, null, di));
       });
       it('should inject services replaced with dots in the end', function() {

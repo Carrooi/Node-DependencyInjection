@@ -12,6 +12,8 @@ class DI
 
 	creating: null
 
+	basePath: null
+
 
 	constructor: ->
 		di = new Service(@, 'di', @)
@@ -24,12 +26,16 @@ class DI
 		@creating = []
 
 
+	getPath: (name) ->
+		return (if @basePath == null then '' else @basePath + '/') + name
+
+
 	addService: (name, service, args = []) ->
 		if name in @reserved
 			throw new Error "DI: name '#{name}' is reserved by DI."
 
 		if typeof service == 'string'
-			service = require.resolve(service)
+			service = require.resolve(@getPath(service))
 			@paths[service] = name
 
 		@services[name] = new Service(@, name, service, args)
@@ -83,7 +89,7 @@ class DI
 	getByPath: (path) ->
 		error = false
 		try
-			path = require.resolve(path)
+			path = require.resolve(@getPath(path))
 		catch e
 			error = true
 

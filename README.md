@@ -32,7 +32,7 @@ is used for configuration your services (classes).
 {
 	"services": {
 		"application": {
-    		"service": "/path/to/my/application/module",
+    		"service": "path/to/my/application/module",
     		"arguments": ["./www", "someOtherVariable"],
     		"setup": {
     			"setApplicationName": ["nameOfApplication"],
@@ -58,9 +58,13 @@ var DIConfigurator = require('dependency-injection/DIConfigurator');
 var configurator = new DIConfigurator('/path/to/your/configuration/file.json');
 
 var di = configurator.create();
+di.basePath = __dirname;
 ```
 
 This will create new instance of DI class which holding all your services.
+
+You have to also set the basePath property. DI will prepend this basePath to all services' paths from your configuration.
+So it should be path to root directory of your application.
 
 In example below, you can see how to get your services.
 
@@ -384,6 +388,7 @@ $ npm test
 * 2.0.0
 	+ Removed autowiring into `inject` methods (BC break!)
 	+ Added method `getByPath`
+	+ Added basePath option
 
 * 1.8.0
 	+ Better tests (mocha does not need to be installed globally)

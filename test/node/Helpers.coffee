@@ -16,6 +16,7 @@ describe 'Helpers', ->
 
 	beforeEach( ->
 		di = new DI
+		di.basePath = path.resolve(__dirname + '/../..')
 	)
 
 	describe '#createInstance()', ->
@@ -64,12 +65,10 @@ describe 'Helpers', ->
 
 		it.skip 'should inject service by full path', ->
 			fn = (something) ->
-				{'@di:inject': ['$/test/data/AutowirePath']}
+				{'@di:inject': ['$test/data/AutowirePath']}
 				return something
 
-			name = require.resolve '../data/AutowirePath'
-
-			di.addService('someRandomName', name)
+			di.addService('someRandomName', 'test/data/AutowirePath')
 			console.log(Helpers.autowireArguments(fn, null, di))
 
 		it 'should inject services replaced with dots in the end', ->

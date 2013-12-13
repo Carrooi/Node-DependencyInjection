@@ -1,1 +1,7 @@
-module.exports = 'hello'
+class AutowirePath
+
+
+
+
+
+module.exports = AutowirePath

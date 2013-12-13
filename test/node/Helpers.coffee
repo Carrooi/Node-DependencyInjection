@@ -7,6 +7,7 @@ Helpers = require '../../lib/Helpers'
 
 Application = require '../data/Application'
 Http = require '../data/Http'
+console.log require.resolve '../data/AutowirePath'
 
 di = null
 dir = '/test/data'
@@ -60,6 +61,16 @@ describe 'Helpers', ->
 			fn = (variable) -> return variable
 			di.addService('array', Array)
 			expect(Helpers.autowireArguments(fn, ['@array'], di)).to.be.eql([[]])
+
+		it.skip 'should inject service by full path', ->
+			fn = (something) ->
+				{'@di:inject': ['$/test/data/AutowirePath']}
+				return something
+
+			name = require.resolve '../data/AutowirePath'
+
+			di.addService('someRandomName', name)
+			console.log(Helpers.autowireArguments(fn, null, di))
 
 		it 'should inject services replaced with dots in the end', ->
 			fn = (first, second, third) -> return arguments

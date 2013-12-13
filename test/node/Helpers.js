@@ -16,6 +16,8 @@
 
   Http = require('../data/Http');
 
+  console.log(require.resolve('../data/AutowirePath'));
+
   di = null;
 
   dir = '/test/data';
@@ -75,6 +77,18 @@
         };
         di.addService('array', Array);
         return expect(Helpers.autowireArguments(fn, ['@array'], di)).to.be.eql([[]]);
+      });
+      it.skip('should inject service by full path', function() {
+        var fn, name;
+        fn = function(something) {
+          ({
+            '@di:inject': ['$/test/data/AutowirePath']
+          });
+          return something;
+        };
+        name = require.resolve('../data/AutowirePath');
+        di.addService('someRandomName', name);
+        return console.log(Helpers.autowireArguments(fn, null, di));
       });
       it('should inject services replaced with dots in the end', function() {
         var fn;

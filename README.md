@@ -239,7 +239,7 @@ for DI container.
 
 ```
 var someFunction = function(otherNameForApplicationService) {
-	{'@di:inject': ['@application']}
+	{'@di:inject': ['@application']};
 
 	otherNameForApplicationService.run();		// this will call method run on service application
 };
@@ -248,7 +248,7 @@ var someFunction = function(otherNameForApplicationService) {
 or you can also include services with their full paths
 ```
 var someFunction = function(otherNameForApplicationService) {
-	{'@di:inject': ['$/path/to/application/service']}
+	{'@di:inject': ['$/path/to/application/service']};
 
 	otherNameForApplicationService.run();
 };

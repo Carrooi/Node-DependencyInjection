@@ -54,13 +54,34 @@ class Helpers
 
 
 	@getArguments: (method) ->
-		method = method.toString()
-		method = method.replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg, '')		# remove comments
+		try
+			method = method.toString()
+		catch e
+			throw new Error 'Can not call toString on method'	# todo: try to add name of method
 
 		args = method.slice(method.indexOf('(') + 1, method.indexOf(')')).match(/([^\s,]+)/g)
 		args = if args == null then [] else args
 
 		return args
+
+
+	@getHintArguments: (method) ->
+		try
+			method = method.toString()
+		catch e
+			throw new Error 'Can not call toString on method'	# todo: try to add name of method
+
+		body = method.slice(method.indexOf("{") + 1, method.lastIndexOf("}"))
+		args = body.match(/{\s*['"]@di:inject['"]\s*:\s*\[(.+)\]\s*}/)
+
+		if args != null
+			args = args[1].split(',')
+			for arg, i in args
+				args[i] = arg.replace(/^\s*['"]/, '').replace(/['"]$/, '')
+
+			return args
+
+		return null
 
 
 	@autowireArguments: (method, args = [], container) ->
@@ -70,17 +91,19 @@ class Helpers
 		previousDots = false
 
 		args = Helpers.clone(args)
+		if args.length == 0
+			args = Helpers.getHintArguments(method)
+			if args == null then args = []
 
 		for parameter in Helpers.getArguments(method)
 			if typeof args[0] != 'undefined' && args[0] == '...'
 				dots = true
 
-			if parameter.match(/Factory$/) != null
-				parameter = parameter.substring(0, parameter.length - 7)
-				factory = true
-
-			# autowire parameter from container
+			# autowire parameter from container by argument name
 			if typeof args[0] == 'undefined' || dots || (container.hasDefinition(parameter) && previousDots)
+				if parameter.match(/Factory$/) != null
+					parameter = parameter.substring(0, parameter.length - 7)
+					factory = true
 
 				service = container.findDefinitionByName(parameter)
 

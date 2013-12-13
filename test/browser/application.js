@@ -392,12 +392,37 @@
 	    };
 	
 	    Helpers.getArguments = function(method) {
-	      var args;
-	      method = method.toString();
-	      method = method.replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg, '');
+	      var args, e;
+	      try {
+	        method = method.toString();
+	      } catch (_error) {
+	        e = _error;
+	        throw new Error('Can not call toString on method');
+	      }
 	      args = method.slice(method.indexOf('(') + 1, method.indexOf(')')).match(/([^\s,]+)/g);
 	      args = args === null ? [] : args;
 	      return args;
+	    };
+	
+	    Helpers.getHintArguments = function(method) {
+	      var arg, args, body, e, i, _i, _len;
+	      try {
+	        method = method.toString();
+	      } catch (_error) {
+	        e = _error;
+	        throw new Error('Can not call toString on method');
+	      }
+	      body = method.slice(method.indexOf("{") + 1, method.lastIndexOf("}"));
+	      args = body.match(/{\s*['"]@di:inject['"]\s*:\s*\[(.+)\]\s*}/);
+	      if (args !== null) {
+	        args = args[1].split(',');
+	        for (i = _i = 0, _len = args.length; _i < _len; i = ++_i) {
+	          arg = args[i];
+	          args[i] = arg.replace(/^\s*['"]/, '').replace(/['"]$/, '');
+	        }
+	        return args;
+	      }
+	      return null;
 	    };
 	
 	    Helpers.autowireArguments = function(method, args, container) {
@@ -410,17 +435,23 @@
 	      dots = false;
 	      previousDots = false;
 	      args = Helpers.clone(args);
+	      if (args.length === 0) {
+	        args = Helpers.getHintArguments(method);
+	        if (args === null) {
+	          args = [];
+	        }
+	      }
 	      _ref = Helpers.getArguments(method);
 	      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
 	        parameter = _ref[_i];
 	        if (typeof args[0] !== 'undefined' && args[0] === '...') {
 	          dots = true;
 	        }
-	        if (parameter.match(/Factory$/) !== null) {
-	          parameter = parameter.substring(0, parameter.length - 7);
-	          factory = true;
-	        }
 	        if (typeof args[0] === 'undefined' || dots || (container.hasDefinition(parameter) && previousDots)) {
+	          if (parameter.match(/Factory$/) !== null) {
+	            parameter = parameter.substring(0, parameter.length - 7);
+	            factory = true;
+	          }
 	          service = container.findDefinitionByName(parameter);
 	          if (service.autowired === false) {
 	            throw new Error("DI: Service '" + parameter + "' in not autowired.");
@@ -438,6 +469,9 @@
 	          if (args[0] !== null && typeof args[0] === 'string' && args[0].match(/^@/) !== null) {
 	            args[0] = args[0].substr(1);
 	            result.push(container.get(args[0]));
+	          } else if (args[0] !== null && typeof args[0] === 'string' && args[0].match(/^$/) !== null) {
+	            args[0] = args[0].substr(1);
+	            result.push(container.getByPath(args[0]));
 	          } else {
 	            result.push(args[0]);
 	          }
@@ -1736,7 +1770,7 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1386858310000,"mtime":1386858307000,"ctime":1386858307000},"/lib/Helpers.js":{"atime":1386856820000,"mtime":1386856806000,"ctime":1386856806000},"/lib/DI.js":{"atime":1386862672000,"mtime":1386862668000,"ctime":1386862668000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1386835303000,"mtime":1385411214000,"ctime":1385450928000},"recursive-merge/lib/Merge.js":{"atime":1386835303000,"mtime":1385409966000,"ctime":1385450932000},"easy-configuration/lib/Extension.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"easy-configuration/lib/Helpers.js":{"atime":1386835304000,"mtime":1385411214000,"ctime":1385450928000},"/test/browser/tests/DI.coffee":{"atime":1386862718000,"mtime":1386862696000,"ctime":1386862696000},"/test/browser/tests/Helpers.coffee":{"atime":1386857560000,"mtime":1386857556000,"ctime":1386857556000},"/lib/DIConfigurator.js":{"atime":1386856820000,"mtime":1386856806000,"ctime":1386856806000},"/test/data/Application.coffee":{"atime":1386861722000,"mtime":1386861722000,"ctime":1386861722000},"/test/data/Http.coffee":{"atime":1386835304000,"mtime":1384940373000,"ctime":1384940373000},"/package.json":{"atime":1386862710000,"mtime":1386862710000,"ctime":1386862710000},"easy-configuration/package.json":{"atime":1386835040000,"mtime":1385450929000,"ctime":1385450929000}});
+require.__setStats({"/lib/Service.js":{"atime":1386926442000,"mtime":1386926423000,"ctime":1386926423000},"/lib/Helpers.js":{"atime":1386926442000,"mtime":1386926423000,"ctime":1386926423000},"/lib/DI.js":{"atime":1386926442000,"mtime":1386926423000,"ctime":1386926423000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1386923382000,"mtime":1385411214000,"ctime":1385450928000},"recursive-merge/lib/Merge.js":{"atime":1386923382000,"mtime":1385409966000,"ctime":1385450932000},"easy-configuration/lib/Extension.js":{"atime":1386923382000,"mtime":1385411214000,"ctime":1385450928000},"easy-configuration/lib/Helpers.js":{"atime":1386923382000,"mtime":1385411214000,"ctime":1385450928000},"/test/browser/tests/DI.coffee":{"atime":1386926495000,"mtime":1386926494000,"ctime":1386926494000},"/test/browser/tests/Helpers.coffee":{"atime":1386926501000,"mtime":1386926501000,"ctime":1386926501000},"/lib/DIConfigurator.js":{"atime":1386926442000,"mtime":1386926423000,"ctime":1386926423000},"/test/data/Application.coffee":{"atime":1386925844000,"mtime":1386925844000,"ctime":1386925844000},"/test/data/Http.coffee":{"atime":1386923382000,"mtime":1384940373000,"ctime":1384940373000},"/package.json":{"atime":1386923331000,"mtime":1386923331000,"ctime":1386923331000},"easy-configuration/package.json":{"atime":1386923382000,"mtime":1385450929000,"ctime":1385450929000}});
 require.version = '5.5.1';
 
 /** run section **/

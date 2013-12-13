@@ -91,7 +91,7 @@ Custom name:
 ```
 {
 	"setup": {
-		"windowExpose": "configurator"
+		"windowExpose": "secondDI"
 	}
 }
 ```
@@ -252,7 +252,7 @@ var someFunction = function(otherNameForApplicationService) {
 or you can also include services with their full paths
 ```
 var someFunction = function(otherNameForApplicationService) {
-	{'@di:inject': ['$/path/to/application/service']};
+	{'@di:inject': ['$path/to/application/service']};
 
 	otherNameForApplicationService.run();
 };
@@ -313,7 +313,7 @@ or with full module path:
 		"foreignLibrary": {
 			"service": "path/to/service",
 			"arguments": [
-				"$/path/to/translator/module"
+				"$path/to/translator/module"
 			]
 		}
 	}
@@ -350,7 +350,7 @@ di.addService('translator', require('./path/to/translator'))
 di.addService('jquery', 'jquery')
 	.setInstantiate(false);
 
-di.addService('private', '/my/private/service')
+di.addService('private', 'my/private/service')
 	.setAutowired(false);
 ```
 
@@ -389,6 +389,7 @@ $ npm test
 	+ Removed autowiring into `inject` methods (BC break!)
 	+ Added method `getByPath`
 	+ Added basePath option
+	+ Better docs
 
 * 1.8.0
 	+ Better tests (mocha does not need to be installed globally)

@@ -341,6 +341,43 @@ constructor. This also means that you can not register new service with name "di
 di.get('di');
 ```
 
+## Parameters
+
+In documentation of [easy-configuration](https://github.com/sakren/node-easy-configuration) you can see that you can use
+also parameters. This is useful for example for setting your services.
+
+```
+{
+	"parameters": {
+		"database": {
+			"user": "root",
+			"password": "toor"
+		}
+	},
+	"services": {
+		"database": {
+			"service": "database/connection",
+			"arguments": [
+				"%database.user%",
+				"%database.password%"
+			]
+		}
+	}
+}
+```
+
+Credentials for database connection will be root and toor.
+
+Or you can access these parameters from di object.
+
+```
+console.log(di.parameters);							// whole object of expanded parameters
+console.log(di.getParameter('database.user');		// root
+```
+
+`getParameter()` method is just shortcut to [getParameter](https://github.com/sakren/node-easy-configuration/blob/master/src/EasyConfiguration.coffee#L173)
+method in [easy-configuration](https://github.com/sakren/node-easy-configuration).
+
 ## Without configuration
 
 Maybe it will be better for someone to use this DI without configuration, so here is example of application, translator

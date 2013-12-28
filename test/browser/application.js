@@ -1546,6 +1546,8 @@
 	  DIConfigurator = (function() {
 	    DIConfigurator.EXPOSE_NAME = 'di';
 	
+	    DIConfigurator.prototype.config = null;
+	
 	    DIConfigurator.prototype.path = null;
 	
 	    DIConfigurator.prototype.defaultSetup = {
@@ -1567,11 +1569,11 @@
 	    }
 	
 	    DIConfigurator.prototype.create = function() {
-	      var config, configuration, defaultService, defaultSetup, di, expose, method, name, run, s, service, _i, _len, _ref, _ref1;
-	      config = new Configuration(this.path);
+	      var configuration, defaultService, defaultSetup, di, expose, method, name, run, s, service, _i, _len, _ref, _ref1;
+	      this.config = new Configuration(this.path);
 	      defaultService = this.defaultService;
-	      config.addSection('services').loadConfiguration = function() {
-	        var name;
+	      this.config.addSection('services').loadConfiguration = function() {
+	        var config, name;
 	        config = this.getConfig();
 	        for (name in config) {
 	          if (config.hasOwnProperty(name) && (name !== '__proto__')) {
@@ -1581,10 +1583,10 @@
 	        return config;
 	      };
 	      defaultSetup = this.defaultSetup;
-	      config.addSection('setup').loadConfiguration = function() {
+	      this.config.addSection('setup').loadConfiguration = function() {
 	        return this.getConfig(defaultSetup);
 	      };
-	      configuration = config.load();
+	      configuration = this.config.load();
 	      di = new DI;
 	      if (configuration.setup.windowExpose !== null) {
 	        console.log('Option windowExpose is deprecated. Please use expose.');
@@ -1781,7 +1783,7 @@
 	return {
 		"name": "dependency-injection",
 		"description": "Dependency injection with configuration and autowire for node js and browser",
-		"version": "2.0.0",
+		"version": "2.1.0",
 		"author": {
 			"name": "David Kudera",
 			"email": "sakren@gmail.com"
@@ -1875,11 +1877,7 @@
 	  },
 	  "homepage": "https://github.com/sakren/node-easy-configuration",
 	  "_id": "easy-configuration@1.6.6",
-	  "dist": {
-	    "shasum": "db0587409da1302eaefac9c89e1a752d1df18ada"
-	  },
-	  "_from": "easy-configuration@~1.6.6",
-	  "_resolved": "https://registry.npmjs.org/easy-configuration/-/easy-configuration-1.6.6.tgz"
+	  "_from": "easy-configuration@~1.6.6"
 	}
 	
 	}).call(this);
@@ -1889,7 +1887,7 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1386938679000,"mtime":1386938648000,"ctime":1386938648000},"/lib/Helpers.js":{"atime":1386939051000,"mtime":1386939049000,"ctime":1386939049000},"/lib/DI.js":{"atime":1386938679000,"mtime":1386938648000,"ctime":1386938648000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1386923382000,"mtime":1385411214000,"ctime":1385450928000},"recursive-merge/lib/Merge.js":{"atime":1386923382000,"mtime":1385409966000,"ctime":1385450932000},"easy-configuration/lib/Extension.js":{"atime":1386923382000,"mtime":1385411214000,"ctime":1385450928000},"easy-configuration/lib/Helpers.js":{"atime":1386923382000,"mtime":1385411214000,"ctime":1385450928000},"/test/browser/tests/DI.coffee":{"atime":1386926495000,"mtime":1386926494000,"ctime":1386926494000},"/test/browser/tests/Helpers.coffee":{"atime":1386939387000,"mtime":1386939364000,"ctime":1386939364000},"/lib/DIConfigurator.js":{"atime":1386938683000,"mtime":1386938648000,"ctime":1386938648000},"/test/data/Application.coffee":{"atime":1386925844000,"mtime":1386925844000,"ctime":1386925844000},"/test/data/AutowirePath.coffee":{"atime":1386934815000,"mtime":1386934815000,"ctime":1386934815000},"/test/data/Http.coffee":{"atime":1386923382000,"mtime":1384940373000,"ctime":1384940373000},"/package.json":{"atime":1386936604000,"mtime":1386936602000,"ctime":1386936602000},"easy-configuration/package.json":{"atime":1386923382000,"mtime":1385450929000,"ctime":1385450929000}});
+require.__setStats({"/lib/Service.js":{"atime":1388270716000,"mtime":1388270696000,"ctime":1388270696000},"/lib/Helpers.js":{"atime":1388270716000,"mtime":1388270696000,"ctime":1388270696000},"/lib/DI.js":{"atime":1388271105000,"mtime":1388271043000,"ctime":1388271043000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1388270441000,"mtime":1385411214000,"ctime":1385411940000},"recursive-merge/lib/Merge.js":{"atime":1388270447000,"mtime":1385409966000,"ctime":1385411941000},"easy-configuration/lib/Extension.js":{"atime":1388270446000,"mtime":1385411214000,"ctime":1385411940000},"easy-configuration/lib/Helpers.js":{"atime":1388270448000,"mtime":1385411214000,"ctime":1385411940000},"/test/browser/tests/DI.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/browser/tests/Helpers.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/lib/DIConfigurator.js":{"atime":1388270916000,"mtime":1388270737000,"ctime":1388270737000},"/test/data/Application.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1388271222000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1388271061000,"mtime":1388271060000,"ctime":1388271060000},"easy-configuration/package.json":{"atime":1388270238000,"mtime":1385411940000,"ctime":1385411940000}});
 require.version = '5.5.1';
 
 /** run section **/

@@ -51,7 +51,7 @@ class DIConfigurator
 			console.log 'Option windowExpose is deprecated. Please use expose.'
 			configuration.setup.expose = configuration.setup.windowExpose
 
-		expose = configuration.setup.wxpose
+		expose = configuration.setup.expose
 		if expose != false
 			name = if typeof expose == 'string' then expose else DIConfigurator.EXPOSE_NAME
 			if typeof window != 'undefined'

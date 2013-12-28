@@ -7,6 +7,8 @@ class DIConfigurator
 	@EXPOSE_NAME = 'di'
 
 
+	config: null
+
 	path: null
 
 	defaultSetup:
@@ -26,10 +28,10 @@ class DIConfigurator
 
 
 	create: ->
-		config = new Configuration(@path)
+		@config = new Configuration(@path)
 
 		defaultService = @defaultService
-		config.addSection('services').loadConfiguration = ->
+		@config.addSection('services').loadConfiguration = ->
 			config = @getConfig()
 
 			for name of config
@@ -39,10 +41,10 @@ class DIConfigurator
 			return config
 
 		defaultSetup = @defaultSetup
-		config.addSection('setup').loadConfiguration = ->
+		@config.addSection('setup').loadConfiguration = ->
 			return @getConfig(defaultSetup)
 
-		configuration = config.load()
+		configuration = @config.load()
 		di = new DI
 
 		if configuration.setup.windowExpose != null

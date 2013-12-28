@@ -395,6 +395,9 @@ $ npm test
 
 ## Changelog
 
+* 2.1.0
+	+ Added [config](https://github.com/sakren/node-easy-configuration) object do DIConfigurator
+
 * 2.0.1
 	+ Injecting by arguments and hints was not working
 

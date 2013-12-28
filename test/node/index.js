@@ -4,4 +4,6 @@
 
   require('./DI');
 
+  require('./DIConfigurator');
+
 }).call(this);

@@ -4,8 +4,9 @@ Service = require '/lib/Service'
 Application = require '/test/data/Application'
 Http = require '/test/data/Http'
 
-di = null
 dir = '/test/data'
+
+di = null
 
 describe 'DI', ->
 

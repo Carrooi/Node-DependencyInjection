@@ -6,11 +6,12 @@
 			"modules": [
 				"./test/browser/tests/*.coffee",
 				"./lib/*.js",
-				"./test/data/*.coffee"
+				"./test/data/*.<(coffee|json)$>"
 			],
 			"run": [
 				"/test/browser/tests/Helpers",
-				"/test/browser/tests/DI"
+				"/test/browser/tests/DI",
+				"/test/browser/tests/DIConfigurator"
 			]
 		}
 	}

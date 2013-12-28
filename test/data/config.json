@@ -1,0 +1,13 @@
+{
+	"parameters": {
+		"language": "en",
+		"users": {
+			"david": "123456",
+			"admin": "nimda"
+		},
+		"database": {
+			"user": "admin",
+			"password": "%users.admin%"
+		}
+	}
+}

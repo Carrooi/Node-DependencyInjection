@@ -14,9 +14,9 @@
 
   Http = require('../data/Http');
 
-  di = null;
-
   dir = path.resolve(__dirname + '/../data');
+
+  di = null;
 
   describe('DI', function() {
     beforeEach(function() {

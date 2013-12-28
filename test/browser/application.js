@@ -1211,9 +1211,9 @@
 	
 	  Http = require('/test/data/Http');
 	
-	  di = null;
-	
 	  dir = '/test/data';
+	
+	  di = null;
 	
 	  describe('DI', function() {
 	    beforeEach(function() {
@@ -1372,6 +1372,68 @@
 	            return di.inject('');
 	          }).to["throw"](Error, "DI: Inject method can be called only on functions.");
 	        });
+	      });
+	    });
+	  });
+	
+	}).call(this);
+	
+
+}, '/test/browser/tests/DIConfigurator.coffee': function(exports, module) {
+
+	/** node globals **/
+	var require = function(name) {return window.require(name, '/test/browser/tests/DIConfigurator.coffee');};
+	require.resolve = function(name, parent) {if (parent === null) {parent = '/test/browser/tests/DIConfigurator.coffee';} return window.require.resolve(name, parent);};
+	require.define = function(bundle) {window.require.define(bundle);};
+	require.cache = window.require.cache;
+	var __filename = '/test/browser/tests/DIConfigurator.coffee';
+	var __dirname = '/test/browser/tests';
+	var process = {cwd: function() {return '/';}, argv: ['node', '/test/browser/tests/DIConfigurator.coffee'], env: {}};
+
+	/** code **/
+	(function() {
+	  var DI, DIConfigurator, configurator, di, dir;
+	
+	  DI = require('/lib/DI');
+	
+	  DIConfigurator = require('/lib/DIConfigurator');
+	
+	  dir = '/test/data';
+	
+	  di = null;
+	
+	  configurator = null;
+	
+	  describe('DIConfiguration', function() {
+	    beforeEach(function() {
+	      configurator = new DIConfigurator(dir + '/config.json');
+	      di = configurator.create();
+	      return di.basePath = dir;
+	    });
+	    describe('#parameters', function() {
+	      return it('should contain all parameters', function() {
+	        return expect(di.parameters).to.be.eql({
+	          language: 'en',
+	          users: {
+	            david: '123456',
+	            admin: 'nimda'
+	          },
+	          database: {
+	            user: 'admin',
+	            password: 'nimda'
+	          }
+	        });
+	      });
+	    });
+	    return describe('#getParameter()', function() {
+	      it('should throw an error if di object was not created from DIConfigurator', function() {
+	        di = new DI;
+	        return expect(function() {
+	          return di.getParameter('buf');
+	        }).to["throw"](Error, 'DI container was not created with DIConfigurator.');
+	      });
+	      return it('should return expanded parameter', function() {
+	        return expect(di.getParameter('database.password')).to.be.equal('nimda');
 	      });
 	    });
 	  });
@@ -1780,6 +1842,35 @@
 	}).call(this);
 	
 
+}, '/test/data/config.json': function(exports, module) {
+
+	/** node globals **/
+	var require = function(name) {return window.require(name, '/test/data/config.json');};
+	require.resolve = function(name, parent) {if (parent === null) {parent = '/test/data/config.json';} return window.require.resolve(name, parent);};
+	require.define = function(bundle) {window.require.define(bundle);};
+	require.cache = window.require.cache;
+	var __filename = '/test/data/config.json';
+	var __dirname = '/test/data';
+	var process = {cwd: function() {return '/';}, argv: ['node', '/test/data/config.json'], env: {}};
+
+	/** code **/
+	module.exports = (function() {
+	return {
+		"parameters": {
+			"language": "en",
+			"users": {
+				"david": "123456",
+				"admin": "nimda"
+			},
+			"database": {
+				"user": "admin",
+				"password": "%users.admin%"
+			}
+		}
+	}
+	}).call(this);
+	
+
 }, '/package.json': function(exports, module) {
 
 	/** node globals **/
@@ -1900,7 +1991,7 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1388270716000,"mtime":1388270696000,"ctime":1388270696000},"/lib/Helpers.js":{"atime":1388270716000,"mtime":1388270696000,"ctime":1388270696000},"/lib/DI.js":{"atime":1388271660000,"mtime":1388271503000,"ctime":1388271503000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1388270441000,"mtime":1385411214000,"ctime":1385411940000},"recursive-merge/lib/Merge.js":{"atime":1388270447000,"mtime":1385409966000,"ctime":1385411941000},"easy-configuration/lib/Extension.js":{"atime":1388270446000,"mtime":1385411214000,"ctime":1385411940000},"easy-configuration/lib/Helpers.js":{"atime":1388270448000,"mtime":1385411214000,"ctime":1385411940000},"/test/browser/tests/DI.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/browser/tests/Helpers.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/lib/DIConfigurator.js":{"atime":1388271460000,"mtime":1388271428000,"ctime":1388271428000},"/test/data/Application.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1388271222000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1388271061000,"mtime":1388271060000,"ctime":1388271060000},"easy-configuration/package.json":{"atime":1388270238000,"mtime":1385411940000,"ctime":1385411940000}});
+require.__setStats({"/lib/Service.js":{"atime":1388270716000,"mtime":1388270696000,"ctime":1388270696000},"/lib/Helpers.js":{"atime":1388270716000,"mtime":1388270696000,"ctime":1388270696000},"/lib/DI.js":{"atime":1388271660000,"mtime":1388271503000,"ctime":1388271503000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1388270441000,"mtime":1385411214000,"ctime":1385411940000},"recursive-merge/lib/Merge.js":{"atime":1388270447000,"mtime":1385409966000,"ctime":1385411941000},"easy-configuration/lib/Extension.js":{"atime":1388270446000,"mtime":1385411214000,"ctime":1385411940000},"easy-configuration/lib/Helpers.js":{"atime":1388270448000,"mtime":1385411214000,"ctime":1385411940000},"/test/browser/tests/DI.coffee":{"atime":1388272821000,"mtime":1388272742000,"ctime":1388272742000},"/test/browser/tests/DIConfigurator.coffee":{"atime":1388272821000,"mtime":1388272778000,"ctime":1388272778000},"/test/browser/tests/Helpers.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/lib/DIConfigurator.js":{"atime":1388271460000,"mtime":1388271428000,"ctime":1388271428000},"/test/data/Application.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1388271222000,"mtime":1385309217000,"ctime":1385309217000},"/test/data/config.json":{"atime":1388272274000,"mtime":1388272273000,"ctime":1388272273000},"/package.json":{"atime":1388271061000,"mtime":1388271060000,"ctime":1388271060000},"easy-configuration/package.json":{"atime":1388270238000,"mtime":1385411940000,"ctime":1385411940000}});
 require.version = '5.5.1';
 
 /** run section **/
@@ -1910,3 +2001,6 @@ require('/test/browser/tests/Helpers');
 
 /** /test/browser/tests/DI **/
 require('/test/browser/tests/DI');
+
+/** /test/browser/tests/DIConfigurator **/
+require('/test/browser/tests/DIConfigurator');

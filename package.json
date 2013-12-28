@@ -26,9 +26,9 @@
 	},
 	"devDependencies": {
 		"chai": "1.8.1",
-		"mocha": "1.15.1",
-		"mocha-phantomjs": "3.2.0",
-		"phantomjs": "1.9.2-5"
+		"mocha": "1.16.2",
+		"mocha-phantomjs": "3.3.0",
+		"phantomjs": "1.9.2-6"
 	},
 	"scripts": {
 		"test": "npm run test-node && npm run test-browser",

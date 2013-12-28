@@ -6,6 +6,10 @@ class DI
 
 	services: null
 
+	parameters: null
+
+	config: null
+
 	paths: null
 
 	reserved: ['di']
@@ -24,6 +28,13 @@ class DI
 
 		@paths = {}
 		@creating = []
+
+
+	getParameter: (parameter) ->
+		if @config == null
+			throw new Error 'DI container was not created with DIConfigurator.'
+
+		return @config.getParameter(parameter)
 
 
 	getPath: (name) ->

@@ -531,6 +531,10 @@
 	  DI = (function() {
 	    DI.prototype.services = null;
 	
+	    DI.prototype.parameters = null;
+	
+	    DI.prototype.config = null;
+	
 	    DI.prototype.paths = null;
 	
 	    DI.prototype.reserved = ['di'];
@@ -549,6 +553,13 @@
 	      this.paths = {};
 	      this.creating = [];
 	    }
+	
+	    DI.prototype.getParameter = function(parameter) {
+	      if (this.config === null) {
+	        throw new Error('DI container was not created with DIConfigurator.');
+	      }
+	      return this.config.getParameter(parameter);
+	    };
 	
 	    DI.prototype.getPath = function(name) {
 	      return (this.basePath === null ? '' : this.basePath + '/') + name;
@@ -1588,6 +1599,8 @@
 	      };
 	      configuration = this.config.load();
 	      di = new DI;
+	      di.config = this.config;
+	      di.parameters = this.config.parameters;
 	      if (configuration.setup.windowExpose !== null) {
 	        console.log('Option windowExpose is deprecated. Please use expose.');
 	        configuration.setup.expose = configuration.setup.windowExpose;
@@ -1887,7 +1900,7 @@
 , 'recursive-merge': function(exports, module) { module.exports = window.require('recursive-merge/lib/Merge.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1388270716000,"mtime":1388270696000,"ctime":1388270696000},"/lib/Helpers.js":{"atime":1388270716000,"mtime":1388270696000,"ctime":1388270696000},"/lib/DI.js":{"atime":1388271105000,"mtime":1388271043000,"ctime":1388271043000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1388270441000,"mtime":1385411214000,"ctime":1385411940000},"recursive-merge/lib/Merge.js":{"atime":1388270447000,"mtime":1385409966000,"ctime":1385411941000},"easy-configuration/lib/Extension.js":{"atime":1388270446000,"mtime":1385411214000,"ctime":1385411940000},"easy-configuration/lib/Helpers.js":{"atime":1388270448000,"mtime":1385411214000,"ctime":1385411940000},"/test/browser/tests/DI.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/browser/tests/Helpers.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/lib/DIConfigurator.js":{"atime":1388271289000,"mtime":1388271273000,"ctime":1388271273000},"/test/data/Application.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1388271222000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1388271061000,"mtime":1388271060000,"ctime":1388271060000},"easy-configuration/package.json":{"atime":1388270238000,"mtime":1385411940000,"ctime":1385411940000}});
+require.__setStats({"/lib/Service.js":{"atime":1388270716000,"mtime":1388270696000,"ctime":1388270696000},"/lib/Helpers.js":{"atime":1388270716000,"mtime":1388270696000,"ctime":1388270696000},"/lib/DI.js":{"atime":1388271660000,"mtime":1388271503000,"ctime":1388271503000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1388270441000,"mtime":1385411214000,"ctime":1385411940000},"recursive-merge/lib/Merge.js":{"atime":1388270447000,"mtime":1385409966000,"ctime":1385411941000},"easy-configuration/lib/Extension.js":{"atime":1388270446000,"mtime":1385411214000,"ctime":1385411940000},"easy-configuration/lib/Helpers.js":{"atime":1388270448000,"mtime":1385411214000,"ctime":1385411940000},"/test/browser/tests/DI.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/browser/tests/Helpers.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/lib/DIConfigurator.js":{"atime":1388271460000,"mtime":1388271428000,"ctime":1388271428000},"/test/data/Application.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1388270225000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1388271222000,"mtime":1385309217000,"ctime":1385309217000},"/package.json":{"atime":1388271061000,"mtime":1388271060000,"ctime":1388271060000},"easy-configuration/package.json":{"atime":1388270238000,"mtime":1385411940000,"ctime":1385411940000}});
 require.version = '5.5.1';
 
 /** run section **/

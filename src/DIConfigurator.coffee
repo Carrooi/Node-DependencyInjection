@@ -47,6 +47,9 @@ class DIConfigurator
 		configuration = @config.load()
 		di = new DI
 
+		di.config = @config
+		di.parameters = @config.parameters
+
 		if configuration.setup.windowExpose != null
 			console.log 'Option windowExpose is deprecated. Please use expose.'
 			configuration.setup.expose = configuration.setup.windowExpose

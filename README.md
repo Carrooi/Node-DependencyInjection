@@ -398,6 +398,7 @@ $ npm test
 * 2.1.0
 	+ Added [config](https://github.com/sakren/node-easy-configuration) object do DIConfigurator
 	+ Bug with exposing
+	+ Accessing parameters from di instance
 
 * 2.0.1
 	+ Injecting by arguments and hints was not working

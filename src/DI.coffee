@@ -62,14 +62,14 @@ class DI
 	createInstance: (service, args = [], instantiate = true) ->
 		if instantiate == true
 			if Object.prototype.toString.call(service.prototype.constructor) == '[Function]'
-				service = @inject(service, {}, args)
+				service = @inject(service, args, {})
 			else
 				service = Helpers.createInstance(service, args, @)
 
 		return service
 
 
-	inject: (fn, scope = {}, args = []) ->
+	inject: (fn, args = [], scope = {}) ->
 		if fn !instanceof Function
 			throw new Error 'DI: Inject method can be called only on functions.'
 

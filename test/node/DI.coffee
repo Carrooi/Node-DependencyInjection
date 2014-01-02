@@ -50,7 +50,7 @@ describe 'DI', ->
 		it 'should throw an error when service to inject does not exists', ->
 			delete di.services.http
 			app = di.createInstance(Application)
-			expect( -> di.inject(app.setHttp, app)).to.throw(Error, "DI: Service 'http' was not found.")
+			expect( -> di.inject(app.setHttp, [], app)).to.throw(Error, "DI: Service 'http' was not found.")
 
 	describe '#findDefinitionByName()', ->
 

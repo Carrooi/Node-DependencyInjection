@@ -57,7 +57,7 @@
         delete di.services.http;
         app = di.createInstance(Application);
         return expect(function() {
-          return di.inject(app.setHttp, app);
+          return di.inject(app.setHttp, [], app);
         }).to["throw"](Error, "DI: Service 'http' was not found.");
       });
     });

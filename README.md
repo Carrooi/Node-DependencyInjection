@@ -426,6 +426,16 @@ di.inject(function(application) {
 });
 ```
 
+or with arguments
+
+```
+di.inject(function(application, path) {
+	application.setPath(path);
+}, ['...', '/path/to/some/folder']);		// syntax is same like in configuration
+```
+
+you can of course use also autowire hints.
+
 ## Tests
 
 ```
@@ -436,6 +446,7 @@ $ npm test
 
 * 2.1.1
 	+ Hints has exactly the same syntax as arguments configuration
+	+ Inject method's second argument is args, not scope (BC break!)
 
 * 2.1.0
 	+ Added [config](https://github.com/sakren/node-easy-configuration) object do DIConfigurator

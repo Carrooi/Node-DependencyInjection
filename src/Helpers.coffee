@@ -90,18 +90,13 @@ class Helpers
 		dots = false
 		previousDots = false
 
-		args = Helpers.clone(args)
-		originalArgs = args
-
 		hints = Helpers.getHintArguments(method)
-
 		if hints != null
-			args = Helpers.clone(hints)
+			args = hints
+
+		args = Helpers.clone(args)
 
 		for parameter, i in Helpers.getArguments(method)
-			if args[0] == '...' && hints != null
-				args[0] = originalArgs[i]
-
 			if typeof args[0] != 'undefined' && args[0] == '...'
 				dots = true
 

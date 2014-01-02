@@ -82,10 +82,25 @@ describe 'Helpers', ->
 			expect(args[0]).to.be.a('function')
 			expect(args[0]()).to.be.an.instanceof(AutowirePath)
 
-		it 'should inject services to another service with argument and hint', ->
-			fn = (something, sameThing) -> '@di:inject': ['...', '@data']
-			di.addService('data', ['one']).setInstantiate(false)
-			expect(Helpers.autowireArguments(fn, ['@data'], di)).to.be.eql([['one'], ['one']])
+		it 'should inject services replaced with dots in the end of hints', ->
+			fn = (first, second, third) ->
+				'@di:inject': ['test', '...']
+				return arguments
+
+			di.addService('second', ['second item']).instantiate = false
+			di.addService('third', ['third item']).instantiate = false
+
+			expect(Helpers.autowireArguments(fn, [], di)).to.be.eql(['test', ['second item'], ['third item']])
+
+		it 'should inject services replaced with dots in the beginning of hints', ->
+			fn = (first, second, third) ->
+				'@di:inject': ['...', 'test']
+				return arguments
+
+			di.addService('first', ['first item']).instantiate = false
+			di.addService('second', ['second item']).instantiate = false
+
+			expect(Helpers.autowireArguments(fn, [], di)).to.be.eql([['first item'], ['second item'], 'test'])
 
 		it 'should inject services replaced with dots in the end', ->
 			fn = (first, second, third) -> return arguments

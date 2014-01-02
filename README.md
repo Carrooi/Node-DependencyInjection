@@ -268,6 +268,8 @@ var someFunction = function(otherNameForApplicationService) {
 };
 ```
 
+These hints has got the same syntax as arguments configuration.
+
 ### Disable autowiring
 
 If you want to disable autowiring for some service, you can set "autowired" option to false in your config (like instantiate).
@@ -431,6 +433,9 @@ $ npm test
 ```
 
 ## Changelog
+
+* 2.1.1
+	+ Hints has exactly the same syntax as arguments configuration
 
 * 2.1.0
 	+ Added [config](https://github.com/sakren/node-easy-configuration) object do DIConfigurator

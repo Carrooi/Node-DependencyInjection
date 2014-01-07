@@ -1542,11 +1542,13 @@
 
 	/** code **/
 	(function() {
-	  var DI, DIConfigurator, configurator, di, dir;
+	  var Configuration, DI, DIConfigurator, configurator, di, dir;
 	
 	  DI = require('/lib/DI');
 	
 	  DIConfigurator = require('/lib/DIConfigurator');
+	
+	  Configuration = require('easy-configuration');
 	
 	  dir = '/test/data';
 	
@@ -1561,10 +1563,20 @@
 	      return di.basePath = dir;
 	    });
 	    describe('#constructor()', function() {
-	      return it('should throw an error for relative paths', function() {
+	      it('should throw an error for relative paths', function() {
 	        return expect(function() {
 	          return new DIConfigurator('../data/config.json');
 	        }).to["throw"](Error, 'Relative paths to config files are not supported in browser.');
+	      });
+	      return it('should create di with custom configurator object', function() {
+	        var config;
+	        config = new Configuration;
+	        config.addConfig("" + dir + "/config.json");
+	        config.addConfig("" + dir + "/sections.json", 'local');
+	        configurator = new DIConfigurator(config);
+	        di = configurator.create();
+	        expect(di).to.be.an["instanceof"](DI);
+	        return expect(di.parameters.users.david).to.be.equal('divad');
 	      });
 	    });
 	    describe('#parameters', function() {
@@ -1817,22 +1829,28 @@
 	      setup: {}
 	    };
 	
-	    function DIConfigurator(_path) {
+	    function DIConfigurator(pathOrConfig) {
 	      var stack;
-	      if (_path[0] === '.' && isWindow) {
-	        throw new Error('Relative paths to config files are not supported in browser.');
+	      if (typeof pathOrConfig === 'string') {
+	        if (pathOrConfig[0] === '.' && isWindow) {
+	          throw new Error('Relative paths to config files are not supported in browser.');
+	        }
+	        if (pathOrConfig[0] === '.') {
+	          stack = callsite();
+	          this.basePath = path.dirname(stack[1].getFileName());
+	          pathOrConfig = path.join(this.basePath, pathOrConfig);
+	        }
+	        this.path = pathOrConfig;
+	        this.config = new Configuration(this.path);
+	      } else if (pathOrConfig instanceof Configuration) {
+	        this.config = pathOrConfig;
+	      } else {
+	        throw new Error('Bad argument');
 	      }
-	      if (_path[0] === '.') {
-	        stack = callsite();
-	        this.basePath = path.dirname(stack[1].getFileName());
-	        _path = path.join(this.basePath, _path);
-	      }
-	      this.path = _path;
 	    }
 	
 	    DIConfigurator.prototype.create = function() {
 	      var configuration, defaultService, defaultSetup, di, expose, method, name, run, s, service, _i, _len, _ref, _ref1;
-	      this.config = new Configuration(this.path);
 	      defaultService = this.defaultService;
 	      this.config.addSection('services').loadConfiguration = function() {
 	        var config, name;
@@ -2063,6 +2081,31 @@
 	}).call(this);
 	
 
+}, '/test/data/sections.json': function(exports, module) {
+
+	/** node globals **/
+	var require = function(name) {return window.require(name, '/test/data/sections.json');};
+	require.resolve = function(name, parent) {if (parent === null) {parent = '/test/data/sections.json';} return window.require.resolve(name, parent);};
+	require.define = function(bundle) {window.require.define(bundle);};
+	require.cache = window.require.cache;
+	var __filename = '/test/data/sections.json';
+	var __dirname = '/test/data';
+	var process = {cwd: function() {return '/';}, argv: ['node', '/test/data/sections.json'], env: {}};
+
+	/** code **/
+	module.exports = (function() {
+	return {
+		"local": {
+			"parameters": {
+				"users": {
+					"david": "divad"
+				}
+			}
+		}
+	}
+	}).call(this);
+	
+
 }, '/package.json': function(exports, module) {
 
 	/** node globals **/
@@ -2241,7 +2284,7 @@
 , 'callsite': function(exports, module) { module.exports = window.require('callsite/index.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1389081257000,"mtime":1389081238000,"ctime":1389081238000},"/lib/Helpers.js":{"atime":1389083391000,"mtime":1389083372000,"ctime":1389083372000},"/lib/Defaults.js":{"atime":1389090301000,"mtime":1389090229000,"ctime":1389090229000},"/lib/DI.js":{"atime":1389088852000,"mtime":1389088849000,"ctime":1389088849000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1389108603000,"mtime":1389106575000,"ctime":1389108599000},"recursive-merge/lib/Merge.js":{"atime":1389108685000,"mtime":1385409966000,"ctime":1389108599000},"easy-configuration/lib/Extension.js":{"atime":1389108603000,"mtime":1389093412000,"ctime":1389108599000},"easy-configuration/lib/Helpers.js":{"atime":1389108603000,"mtime":1389093412000,"ctime":1389108599000},"callsite/index.js":{"atime":1389081083000,"mtime":1359062982000,"ctime":1389081065000},"/test/browser/tests/DI.coffee":{"atime":1389090301000,"mtime":1389090257000,"ctime":1389090257000},"/test/browser/tests/DIConfigurator.coffee":{"atime":1389082345000,"mtime":1389082317000,"ctime":1389082317000},"/test/browser/tests/Helpers.coffee":{"atime":1389081274000,"mtime":1388655455000,"ctime":1388655455000},"/lib/DIConfigurator.js":{"atime":1389083042000,"mtime":1389083040000,"ctime":1389083040000},"/test/data/Application.coffee":{"atime":1389081274000,"mtime":1386925844000,"ctime":1386925844000},"/test/data/AutowirePath.coffee":{"atime":1389081274000,"mtime":1386934815000,"ctime":1386934815000},"/test/data/Http.coffee":{"atime":1389081274000,"mtime":1384940373000,"ctime":1384940373000},"/test/data/config.json":{"atime":1389081274000,"mtime":1388653053000,"ctime":1388653053000},"/package.json":{"atime":1389108675000,"mtime":1389108671000,"ctime":1389108671000},"easy-configuration/package.json":{"atime":1389108603000,"mtime":1389108599000,"ctime":1389108599000},"callsite/package.json":{"atime":1389081083000,"mtime":1389081065000,"ctime":1389081065000}});
+require.__setStats({"/lib/Service.js":{"atime":1389081257000,"mtime":1389081238000,"ctime":1389081238000},"/lib/Helpers.js":{"atime":1389083391000,"mtime":1389083372000,"ctime":1389083372000},"/lib/Defaults.js":{"atime":1389090301000,"mtime":1389090229000,"ctime":1389090229000},"/lib/DI.js":{"atime":1389088852000,"mtime":1389088849000,"ctime":1389088849000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1389108603000,"mtime":1389106575000,"ctime":1389108599000},"recursive-merge/lib/Merge.js":{"atime":1389108685000,"mtime":1385409966000,"ctime":1389108599000},"easy-configuration/lib/Extension.js":{"atime":1389108603000,"mtime":1389093412000,"ctime":1389108599000},"easy-configuration/lib/Helpers.js":{"atime":1389108603000,"mtime":1389093412000,"ctime":1389108599000},"callsite/index.js":{"atime":1389081083000,"mtime":1359062982000,"ctime":1389081065000},"/test/browser/tests/DI.coffee":{"atime":1389090301000,"mtime":1389090257000,"ctime":1389090257000},"/test/browser/tests/DIConfigurator.coffee":{"atime":1389109579000,"mtime":1389109576000,"ctime":1389109576000},"/test/browser/tests/Helpers.coffee":{"atime":1389081274000,"mtime":1388655455000,"ctime":1388655455000},"/lib/DIConfigurator.js":{"atime":1389109096000,"mtime":1389109089000,"ctime":1389109089000},"/test/data/Application.coffee":{"atime":1389081274000,"mtime":1386925844000,"ctime":1386925844000},"/test/data/AutowirePath.coffee":{"atime":1389081274000,"mtime":1386934815000,"ctime":1386934815000},"/test/data/Http.coffee":{"atime":1389081274000,"mtime":1384940373000,"ctime":1384940373000},"/test/data/config.json":{"atime":1389081274000,"mtime":1388653053000,"ctime":1388653053000},"/test/data/sections.json":{"atime":1389109390000,"mtime":1389109389000,"ctime":1389109389000},"/package.json":{"atime":1389108675000,"mtime":1389108671000,"ctime":1389108671000},"easy-configuration/package.json":{"atime":1389108603000,"mtime":1389108599000,"ctime":1389108599000},"callsite/package.json":{"atime":1389081083000,"mtime":1389081065000,"ctime":1389081065000}});
 require.version = '5.5.1';
 
 /** run section **/

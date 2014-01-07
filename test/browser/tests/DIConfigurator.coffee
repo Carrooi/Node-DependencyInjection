@@ -1,5 +1,6 @@
 DI = require '/lib/DI'
 DIConfigurator = require '/lib/DIConfigurator'
+Configuration = require 'easy-configuration'
 
 dir = '/test/data'
 
@@ -18,6 +19,15 @@ describe 'DIConfiguration', ->
 
 		it 'should throw an error for relative paths', ->
 			expect( -> new DIConfigurator('../data/config.json')).to.throw(Error, 'Relative paths to config files are not supported in browser.')
+
+		it 'should create di with custom configurator object', ->
+			config = new Configuration
+			config.addConfig("#{dir}/config.json")
+			config.addConfig("#{dir}/sections.json", 'local')
+			configurator = new DIConfigurator(config)
+			di = configurator.create()
+			expect(di).to.be.an.instanceof(DI)
+			expect(di.parameters.users.david).to.be.equal('divad')
 
 	describe '#parameters', ->
 

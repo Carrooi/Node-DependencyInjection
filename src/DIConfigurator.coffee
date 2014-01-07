@@ -32,21 +32,27 @@ class DIConfigurator
 		setup: {}
 
 
-	constructor: (_path) ->
-		if _path[0] == '.' && isWindow
-			throw new Error 'Relative paths to config files are not supported in browser.'
+	constructor: (pathOrConfig) ->
+		if typeof pathOrConfig == 'string'
+			if pathOrConfig[0] == '.' && isWindow
+				throw new Error 'Relative paths to config files are not supported in browser.'
 
-		if _path[0] == '.'
-			stack = callsite()
-			@basePath = path.dirname(stack[1].getFileName())
-			_path = path.join(@basePath, _path)
+			if pathOrConfig[0] == '.'
+				stack = callsite()
+				@basePath = path.dirname(stack[1].getFileName())
+				pathOrConfig = path.join(@basePath, pathOrConfig)
 
-		@path = _path
+			@path = pathOrConfig
+			@config = new Configuration(@path)
+
+		else if pathOrConfig instanceof Configuration
+			@config = pathOrConfig
+
+		else
+			throw new Error 'Bad argument'
 
 
 	create: ->
-		@config = new Configuration(@path)
-
 		defaultService = @defaultService
 		@config.addSection('services').loadConfiguration = ->
 			config = @getConfig()

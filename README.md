@@ -395,6 +395,22 @@ console.log(di.getParameter('database.user');		// root
 `getParameter()` method is just shortcut to [getParameter](https://github.com/sakren/node-easy-configuration/blob/master/src/EasyConfiguration.coffee#L173)
 method in [easy-configuration](https://github.com/sakren/node-easy-configuration).
 
+## Advanced configuration
+
+If you need more control over configuration, you can create instance of `easy-configuration` object on your own and pass
+it to DIConfigurator.
+
+```
+var Config = require('easy-configuration');
+var DIConfigurator = require('dependency-injection/DIConfigurator');
+
+var config = new Config;
+config.addConfig('./path/to/config.json', 'development');
+
+var configurator = new DIConfigurator(config);
+var di = configurator.create();
+```
+
 ## Without configuration
 
 Maybe it will be better for someone to use this DI without configuration, so here is example of application, translator

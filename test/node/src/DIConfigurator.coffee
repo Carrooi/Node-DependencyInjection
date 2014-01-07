@@ -3,6 +3,7 @@ path = require 'path'
 
 DI = require '../../../lib/DI'
 DIConfigurator = require '../../../lib/DIConfigurator'
+Configuration = require 'easy-configuration'
 
 dir = path.resolve(__dirname + '/../../data')
 
@@ -23,6 +24,15 @@ describe 'DIConfiguration', ->
 			configurator = new DIConfigurator('../../data/config.json')
 			expect(configurator.path).to.be.equal(dir + '/config.json')
 			expect(configurator.create().parameters.language).to.be.equal('en')
+
+		it 'should create di with custom configurator object', ->
+			config = new Configuration
+			config.addConfig('../../data/config.json')
+			config.addConfig('../../data/sections.json', 'local')
+			configurator = new DIConfigurator(config)
+			di = configurator.create()
+			expect(di).to.be.an.instanceof(DI)
+			expect(di.parameters.users.david).to.be.equal('divad')
 
 	describe '#parameters', ->
 

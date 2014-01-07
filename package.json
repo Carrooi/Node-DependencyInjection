@@ -22,14 +22,14 @@
 	},
 	"main": "./lib/DI",
 	"dependencies": {
-		"easy-configuration": "1.6.6",
-		"callsite": "1.0.0"
+		"easy-configuration": "~2.0.0",
+		"callsite": "~1.0.0"
 	},
 	"devDependencies": {
-		"chai": "1.8.1",
-		"mocha": "1.16.2",
-		"mocha-phantomjs": "3.3.0",
-		"phantomjs": "1.9.2-6"
+		"chai": "~1.8.1",
+		"mocha": "~1.16.2",
+		"mocha-phantomjs": "~3.3.1",
+		"phantomjs": "~1.9.2-6"
 	},
 	"scripts": {
 		"test": "npm run test-node && npm run test-browser",

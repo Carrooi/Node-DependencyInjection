@@ -1,13 +1,13 @@
 expect = require('chai').expect
 path = require 'path'
 
-DI = require '../../lib/DI'
-Service = require '../../lib/Service'
-Helpers = require '../../lib/Helpers'
+DI = require '../../../lib/DI'
+Service = require '../../../lib/Service'
+Helpers = require '../../../lib/Helpers'
 
-Application = require '../data/Application'
-Http = require '../data/Http'
-AutowirePath = require '../data/AutowirePath'
+Application = require '../../data/Application'
+Http = require '../../data/Http'
+AutowirePath = require '../../data/AutowirePath'
 
 di = null
 dir = '/test/data'
@@ -16,7 +16,7 @@ describe 'Helpers', ->
 
 	beforeEach( ->
 		di = new DI
-		di.basePath = path.resolve(__dirname + '/../..')
+		di.basePath = path.resolve(__dirname + '/../../..')
 	)
 
 	describe '#createInstance()', ->

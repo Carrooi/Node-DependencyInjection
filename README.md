@@ -455,6 +455,7 @@ $ npm test
 
 * 2.2.0
 	+ Relative paths to config files
+	+ Little updates in tests
 
 * 2.1.1
 	+ Hints has exactly the same syntax as arguments configuration

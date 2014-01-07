@@ -6,11 +6,11 @@
 
   path = require('path');
 
-  DI = require('../../lib/DI');
+  DI = require('../../../lib/DI');
 
-  DIConfigurator = require('../../lib/DIConfigurator');
+  DIConfigurator = require('../../../lib/DIConfigurator');
 
-  dir = path.resolve(__dirname + '/../data');
+  dir = path.resolve(__dirname + '/../../data');
 
   di = null;
 
@@ -24,7 +24,7 @@
     });
     describe('#constructor()', function() {
       return it('should resolve relative path to absolute path', function() {
-        configurator = new DIConfigurator('../data/config.json');
+        configurator = new DIConfigurator('../../data/config.json');
         expect(configurator.path).to.be.equal(dir + '/config.json');
         return expect(configurator.create().parameters.language).to.be.equal('en');
       });

@@ -6,15 +6,15 @@
 
   path = require('path');
 
-  DI = require('../../lib/DI');
+  DI = require('../../../lib/DI');
 
-  Service = require('../../lib/Service');
+  Service = require('../../../lib/Service');
 
-  Application = require('../data/Application');
+  Application = require('../../data/Application');
 
-  Http = require('../data/Http');
+  Http = require('../../data/Http');
 
-  dir = path.resolve(__dirname + '/../data');
+  dir = path.resolve(__dirname + '/../../data');
 
   di = null;
 

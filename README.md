@@ -25,8 +25,9 @@ $ npm install dependency-injection
 
 ## Configuration
 
-You can see full documentation of easy-configuration [here](https://npmjs.org/package/easy-configuration). This package
-is used for configuration your services (classes).
+Please first read full documentation of [easy-configuration](https://github.com/sakren/node-easy-configuration). It will
+really help you.
+
 
 ```
 {
@@ -462,6 +463,8 @@ $ npm test
 	+ Relative paths to config files
 	+ Little updates in tests
 	+ Added default services
+	+ Better documentation
+	+ Many improvements in configuration (see [easy-configuration](https://github.com/sakren/node-easy-configuration))
 
 * 2.1.1
 	+ Hints has exactly the same syntax as arguments configuration

@@ -25,6 +25,10 @@ class Helpers
 		return result
 
 
+	@dirname: (path) ->
+
+
+
 	@log: (message) ->
 		if console?.log?
 			console.log(message)

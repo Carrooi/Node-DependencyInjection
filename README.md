@@ -55,11 +55,12 @@ argument will be passed into this object property.
 
 ```
 var DIConfigurator = require('dependency-injection/DIConfigurator');
-var configurator = new DIConfigurator('/path/to/your/configuration/file.json');
+var configurator = new DIConfigurator('./path/to/your/configuration/file.json');
 
 var di = configurator.create();
-di.basePath = __dirname;
 ```
+
+**Relative paths to config files are supported only on node (not in browser)!!!**
 
 This will create new instance of DI class which holding all your services.
 
@@ -72,6 +73,14 @@ In example below, you can see how to get your services.
 di.get('application');
 di.create('application');
 di.getFactory('application');
+```
+
+## Base path to services
+
+Default base path in node is directory of file from which you are initializing DI. You have to set this manually in browser.
+
+```
+di.basePath = __dirname;
 ```
 
 ## Auto exposing into global
@@ -443,6 +452,9 @@ $ npm test
 ```
 
 ## Changelog
+
+* 2.2.0
+	+ Relative paths to config files
 
 * 2.1.1
 	+ Hints has exactly the same syntax as arguments configuration

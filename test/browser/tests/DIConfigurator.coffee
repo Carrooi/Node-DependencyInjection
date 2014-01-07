@@ -14,6 +14,11 @@ describe 'DIConfiguration', ->
 		di.basePath = dir
 	)
 
+	describe '#constructor()', ->
+
+		it 'should throw an error for relative paths', ->
+			expect( -> new DIConfigurator('../data/config.json')).to.throw(Error, 'Relative paths to config files are not supported in browser.')
+
 	describe '#parameters', ->
 
 		it 'should contain all parameters', ->

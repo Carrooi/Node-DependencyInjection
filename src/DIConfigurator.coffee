@@ -1,6 +1,12 @@
 DI = require './DI'
 Configuration = require 'easy-configuration'
 
+isWindow = typeof window != 'undefined'
+
+if !isWindow
+	callsite = require 'callsite'
+	path = require 'path'
+
 class DIConfigurator
 
 
@@ -10,6 +16,8 @@ class DIConfigurator
 	config: null
 
 	path: null
+
+	basePath: null
 
 	defaultSetup:
 		windowExpose: null		# deprecated
@@ -24,7 +32,16 @@ class DIConfigurator
 		setup: {}
 
 
-	constructor: (@path) ->
+	constructor: (_path) ->
+		if _path[0] == '.' && isWindow
+			throw new Error 'Relative paths to config files are not supported in browser.'
+
+		if _path[0] == '.'
+			stack = callsite()
+			@basePath = path.dirname(stack[1].getFileName())
+			_path = path.join(@basePath, _path)
+
+		@path = _path
 
 
 	create: ->
@@ -46,6 +63,9 @@ class DIConfigurator
 
 		configuration = @config.load()
 		di = new DI
+
+		if @basePath != null
+			di.basePath = @basePath
 
 		di.config = @config
 		di.parameters = @config.parameters

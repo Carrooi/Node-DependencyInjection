@@ -22,6 +22,13 @@
       di = configurator.create();
       return di.basePath = dir;
     });
+    describe('#constructor()', function() {
+      return it('should resolve relative path to absolute path', function() {
+        configurator = new DIConfigurator('../data/config.json');
+        expect(configurator.path).to.be.equal(dir + '/config.json');
+        return expect(configurator.create().parameters.language).to.be.equal('en');
+      });
+    });
     describe('#parameters', function() {
       return it('should contain all parameters', function() {
         return expect(di.parameters).to.be.eql({

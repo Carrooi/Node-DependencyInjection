@@ -17,6 +17,13 @@ describe 'DIConfiguration', ->
 		di.basePath = dir
 	)
 
+	describe '#constructor()', ->
+
+		it 'should resolve relative path to absolute path', ->
+			configurator = new DIConfigurator('../data/config.json')
+			expect(configurator.path).to.be.equal(dir + '/config.json')
+			expect(configurator.create().parameters.language).to.be.equal('en')
+
 	describe '#parameters', ->
 
 		it 'should contain all parameters', ->

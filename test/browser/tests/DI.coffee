@@ -14,6 +14,24 @@ describe 'DI', ->
 		di = new DI
 	)
 
+	describe 'defaults', ->
+
+		it 'should be added di into services', ->
+			expect(di.get('di')).to.be.equal(di)
+
+		it 'should be added timer service', (done) ->
+			timer = di.get('timer')
+			expect(timer).to.have.keys(['setTimeout', 'setInterval', 'clearTimeout', 'clearInterval'])
+			timer.setTimeout( ->
+				done()
+			, 100)
+
+		it 'should be added window object service', ->
+			expect(di.get('window')).to.be.equal(window)
+
+		it 'should be added document object service', ->
+			expect(di.get('document')).to.be.equal(window.document)
+
 	describe '#addService()', ->
 
 		it 'should return instance of new Service class from object', ->

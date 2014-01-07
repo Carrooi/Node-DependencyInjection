@@ -22,6 +22,22 @@
     beforeEach(function() {
       return di = new DI;
     });
+    describe('defaults', function() {
+      it('should be added di into services', function() {
+        return expect(di.get('di')).to.be.equal(di);
+      });
+      it('should be added timer service', function(done) {
+        var timer;
+        timer = di.get('timer');
+        expect(timer).to.have.keys(['setTimeout', 'setInterval', 'clearTimeout', 'clearInterval']);
+        return timer.setTimeout(function() {
+          return done();
+        }, 100);
+      });
+      return it('should be added global object service', function() {
+        return expect(di.get('global')).to.be.equal(global);
+      });
+    });
     describe('#addService()', function() {
       it('should return instance of new Service class from object', function() {
         return expect(di.addService('array', Array)).to.be.an["instanceof"](Service);

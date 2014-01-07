@@ -343,10 +343,15 @@ or with full module path:
 
 Now this `foreignLibrary` will gets your `translator` service in constructor.
 
-## Autowiring DI
+## Default services
 
-Autowiring DI container is also possible. Only thing you need to do, is set argument with name "di" into your method or
-constructor. This also means that you can not register new service with name "di".
+There are already prepared some services.
+
+* `di`: di container itself
+* `timer`: object with `setTimeout`, `setInterval`, `clearTimeout` and `clearInterval` methods
+* `window`: window object (browser only)
+* `document`: window.document object (browser only)
+* `global`: global object (node.js only)
 
 ```
 di.get('di');
@@ -456,6 +461,7 @@ $ npm test
 * 2.2.0
 	+ Relative paths to config files
 	+ Little updates in tests
+	+ Added default services
 
 * 2.1.1
 	+ Hints has exactly the same syntax as arguments configuration

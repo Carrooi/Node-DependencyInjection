@@ -1,5 +1,6 @@
 Service = require './Service'
 Helpers = require './Helpers'
+Defaults = require './Defaults'
 
 class DI
 
@@ -20,14 +21,11 @@ class DI
 
 
 	constructor: ->
-		di = new Service(@, 'di', @)
-		di.instantiate = false
-
-		@services =
-			di: di
-
+		@services = {}
 		@paths = {}
 		@creating = []
+
+		new Defaults(@)
 
 
 	getParameter: (parameter) ->
@@ -42,7 +40,7 @@ class DI
 
 
 	addService: (name, service, args = []) ->
-		if name in @reserved
+		if name in @reserved && typeof @services[name] != 'undefined'
 			throw new Error "DI: name '#{name}' is reserved by DI."
 
 		if typeof service == 'string'

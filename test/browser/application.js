@@ -2122,7 +2122,7 @@
 	return {
 		"name": "dependency-injection",
 		"description": "Dependency injection with configuration and autowire for node js and browser",
-		"version": "2.1.1",
+		"version": "2.2.0",
 		"author": {
 			"name": "David Kudera",
 			"email": "sakren@gmail.com"
@@ -2155,7 +2155,7 @@
 		"scripts": {
 			"test": "npm run test-node && npm run test-browser",
 			"build-and-test": "npm run test-build && npm run test",
-			"test-build": "cd ./test/browser; simq build;",
+			"test-build": "coffee -co ./test/node/lib ./test/node/src; cd ./test/browser; simq build;",
 			"test-node": "mocha ./test/node/index.js --reporter spec",
 			"test-browser": "mocha-phantomjs ./test/browser/index.html"
 		}
@@ -2225,7 +2225,11 @@
 	  },
 	  "homepage": "https://github.com/sakren/node-easy-configuration",
 	  "_id": "easy-configuration@2.0.0",
-	  "_from": "easy-configuration@~2.0.0"
+	  "dist": {
+	    "shasum": "4c9f6e38b568c42eba3f45c88107572f24cc3aab"
+	  },
+	  "_from": "easy-configuration@~2.0.0",
+	  "_resolved": "https://registry.npmjs.org/easy-configuration/-/easy-configuration-2.0.0.tgz"
 	}
 	
 	}).call(this);
@@ -2269,11 +2273,7 @@
 	  "readme": "# callstack\n\n  Access to v8's \"raw\" `CallSite`s.\n\n## Installation\n\n    $ npm install callsite\n\n## Example\n\n```js\nvar stack = require('callsite');\n\nfoo();\n\nfunction foo() {\n  bar();\n}\n\nfunction bar() {\n  baz();\n}\n\nfunction baz() {\n  console.log();\n  stack().forEach(function(site){\n    console.log('  \\033[36m%s\\033[90m in %s:%d\\033[0m'\n      , site.getFunctionName() || 'anonymous'\n      , site.getFileName()\n      , site.getLineNumber());\n  });\n  console.log();\n}\n```\n\n## Why?\n\n  Because you can do weird, stupid, clever, wacky things such as:\n\n  - [better-assert](https://github.com/visionmedia/better-assert)\n\n## License\n\n  MIT\n",
 	  "readmeFilename": "Readme.md",
 	  "_id": "callsite@1.0.0",
-	  "dist": {
-	    "shasum": "5bd0a21871110cc4720abf4d8498bab17a74c902"
-	  },
-	  "_from": "callsite@1.0.0",
-	  "_resolved": "https://registry.npmjs.org/callsite/-/callsite-1.0.0.tgz"
+	  "_from": "callsite@~1.0.0"
 	}
 	
 	}).call(this);
@@ -2284,7 +2284,7 @@
 , 'callsite': function(exports, module) { module.exports = window.require('callsite/index.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1389081257000,"mtime":1389081238000,"ctime":1389081238000},"/lib/Helpers.js":{"atime":1389083391000,"mtime":1389083372000,"ctime":1389083372000},"/lib/Defaults.js":{"atime":1389090301000,"mtime":1389090229000,"ctime":1389090229000},"/lib/DI.js":{"atime":1389088852000,"mtime":1389088849000,"ctime":1389088849000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1389108603000,"mtime":1389106575000,"ctime":1389108599000},"recursive-merge/lib/Merge.js":{"atime":1389108685000,"mtime":1385409966000,"ctime":1389108599000},"easy-configuration/lib/Extension.js":{"atime":1389108603000,"mtime":1389093412000,"ctime":1389108599000},"easy-configuration/lib/Helpers.js":{"atime":1389108603000,"mtime":1389093412000,"ctime":1389108599000},"callsite/index.js":{"atime":1389081083000,"mtime":1359062982000,"ctime":1389081065000},"/test/browser/tests/DI.coffee":{"atime":1389090301000,"mtime":1389090257000,"ctime":1389090257000},"/test/browser/tests/DIConfigurator.coffee":{"atime":1389109579000,"mtime":1389109576000,"ctime":1389109576000},"/test/browser/tests/Helpers.coffee":{"atime":1389081274000,"mtime":1388655455000,"ctime":1388655455000},"/lib/DIConfigurator.js":{"atime":1389109096000,"mtime":1389109089000,"ctime":1389109089000},"/test/data/Application.coffee":{"atime":1389081274000,"mtime":1386925844000,"ctime":1386925844000},"/test/data/AutowirePath.coffee":{"atime":1389081274000,"mtime":1386934815000,"ctime":1386934815000},"/test/data/Http.coffee":{"atime":1389081274000,"mtime":1384940373000,"ctime":1384940373000},"/test/data/config.json":{"atime":1389081274000,"mtime":1388653053000,"ctime":1388653053000},"/test/data/sections.json":{"atime":1389109390000,"mtime":1389109389000,"ctime":1389109389000},"/package.json":{"atime":1389108675000,"mtime":1389108671000,"ctime":1389108671000},"easy-configuration/package.json":{"atime":1389108603000,"mtime":1389108599000,"ctime":1389108599000},"callsite/package.json":{"atime":1389081083000,"mtime":1389081065000,"ctime":1389081065000}});
+require.__setStats({"/lib/Service.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/Helpers.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/Defaults.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/DI.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1389471395000,"mtime":1389106575000,"ctime":1389113763000},"recursive-merge/lib/Merge.js":{"atime":1389471642000,"mtime":1385409966000,"ctime":1389113764000},"easy-configuration/lib/Extension.js":{"atime":1389471395000,"mtime":1389093412000,"ctime":1389113763000},"easy-configuration/lib/Helpers.js":{"atime":1389471396000,"mtime":1389093412000,"ctime":1389113763000},"callsite/index.js":{"atime":1389471642000,"mtime":1359062982000,"ctime":1389113763000},"/test/browser/tests/DI.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/test/browser/tests/DIConfigurator.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/test/browser/tests/Helpers.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/lib/DIConfigurator.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/test/data/Application.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1389471642000,"mtime":1385309217000,"ctime":1385309217000},"/test/data/config.json":{"atime":1389471642000,"mtime":1388272273000,"ctime":1388272273000},"/test/data/sections.json":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/package.json":{"atime":1389471623000,"mtime":1389471608000,"ctime":1389471608000},"easy-configuration/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000},"callsite/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000}});
 require.version = '5.5.1';
 
 /** run section **/

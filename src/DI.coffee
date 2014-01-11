@@ -19,6 +19,8 @@ class DI
 
 	basePath: null
 
+	instantiate: true
+
 
 	constructor: ->
 		@services = {}

@@ -19,6 +19,9 @@ class DIConfigurator
 
 	basePath: null
 
+	defaultDefaults:
+		instantiate: true
+
 	defaultSetup:
 		windowExpose: null		# deprecated
 		expose: false
@@ -67,6 +70,10 @@ class DIConfigurator
 		@config.addSection('setup').loadConfiguration = ->
 			return @getConfig(defaultSetup)
 
+		defaultDefaults = @defaultDefaults
+		@config.addSection('defaults').loadConfiguration = ->
+			return @getConfig(defaultDefaults)
+
 		configuration = @config.load()
 		di = new DI
 
@@ -75,6 +82,7 @@ class DIConfigurator
 
 		di.config = @config
 		di.parameters = @config.parameters
+		di.instantiate = configuration.defaults.instantiate
 
 		if configuration.setup.windowExpose != null
 			console.log 'Option windowExpose is deprecated. Please use expose.'

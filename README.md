@@ -49,6 +49,8 @@ you will need this service, it will have got these arguments and all setup funct
 
 Section service is path for module require (common js).
 
+You can of course use also modules from node_modules directory just like you are used to.
+
 DI automatically look into values from setup in your module (service). If it is function, then it will be called, otherwise
 argument will be passed into this object property.
 

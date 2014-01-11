@@ -108,6 +108,10 @@
         it('should return always the same instance of Application', function() {
           return expect(di.get('application')).to.be.equal(di.get('application'));
         });
+        it('should add service from node_modules', function() {
+          di.addService('callsite', 'callsite').setInstantiate(false);
+          return expect(di.get('callsite')).to.be.equal(require('callsite'));
+        });
         it('should return info array without instantiating it', function() {
           return expect(di.get('info')).to.be.eql(['hello']);
         });

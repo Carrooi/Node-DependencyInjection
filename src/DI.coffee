@@ -45,12 +45,25 @@ class DI
 		if name in @reserved && typeof @services[name] != 'undefined'
 			throw new Error "DI: name '#{name}' is reserved by DI."
 
+		originalService = service
+
 		if typeof service == 'string'
-			service = require.resolve(@getPath(service))
+			service = @resolveModulePath(service)
+			if service == null
+				throw new Error "Service '#{originalService}' can not be found."
+
 			@paths[service] = name
 
 		@services[name] = new Service(@, name, service, args)
 		return @services[name]
+
+
+	resolveModulePath: (_path) ->
+		get = (p) ->
+			try return require.resolve(p)
+			catch err then return null
+
+		return get(_path) || get(@getPath(_path)) || get(Helpers.normalizePath(_path)) || get(Helpers.normalizePath(@getPath(_path)))
 
 
 	# deprecated

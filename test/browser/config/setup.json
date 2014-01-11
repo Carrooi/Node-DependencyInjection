@@ -6,7 +6,8 @@
 			"modules": [
 				"./test/browser/tests/*.coffee",
 				"./lib/*.js",
-				"./test/data/*.<(coffee|json)$>"
+				"./test/data/*.<(coffee|json)$>",
+				"callsite"
 			],
 			"run": [
 				"/test/browser/tests/Helpers",

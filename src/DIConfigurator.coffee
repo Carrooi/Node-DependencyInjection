@@ -1,4 +1,5 @@
 DI = require './DI'
+Helpers = require './Helpers'
 Configuration = require 'easy-configuration'
 
 isWindow = typeof window != 'undefined'
@@ -53,6 +54,10 @@ class DIConfigurator
 
 		else
 			throw new Error 'Bad argument'
+
+		if @basePath == null
+			break for _path, section of @config.files
+			@basePath = Helpers.dirName(_path)
 
 
 	create: ->

@@ -102,6 +102,10 @@ describe 'DI', ->
 			it 'should return always the same instance of Application', ->
 				expect(di.get('application')).to.be.equal(di.get('application'))
 
+			it 'should add service from node_modules', ->
+				di.addService('callsite', 'callsite').setInstantiate(false)
+				expect(di.get('callsite')).to.be.equal(require('callsite'))
+
 			it 'should return info array without instantiating it', ->
 				expect(di.get('info')).to.be.eql(['hello'])
 

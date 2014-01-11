@@ -344,6 +344,19 @@ or with full module path:
 
 Now this `foreignLibrary` will gets your `translator` service in constructor.
 
+## Default settings
+
+You can change default behavior of some options in your config file.
+
+```
+{
+	"defaults": {
+		"instantiate": false
+	},
+	"services": { ... }
+}
+```
+
 ## Default services
 
 There are already prepared some services.

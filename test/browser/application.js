@@ -228,6 +228,7 @@
 	      this.service = service;
 	      this["arguments"] = _arguments != null ? _arguments : [];
 	      this.setup = {};
+	      this.instantiate = this.di.instantiate;
 	    }
 	
 	    Service.prototype.getInstance = function() {
@@ -598,6 +599,8 @@
 	    DI.prototype.creating = null;
 	
 	    DI.prototype.basePath = null;
+	
+	    DI.prototype.instantiate = true;
 	
 	    function DI() {
 	      this.services = {};
@@ -1815,6 +1818,10 @@
 	
 	    DIConfigurator.prototype.basePath = null;
 	
+	    DIConfigurator.prototype.defaultDefaults = {
+	      instantiate: true
+	    };
+	
 	    DIConfigurator.prototype.defaultSetup = {
 	      windowExpose: null,
 	      expose: false
@@ -1850,7 +1857,7 @@
 	    }
 	
 	    DIConfigurator.prototype.create = function() {
-	      var configuration, defaultService, defaultSetup, di, expose, method, name, run, s, service, _i, _len, _ref, _ref1;
+	      var configuration, defaultDefaults, defaultService, defaultSetup, di, expose, method, name, run, s, service, _i, _len, _ref, _ref1;
 	      defaultService = this.defaultService;
 	      this.config.addSection('services').loadConfiguration = function() {
 	        var config, name;
@@ -1866,6 +1873,10 @@
 	      this.config.addSection('setup').loadConfiguration = function() {
 	        return this.getConfig(defaultSetup);
 	      };
+	      defaultDefaults = this.defaultDefaults;
+	      this.config.addSection('defaults').loadConfiguration = function() {
+	        return this.getConfig(defaultDefaults);
+	      };
 	      configuration = this.config.load();
 	      di = new DI;
 	      if (this.basePath !== null) {
@@ -1873,6 +1884,7 @@
 	      }
 	      di.config = this.config;
 	      di.parameters = this.config.parameters;
+	      di.instantiate = configuration.defaults.instantiate;
 	      if (configuration.setup.windowExpose !== null) {
 	        console.log('Option windowExpose is deprecated. Please use expose.');
 	        configuration.setup.expose = configuration.setup.windowExpose;
@@ -2284,7 +2296,7 @@
 , 'callsite': function(exports, module) { module.exports = window.require('callsite/index.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/Helpers.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/Defaults.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/DI.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1389471395000,"mtime":1389106575000,"ctime":1389113763000},"recursive-merge/lib/Merge.js":{"atime":1389471642000,"mtime":1385409966000,"ctime":1389113764000},"easy-configuration/lib/Extension.js":{"atime":1389471395000,"mtime":1389093412000,"ctime":1389113763000},"easy-configuration/lib/Helpers.js":{"atime":1389471396000,"mtime":1389093412000,"ctime":1389113763000},"callsite/index.js":{"atime":1389471642000,"mtime":1359062982000,"ctime":1389113763000},"/test/browser/tests/DI.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/test/browser/tests/DIConfigurator.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/test/browser/tests/Helpers.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/lib/DIConfigurator.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/test/data/Application.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1389471642000,"mtime":1385309217000,"ctime":1385309217000},"/test/data/config.json":{"atime":1389471642000,"mtime":1388272273000,"ctime":1388272273000},"/test/data/sections.json":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/package.json":{"atime":1389471623000,"mtime":1389471608000,"ctime":1389471608000},"easy-configuration/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000},"callsite/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000}});
+require.__setStats({"/lib/Service.js":{"atime":1389473502000,"mtime":1389473286000,"ctime":1389473286000},"/lib/Helpers.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/Defaults.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/DI.js":{"atime":1389473227000,"mtime":1389473146000,"ctime":1389473146000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1389471395000,"mtime":1389106575000,"ctime":1389113763000},"recursive-merge/lib/Merge.js":{"atime":1389471642000,"mtime":1385409966000,"ctime":1389113764000},"easy-configuration/lib/Extension.js":{"atime":1389471395000,"mtime":1389093412000,"ctime":1389113763000},"easy-configuration/lib/Helpers.js":{"atime":1389471396000,"mtime":1389093412000,"ctime":1389113763000},"callsite/index.js":{"atime":1389471642000,"mtime":1359062982000,"ctime":1389113763000},"/test/browser/tests/DI.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/test/browser/tests/DIConfigurator.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/test/browser/tests/Helpers.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/lib/DIConfigurator.js":{"atime":1389473227000,"mtime":1389473196000,"ctime":1389473196000},"/test/data/Application.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1389471642000,"mtime":1385309217000,"ctime":1385309217000},"/test/data/config.json":{"atime":1389471642000,"mtime":1388272273000,"ctime":1388272273000},"/test/data/sections.json":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/package.json":{"atime":1389472454000,"mtime":1389472454000,"ctime":1389472454000},"easy-configuration/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000},"callsite/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000}});
 require.version = '5.5.1';
 
 /** run section **/

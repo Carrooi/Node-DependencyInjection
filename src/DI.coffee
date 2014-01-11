@@ -63,7 +63,7 @@ class DI
 			try return require.resolve(p)
 			catch err then return null
 
-		return get(_path) || get(@getPath(_path))
+		return get(_path) || get(@getPath(_path)) || get(Helpers.normalizePath(_path)) || get(Helpers.normalizePath(@getPath(_path)))
 
 
 	# deprecated

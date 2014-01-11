@@ -80,10 +80,12 @@ di.getFactory('application');
 
 ## Base path to services
 
-Default base path in node is directory of file from which you are initializing DI. You have to set this manually in browser.
+Base path is used for requiring your services. All services (exceptions are node_modules services) are relative to this path.
+
+**Default base path is directory in which is your config.json file.**
 
 ```
-di.basePath = __dirname;
+di.basePath = __dirname + '/my/custom/base/directory';
 ```
 
 ## Auto exposing into global

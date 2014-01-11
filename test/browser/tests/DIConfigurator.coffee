@@ -4,6 +4,8 @@ Configuration = require 'easy-configuration'
 
 dir = '/test/data'
 
+Http = require '/test/data/Http'
+
 di = null
 configurator = null
 
@@ -50,3 +52,10 @@ describe 'DIConfiguration', ->
 
 		it 'should return expanded parameter', ->
 			expect(di.getParameter('database.password')).to.be.equal('nimda')
+
+	describe '#get()', ->
+
+		it 'should load service defined with relative path', ->
+			configurator = new DIConfigurator(dir + '/relative.json')
+			di = configurator.create()
+			expect(di.get('http')).to.be.an.instanceof(Http)

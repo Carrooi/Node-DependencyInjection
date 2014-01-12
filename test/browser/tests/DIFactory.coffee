@@ -1,6 +1,6 @@
-DI = require '/lib/DI'
-DIFactory = require '/lib/DIFactory'
-Configuration = require 'easy-configuration'
+DI = require 'dependency-injection'
+DIFactory = require 'dependency-injection/DIFactory'
+Configuration = require 'dependency-injection/Configuration'
 
 dir = '/test/data'
 

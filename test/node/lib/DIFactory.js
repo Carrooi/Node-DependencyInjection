@@ -10,7 +10,7 @@
 
   DIFactory = require('../../../DIFactory');
 
-  Configuration = require('easy-configuration');
+  Configuration = require('../../../Configuration');
 
   Http = require('../../data/Http');
 

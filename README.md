@@ -418,10 +418,10 @@ If you need more control over configuration, you can create instance of `easy-co
 it to DIFactory.
 
 ```
-var Config = require('easy-configuration');
+var Configuration = require('dependency-injection/Configuration');		// shortcut to easy-configuration module
 var DIFactory = require('dependency-injection/DIFactory');
 
-var config = new Config;
+var config = new Configuration;
 config.addConfig('./path/to/config.json', 'development');
 
 var factory = new DIFactory(config);

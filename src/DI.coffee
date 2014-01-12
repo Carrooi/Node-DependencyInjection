@@ -47,7 +47,7 @@ class DI
 
 		originalService = service
 
-		if typeof service == 'string'
+		if typeof service == 'string' && !service.match(/^(factory\:)?[@$]/)
 			service = @resolveModulePath(service)
 			if service == null
 				throw new Error "Service '#{originalService}' can not be found."
@@ -64,6 +64,33 @@ class DI
 			catch err then return null
 
 		return get(_path) || get(@getPath(_path)) || get(Helpers.normalizePath(_path)) || get(Helpers.normalizePath(@getPath(_path)))
+
+
+	tryCallArgument: (arg) ->
+		if typeof arg != 'string'
+			return arg
+
+		if !arg.match(/^(factory\:)?[@$]/)
+			return arg
+
+		factory = false
+		if arg.match(/^factory\:/)
+			factory = true
+			arg = arg.substr(8)
+
+		type = if arg[0] == '@' then 'service' else 'path'
+		arg = arg.substr(1)
+		service = null
+
+		if type == 'service'
+			service = if factory then @getFactory(arg) else @get(arg)
+		else if type == 'path'
+			service = if factory then @getFactoryByPath(arg) else @getByPath(arg)
+
+		if service == null
+			throw new Error "Service '#{arg}' can not be found."
+
+		return service
 
 
 	# deprecated

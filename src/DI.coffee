@@ -47,14 +47,18 @@ class DI
 
 		originalService = service
 
-		if typeof service == 'string' && !service.match(/^(factory\:)?[@$]/)
-			service = @resolveModulePath(service)
-			if service == null
-				throw new Error "Service '#{originalService}' can not be found."
+		if typeof service == 'string'
+			if service.match(/^(factory\:)?[@$]/)
+				service = @tryCallArgument(service)
+			else
+				service = @resolveModulePath(service)
+				if service == null
+					throw new Error "Service '#{originalService}' can not be found."
 
-			@paths[service] = name
+				@paths[service] = name
 
 		@services[name] = new Service(@, name, service, args)
+		@services[name].setInstantiate(@instantiate)
 		return @services[name]
 
 

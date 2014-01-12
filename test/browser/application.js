@@ -228,7 +228,6 @@
 	      this.service = service;
 	      this["arguments"] = _arguments != null ? _arguments : [];
 	      this.setup = {};
-	      this.instantiate = this.di.instantiate;
 	    }
 	
 	    Service.prototype.getInstance = function() {
@@ -634,14 +633,19 @@
 	        throw new Error("DI: name '" + name + "' is reserved by DI.");
 	      }
 	      originalService = service;
-	      if (typeof service === 'string' && !service.match(/^(factory\:)?[@$]/)) {
-	        service = this.resolveModulePath(service);
-	        if (service === null) {
-	          throw new Error("Service '" + originalService + "' can not be found.");
+	      if (typeof service === 'string') {
+	        if (service.match(/^(factory\:)?[@$]/)) {
+	          service = this.tryCallArgument(service);
+	        } else {
+	          service = this.resolveModulePath(service);
+	          if (service === null) {
+	            throw new Error("Service '" + originalService + "' can not be found.");
+	          }
+	          this.paths[service] = name;
 	        }
-	        this.paths[service] = name;
 	      }
 	      this.services[name] = new Service(this, name, service, args);
+	      this.services[name].setInstantiate(this.instantiate);
 	      return this.services[name];
 	    };
 	
@@ -1442,7 +1446,7 @@
 	    DIFactory.prototype.defaultService = {
 	      service: null,
 	      "arguments": [],
-	      instantiate: true,
+	      instantiate: null,
 	      autowired: true,
 	      run: false,
 	      setup: {}
@@ -1523,6 +1527,13 @@
 	      for (name in _ref) {
 	        service = _ref[name];
 	        if (configuration.services.hasOwnProperty(name) && (name !== '__proto__')) {
+	          if (service.instantiate === null) {
+	            if (service.service.match(/^(factory\:)?[@$]/)) {
+	              service.instantiate = false;
+	            } else {
+	              service.instantiate = true;
+	            }
+	          }
 	          s = di.addService(name, service.service, service["arguments"]);
 	          s.setInstantiate(service.instantiate);
 	          s.setAutowired(service.autowired);
@@ -1910,13 +1921,18 @@
 	        di = factory.create();
 	        return expect(di.get('http')).to.be.an["instanceof"](Http);
 	      });
-	      return it('should create services with derived arguments', function() {
+	      it('should create services with derived arguments', function() {
 	        var application;
 	        factory = new DIFactory(dir + '/derivedArguments.json');
 	        di = factory.create();
 	        application = di.get('application');
 	        expect(application.data).to.be.equal('hello David');
 	        return expect(application.namespace).to.be["false"];
+	      });
+	      return it('should create service derived from other service', function() {
+	        factory = new DIFactory(dir + '/derivedService.json');
+	        di = factory.create();
+	        return expect(di.get('http')).to.be.an["instanceof"](Http);
 	      });
 	    });
 	  });
@@ -2271,6 +2287,39 @@
 	}).call(this);
 	
 
+}, '/test/data/HttpFactory.coffee': function(exports, module) {
+
+	/** node globals **/
+	var require = function(name) {return window.require(name, '/test/data/HttpFactory.coffee');};
+	require.resolve = function(name, parent) {if (parent === null) {parent = '/test/data/HttpFactory.coffee';} return window.require.resolve(name, parent);};
+	require.define = function(bundle) {window.require.define(bundle);};
+	require.cache = window.require.cache;
+	var __filename = '/test/data/HttpFactory.coffee';
+	var __dirname = '/test/data';
+	var process = {cwd: function() {return '/';}, argv: ['node', '/test/data/HttpFactory.coffee'], env: {}};
+
+	/** code **/
+	(function() {
+	  var Http, HttpFactory;
+	
+	  Http = require('./Http');
+	
+	  HttpFactory = (function() {
+	    function HttpFactory() {}
+	
+	    HttpFactory.prototype.createHttp = function() {
+	      return new Http;
+	    };
+	
+	    return HttpFactory;
+	
+	  })();
+	
+	  module.exports = HttpFactory;
+	
+	}).call(this);
+	
+
 }, '/test/data/config.json': function(exports, module) {
 
 	/** node globals **/
@@ -2325,6 +2374,32 @@
 			},
 			"http": {
 				"service": "./Http"
+			}
+		}
+	}
+	}).call(this);
+	
+
+}, '/test/data/derivedService.json': function(exports, module) {
+
+	/** node globals **/
+	var require = function(name) {return window.require(name, '/test/data/derivedService.json');};
+	require.resolve = function(name, parent) {if (parent === null) {parent = '/test/data/derivedService.json';} return window.require.resolve(name, parent);};
+	require.define = function(bundle) {window.require.define(bundle);};
+	require.cache = window.require.cache;
+	var __filename = '/test/data/derivedService.json';
+	var __dirname = '/test/data';
+	var process = {cwd: function() {return '/';}, argv: ['node', '/test/data/derivedService.json'], env: {}};
+
+	/** code **/
+	module.exports = (function() {
+	return {
+		"services": {
+			"httpFactory": {
+				"service": "./HttpFactory"
+			},
+			"http": {
+				"service": "@httpFactory::createHttp()"
 			}
 		}
 	}
@@ -2561,7 +2636,7 @@
 , 'callsite': function(exports, module) { module.exports = window.require('callsite/index.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1389474447000,"mtime":1389474205000,"ctime":1389474205000},"/lib/Helpers.js":{"atime":1389524439000,"mtime":1389524436000,"ctime":1389524436000},"/lib/Defaults.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/DI.js":{"atime":1389543119000,"mtime":1389543117000,"ctime":1389543117000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1389471395000,"mtime":1389106575000,"ctime":1389113763000},"recursive-merge/lib/Merge.js":{"atime":1389471642000,"mtime":1385409966000,"ctime":1389113764000},"easy-configuration/lib/Extension.js":{"atime":1389471395000,"mtime":1389093412000,"ctime":1389113763000},"easy-configuration/lib/Helpers.js":{"atime":1389471396000,"mtime":1389093412000,"ctime":1389113763000},"callsite/index.js":{"atime":1389471642000,"mtime":1359062982000,"ctime":1389113763000},"/lib/DIFactory.js":{"atime":1389521212000,"mtime":1389520197000,"ctime":1389520197000},"/test/browser/tests/DI.coffee":{"atime":1389543371000,"mtime":1389543363000,"ctime":1389543363000},"/test/browser/tests/DIFactory.coffee":{"atime":1389545113000,"mtime":1389545106000,"ctime":1389545106000},"/test/browser/tests/Helpers.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/DI.js":{"atime":1389519060000,"mtime":1385309217000,"ctime":1385309217000},"/DIFactory.js":{"atime":1389520197000,"mtime":1389520197000,"ctime":1389520197000},"/Configuration.js":{"atime":1389520197000,"mtime":1389520197000,"ctime":1389520197000},"/test/data/Application.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1389544796000,"mtime":1389544230000,"ctime":1389544230000},"/test/data/config.json":{"atime":1389471642000,"mtime":1388272273000,"ctime":1388272273000},"/test/data/derivedArguments.json":{"atime":1389544939000,"mtime":1389544933000,"ctime":1389544933000},"/test/data/relative.json":{"atime":1389480333000,"mtime":1389480333000,"ctime":1389480333000},"/test/data/sections.json":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"callsite/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000},"/package.json":{"atime":1389544858000,"mtime":1389544843000,"ctime":1389544843000},"easy-configuration/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000}});
+require.__setStats({"/lib/Service.js":{"atime":1389546266000,"mtime":1389546243000,"ctime":1389546243000},"/lib/Helpers.js":{"atime":1389524439000,"mtime":1389524436000,"ctime":1389524436000},"/lib/Defaults.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/DI.js":{"atime":1389547195000,"mtime":1389547074000,"ctime":1389547074000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1389471395000,"mtime":1389106575000,"ctime":1389113763000},"recursive-merge/lib/Merge.js":{"atime":1389471642000,"mtime":1385409966000,"ctime":1389113764000},"easy-configuration/lib/Extension.js":{"atime":1389471395000,"mtime":1389093412000,"ctime":1389113763000},"easy-configuration/lib/Helpers.js":{"atime":1389471396000,"mtime":1389093412000,"ctime":1389113763000},"callsite/index.js":{"atime":1389471642000,"mtime":1359062982000,"ctime":1389113763000},"/lib/DIFactory.js":{"atime":1389547195000,"mtime":1389547189000,"ctime":1389547189000},"/test/browser/tests/DI.coffee":{"atime":1389543371000,"mtime":1389543363000,"ctime":1389543363000},"/test/browser/tests/DIFactory.coffee":{"atime":1389547225000,"mtime":1389547221000,"ctime":1389547221000},"/test/browser/tests/Helpers.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/DI.js":{"atime":1389519060000,"mtime":1385309217000,"ctime":1385309217000},"/DIFactory.js":{"atime":1389520197000,"mtime":1389520197000,"ctime":1389520197000},"/Configuration.js":{"atime":1389520197000,"mtime":1389520197000,"ctime":1389520197000},"/test/data/Application.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1389544796000,"mtime":1389544230000,"ctime":1389544230000},"/test/data/HttpFactory.coffee":{"atime":1389545973000,"mtime":1389545972000,"ctime":1389545972000},"/test/data/config.json":{"atime":1389471642000,"mtime":1388272273000,"ctime":1388272273000},"/test/data/derivedArguments.json":{"atime":1389544939000,"mtime":1389544933000,"ctime":1389544933000},"/test/data/derivedService.json":{"atime":1389547328000,"mtime":1389547328000,"ctime":1389547328000},"/test/data/relative.json":{"atime":1389480333000,"mtime":1389480333000,"ctime":1389480333000},"/test/data/sections.json":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"callsite/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000},"/package.json":{"atime":1389544858000,"mtime":1389544843000,"ctime":1389544843000},"easy-configuration/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000}});
 require.version = '5.5.1';
 
 /** run section **/

@@ -22,7 +22,6 @@ class Service
 
 	constructor: (@di, @name, @service, @arguments = []) ->
 		@setup = {}
-		@instantiate = @di.instantiate
 
 
 	getInstance: ->

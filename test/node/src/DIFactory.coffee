@@ -71,3 +71,8 @@ describe 'DIFactory', ->
 			application = di.get('application')
 			expect(application.data).to.be.equal('hello David')
 			expect(application.namespace).to.be.false
+
+		it 'should create service derived from other service', ->
+			factory = new DIFactory(dir + '/derivedService.json')
+			di = factory.create()
+			expect(di.get('http')).to.be.an.instanceof(Http)

@@ -361,6 +361,20 @@ you can even access properties or methods from other services:
 }
 ```
 
+or create service from other service (for example from factory)
+```
+{
+	"services": {
+		"httpFactory": {
+			"service": "./path/to/http/module"
+		},
+		"http": {
+			"service": "@httpFactory::createHttp()"
+		}
+	}
+}
+```
+
 Now this `foreignLibrary` will gets your `translator` service in constructor.
 
 ## Default settings

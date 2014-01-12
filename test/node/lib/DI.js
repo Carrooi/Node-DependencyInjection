@@ -56,6 +56,36 @@
         return expect(di.get('app').array).to.not.exists;
       });
     });
+    describe('#tryCallArgument()', function() {
+      it('should just return argument if it is not string', function() {
+        return expect(di.tryCallArgument(new Date)).to.be.an["instanceof"](Date);
+      });
+      it('should just return argument if it is not in right format', function() {
+        return expect(di.tryCallArgument('hello word')).to.be.equal('hello word');
+      });
+      it('should return service by its name', function() {
+        di.addService('date', Date);
+        return expect(di.tryCallArgument('@date')).to.be.an["instanceof"](Date);
+      });
+      it('should return service by its path', function() {
+        di.addService('callsite', 'callsite').setInstantiate(false);
+        return expect(di.tryCallArgument('$callsite/index.js')).to.be.equal(require('callsite'));
+      });
+      it('should return factory by its name', function() {
+        var factory;
+        di.addService('date', Date);
+        factory = di.tryCallArgument('factory:@date');
+        expect(factory).to.be.an["instanceof"](Function);
+        return expect(factory()).to.be.an["instanceof"](Date);
+      });
+      return it('should return factory by its path', function() {
+        var factory;
+        di.addService('callsite', 'callsite').setInstantiate(false);
+        factory = di.tryCallArgument('factory:$callsite/index.js');
+        expect(factory).to.be.an["instanceof"](Function);
+        return expect(factory()).to.be.equal(require('callsite'));
+      });
+    });
     describe('#createInstance()', function() {
       beforeEach(function() {
         di.addService('array', Array);

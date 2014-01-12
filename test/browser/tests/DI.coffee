@@ -48,6 +48,33 @@ describe 'DI', ->
 			di.addService('app', "#{dir}/Application", [null])
 			expect(di.get('app').array).to.not.exists
 
+	describe '#tryCallArgument()', ->
+
+		it 'should just return argument if it is not string', ->
+			expect(di.tryCallArgument(new Date)).to.be.an.instanceof(Date)
+
+		it 'should just return argument if it is not in right format', ->
+			expect(di.tryCallArgument('hello word')).to.be.equal('hello word')
+
+		it 'should return service by its name', ->
+			di.addService('date', Date)
+			expect(di.tryCallArgument('@date')).to.be.an.instanceof(Date)
+
+		it 'should return service by its path', ->
+			di.addService('callsite', 'callsite').setInstantiate(false)
+			expect(di.tryCallArgument('$callsite')).to.be.equal(require('callsite'))
+
+		it 'should return factory by its name', ->
+			di.addService('date', Date)
+			factory = di.tryCallArgument('factory:@date')
+			expect(factory).to.be.an.instanceof(Function)
+			expect(factory()).to.be.an.instanceof(Date)
+
+		it 'should return factory by its path', ->
+			di.addService('callsite', 'callsite').setInstantiate(false)
+			factory = di.tryCallArgument('factory:$callsite')
+			expect(factory).to.be.an.instanceof(Function)
+			expect(factory()).to.be.equal(require('callsite'))
 
 	describe '#createInstance()', ->
 

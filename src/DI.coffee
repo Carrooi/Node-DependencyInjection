@@ -138,26 +138,16 @@ class DI
 
 
 	getByPath: (path) ->
-		error = false
-		try
-			path = require.resolve(@getPath(path))
-		catch e
-			error = true
-
-		if typeof @paths[path] != 'undefined' && !error
+		path = @resolveModulePath(path)
+		if path != null && typeof @paths[path] != 'undefined'
 			return @get(@paths[path])
 
 		return null
 
 
 	getFactoryByPath: (path) ->
-		error = false
-		try
-			path = require.resolve(@getPath(path))
-		catch e
-			error = true
-
-		if typeof @paths[path] != 'undefined' && !error
+		path = @resolveModulePath(path)
+		if path != null && typeof @paths[path] != 'undefined'
 			return @getFactory(@paths[path])
 
 		return null

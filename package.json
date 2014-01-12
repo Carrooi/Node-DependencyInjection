@@ -1,7 +1,7 @@
 {
 	"name": "dependency-injection",
 	"description": "Dependency injection with configuration and autowire for node js and browser",
-	"version": "2.2.0",
+	"version": "2.3.0",
 	"author": {
 		"name": "David Kudera",
 		"email": "sakren@gmail.com"
@@ -18,7 +18,7 @@
 	},
 	"license": "MIT",
 	"engines": {
-		"node": "*"
+		"node": ">=0.9"
 	},
 	"main": "./lib/DI",
 	"dependencies": {
@@ -27,7 +27,7 @@
 	},
 	"devDependencies": {
 		"chai": "~1.8.1",
-		"mocha": "~1.16.2",
+		"mocha": "~1.17.0",
 		"mocha-phantomjs": "~3.3.1",
 		"phantomjs": "~1.9.2-6"
 	},

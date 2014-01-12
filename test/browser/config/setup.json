@@ -6,13 +6,14 @@
 			"modules": [
 				"./test/browser/tests/*.coffee",
 				"./lib/*.js",
+				"./DIFactory.js",
 				"./test/data/*.<(coffee|json)$>",
 				"callsite"
 			],
 			"run": [
 				"/test/browser/tests/Helpers",
 				"/test/browser/tests/DI",
-				"/test/browser/tests/DIConfigurator"
+				"/test/browser/tests/DIFactory"
 			]
 		}
 	}

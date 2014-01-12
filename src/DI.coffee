@@ -32,7 +32,7 @@ class DI
 
 	getParameter: (parameter) ->
 		if @config == null
-			throw new Error 'DI container was not created with DIConfigurator.'
+			throw new Error 'DI container was not created with DIFactory.'
 
 		return @config.getParameter(parameter)
 

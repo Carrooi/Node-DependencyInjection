@@ -57,10 +57,10 @@ argument will be passed into this object property.
 ## Usage
 
 ```
-var DIConfigurator = require('dependency-injection/DIConfigurator');
-var configurator = new DIConfigurator('./path/to/your/configuration/file.json');
+var DIFactory = require('dependency-injection/DIFactory');
+var factory = new DIFactory('./path/to/your/configuration/file.json');
 
-var di = configurator.create();
+var di = factory.create();
 ```
 
 **Relative paths to config files are supported only on node (not in browser)!!!**
@@ -415,17 +415,17 @@ method in [easy-configuration](https://github.com/sakren/node-easy-configuration
 ## Advanced configuration
 
 If you need more control over configuration, you can create instance of `easy-configuration` object on your own and pass
-it to DIConfigurator.
+it to DIFactory.
 
 ```
 var Config = require('easy-configuration');
-var DIConfigurator = require('dependency-injection/DIConfigurator');
+var DIFactory = require('dependency-injection/DIFactory');
 
 var config = new Config;
 config.addConfig('./path/to/config.json', 'development');
 
-var configurator = new DIConfigurator(config);
-var di = configurator.create();
+var factory = new DIFactory(config);
+var di = factory.create();
 ```
 
 ## Without configuration
@@ -504,7 +504,7 @@ $ npm test
 	+ Inject method's second argument is args, not scope (BC break!)
 
 * 2.1.0
-	+ Added [config](https://github.com/sakren/node-easy-configuration) object do DIConfigurator
+	+ Added [config](https://github.com/sakren/node-easy-configuration) object do DIFactory
 	+ Bug with exposing
 	+ Accessing parameters from di instance
 	+ Updated dependencies

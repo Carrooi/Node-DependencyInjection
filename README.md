@@ -375,8 +375,6 @@ or create service from other service (for example from factory)
 }
 ```
 
-Now this `foreignLibrary` will gets your `translator` service in constructor.
-
 ## Default settings
 
 You can change default behavior of some options in your config file.
@@ -520,6 +518,16 @@ $ npm test
 ```
 
 ## Changelog
+
+* 2.3.0
+	+ Added option for services derived from other services
+	+ Support for calling methods from other services in config
+	+ Some optimization
+	+ exposed [easy-configuration](https://github.com/sakren/node-easy-configuration) into dependency-injection/Configuration
+	+ DIConfigurator renamed to DIFactory (DIConfigurator is now deprecated)
+	+ Support for services from npm modules
+	+ Default base path for services in config file is dir name of config file
+	+ Updated dependencies
 
 * 2.2.0
 	+ Relative paths to config files

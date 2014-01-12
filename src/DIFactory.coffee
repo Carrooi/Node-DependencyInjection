@@ -8,7 +8,7 @@ if !isWindow
 	callsite = require 'callsite'
 	path = require 'path'
 
-class DIConfigurator
+class DIFactory
 
 
 	@EXPOSE_NAME = 'di'
@@ -95,7 +95,7 @@ class DIConfigurator
 
 		expose = configuration.setup.expose
 		if expose != false
-			name = if typeof expose == 'string' then expose else DIConfigurator.EXPOSE_NAME
+			name = if typeof expose == 'string' then expose else DIFactory.EXPOSE_NAME
 			if typeof window != 'undefined'
 				window[name] = di
 			else if typeof global != 'undefined'
@@ -122,4 +122,4 @@ class DIConfigurator
 		return di
 
 
-module.exports = DIConfigurator
+module.exports = DIFactory

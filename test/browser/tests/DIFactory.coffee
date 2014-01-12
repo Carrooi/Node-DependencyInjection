@@ -1,33 +1,33 @@
-DI = require '/lib/DI'
-DIConfigurator = require '/lib/DIConfigurator'
-Configuration = require 'easy-configuration'
+DI = require 'dependency-injection'
+DIFactory = require 'dependency-injection/DIFactory'
+Configuration = require 'dependency-injection/Configuration'
 
 dir = '/test/data'
 
 Http = require '/test/data/Http'
 
 di = null
-configurator = null
+factory = null
 
-describe 'DIConfiguration', ->
+describe 'DIFactory', ->
 
 	beforeEach( ->
-		configurator = new DIConfigurator(dir + '/config.json')
-		di = configurator.create()
+		factory = new DIFactory(dir + '/config.json')
+		di = factory.create()
 		di.basePath = dir
 	)
 
 	describe '#constructor()', ->
 
 		it 'should throw an error for relative paths', ->
-			expect( -> new DIConfigurator('../data/config.json')).to.throw(Error, 'Relative paths to config files are not supported in browser.')
+			expect( -> new DIFactory('../data/config.json')).to.throw(Error, 'Relative paths to config files are not supported in browser.')
 
-		it 'should create di with custom configurator object', ->
+		it 'should create di with custom config object', ->
 			config = new Configuration
 			config.addConfig("#{dir}/config.json")
 			config.addConfig("#{dir}/sections.json", 'local')
-			configurator = new DIConfigurator(config)
-			di = configurator.create()
+			factory = new DIFactory(config)
+			di = factory.create()
 			expect(di).to.be.an.instanceof(DI)
 			expect(di.parameters.users.david).to.be.equal('divad')
 
@@ -46,9 +46,9 @@ describe 'DIConfiguration', ->
 
 	describe '#getParameter()', ->
 
-		it 'should throw an error if di object was not created from DIConfigurator', ->
+		it 'should throw an error if di object was not created from DIFactory', ->
 			di = new DI
-			expect( -> di.getParameter('buf') ).to.throw(Error, 'DI container was not created with DIConfigurator.')
+			expect( -> di.getParameter('buf') ).to.throw(Error, 'DI container was not created with DIFactory.')
 
 		it 'should return expanded parameter', ->
 			expect(di.getParameter('database.password')).to.be.equal('nimda')
@@ -56,6 +56,6 @@ describe 'DIConfiguration', ->
 	describe '#get()', ->
 
 		it 'should load service defined with relative path', ->
-			configurator = new DIConfigurator(dir + '/relative.json')
-			di = configurator.create()
+			factory = new DIFactory(dir + '/relative.json')
+			di = factory.create()
 			expect(di.get('http')).to.be.an.instanceof(Http)

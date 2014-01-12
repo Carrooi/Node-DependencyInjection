@@ -1,3 +1,3 @@
 require('./lib/Helpers');
 require('./lib/DI');
-require('./lib/DIConfigurator');
+require('./lib/DIFactory');

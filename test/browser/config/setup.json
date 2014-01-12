@@ -6,13 +6,22 @@
 			"modules": [
 				"./test/browser/tests/*.coffee",
 				"./lib/*.js",
+				"./DI.js",
+				"./DIFactory.js",
+				"./Configuration.js",
 				"./test/data/*.<(coffee|json)$>",
 				"callsite"
 			],
+			"aliases": {
+				"dependency-injection": "/lib/DI.js",
+				"dependency-injection/Configuration.js": "/Configuration.js",
+				"dependency-injection/DIFactory.js": "/lib/DIFactory.js",
+				"dependency-injection/Helpers.js": "/Helpers.js"
+			},
 			"run": [
 				"/test/browser/tests/Helpers",
 				"/test/browser/tests/DI",
-				"/test/browser/tests/DIConfigurator"
+				"/test/browser/tests/DIFactory"
 			]
 		}
 	}

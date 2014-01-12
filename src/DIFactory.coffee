@@ -1,4 +1,5 @@
 DI = require './DI'
+Helpers = require './Helpers'
 Configuration = require 'easy-configuration'
 
 isWindow = typeof window != 'undefined'
@@ -7,7 +8,7 @@ if !isWindow
 	callsite = require 'callsite'
 	path = require 'path'
 
-class DIConfigurator
+class DIFactory
 
 
 	@EXPOSE_NAME = 'di'
@@ -19,6 +20,9 @@ class DIConfigurator
 
 	basePath: null
 
+	defaultDefaults:
+		instantiate: true
+
 	defaultSetup:
 		windowExpose: null		# deprecated
 		expose: false
@@ -26,7 +30,7 @@ class DIConfigurator
 	defaultService:
 		service: null
 		arguments: []
-		instantiate: true
+		instantiate: null
 		autowired: true
 		run: false
 		setup: {}
@@ -51,6 +55,10 @@ class DIConfigurator
 		else
 			throw new Error 'Bad argument'
 
+		if @basePath == null
+			break for _path, section of @config.files
+			@basePath = Helpers.dirName(_path)
+
 
 	create: ->
 		defaultService = @defaultService
@@ -67,6 +75,10 @@ class DIConfigurator
 		@config.addSection('setup').loadConfiguration = ->
 			return @getConfig(defaultSetup)
 
+		defaultDefaults = @defaultDefaults
+		@config.addSection('defaults').loadConfiguration = ->
+			return @getConfig(defaultDefaults)
+
 		configuration = @config.load()
 		di = new DI
 
@@ -75,6 +87,7 @@ class DIConfigurator
 
 		di.config = @config
 		di.parameters = @config.parameters
+		di.instantiate = configuration.defaults.instantiate
 
 		if configuration.setup.windowExpose != null
 			console.log 'Option windowExpose is deprecated. Please use expose.'
@@ -82,7 +95,7 @@ class DIConfigurator
 
 		expose = configuration.setup.expose
 		if expose != false
-			name = if typeof expose == 'string' then expose else DIConfigurator.EXPOSE_NAME
+			name = if typeof expose == 'string' then expose else DIFactory.EXPOSE_NAME
 			if typeof window != 'undefined'
 				window[name] = di
 			else if typeof global != 'undefined'
@@ -92,6 +105,12 @@ class DIConfigurator
 
 		for name, service of configuration.services
 			if configuration.services.hasOwnProperty(name) && name not in ['__proto__']
+				if service.instantiate == null
+					if service.service.match(/^(factory\:)?[@$]/)
+						service.instantiate = false
+					else
+						service.instantiate = true
+
 				s = di.addService(name, service.service, service.arguments)
 				s.setInstantiate(service.instantiate)
 				s.setAutowired(service.autowired)
@@ -109,4 +128,4 @@ class DIConfigurator
 		return di
 
 
-module.exports = DIConfigurator
+module.exports = DIFactory

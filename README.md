@@ -49,16 +49,18 @@ you will need this service, it will have got these arguments and all setup funct
 
 Section service is path for module require (common js).
 
+You can of course use also modules from node_modules directory just like you are used to.
+
 DI automatically look into values from setup in your module (service). If it is function, then it will be called, otherwise
 argument will be passed into this object property.
 
 ## Usage
 
 ```
-var DIConfigurator = require('dependency-injection/DIConfigurator');
-var configurator = new DIConfigurator('./path/to/your/configuration/file.json');
+var DIFactory = require('dependency-injection/DIFactory');
+var factory = new DIFactory('./path/to/your/configuration/file.json');
 
-var di = configurator.create();
+var di = factory.create();
 ```
 
 **Relative paths to config files are supported only on node (not in browser)!!!**
@@ -78,10 +80,12 @@ di.getFactory('application');
 
 ## Base path to services
 
-Default base path in node is directory of file from which you are initializing DI. You have to set this manually in browser.
+Base path is used for requiring your services. All services (exceptions are node_modules services) are relative to this path.
+
+**Default base path is directory in which is your config.json file.**
 
 ```
-di.basePath = __dirname;
+di.basePath = __dirname + '/my/custom/base/directory';
 ```
 
 ## Auto exposing into global
@@ -342,7 +346,47 @@ or with full module path:
 }
 ```
 
-Now this `foreignLibrary` will gets your `translator` service in constructor.
+you can even access properties or methods from other services:
+```
+{
+	"services": {
+		"foreignLibrary": {
+			"service": "path/to/service",
+			"arguments": [
+				"@translator::getLanguage('en')",			// en can be default language
+				"@http::basePath"
+			]
+		}
+	}
+}
+```
+
+or create service from other service (for example from factory)
+```
+{
+	"services": {
+		"httpFactory": {
+			"service": "./path/to/http/module"
+		},
+		"http": {
+			"service": "@httpFactory::createHttp()"
+		}
+	}
+}
+```
+
+## Default settings
+
+You can change default behavior of some options in your config file.
+
+```
+{
+	"defaults": {
+		"instantiate": false
+	},
+	"services": { ... }
+}
+```
 
 ## Default services
 
@@ -398,17 +442,17 @@ method in [easy-configuration](https://github.com/sakren/node-easy-configuration
 ## Advanced configuration
 
 If you need more control over configuration, you can create instance of `easy-configuration` object on your own and pass
-it to DIConfigurator.
+it to DIFactory.
 
 ```
-var Config = require('easy-configuration');
-var DIConfigurator = require('dependency-injection/DIConfigurator');
+var Configuration = require('dependency-injection/Configuration');		// shortcut to easy-configuration module
+var DIFactory = require('dependency-injection/DIFactory');
 
-var config = new Config;
+var config = new Configuration;
 config.addConfig('./path/to/config.json', 'development');
 
-var configurator = new DIConfigurator(config);
-var di = configurator.create();
+var factory = new DIFactory(config);
+var di = factory.create();
 ```
 
 ## Without configuration
@@ -475,6 +519,16 @@ $ npm test
 
 ## Changelog
 
+* 2.3.0
+	+ Added option for services derived from other services
+	+ Support for calling methods from other services in config
+	+ Some optimization
+	+ exposed [easy-configuration](https://github.com/sakren/node-easy-configuration) into dependency-injection/Configuration
+	+ DIConfigurator renamed to DIFactory (DIConfigurator is now deprecated)
+	+ Support for services from npm modules
+	+ Default base path for services in config file is dir name of config file
+	+ Updated dependencies
+
 * 2.2.0
 	+ Relative paths to config files
 	+ Little updates in tests
@@ -487,7 +541,7 @@ $ npm test
 	+ Inject method's second argument is args, not scope (BC break!)
 
 * 2.1.0
-	+ Added [config](https://github.com/sakren/node-easy-configuration) object do DIConfigurator
+	+ Added [config](https://github.com/sakren/node-easy-configuration) object do DIFactory
 	+ Bug with exposing
 	+ Accessing parameters from di instance
 	+ Updated dependencies

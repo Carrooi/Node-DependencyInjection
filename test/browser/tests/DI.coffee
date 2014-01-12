@@ -48,6 +48,51 @@ describe 'DI', ->
 			di.addService('app', "#{dir}/Application", [null])
 			expect(di.get('app').array).to.not.exists
 
+	describe '#tryCallArgument()', ->
+
+		it 'should just return argument if it is not string', ->
+			expect(di.tryCallArgument(new Date)).to.be.an.instanceof(Date)
+
+		it 'should just return argument if it is not in right format', ->
+			expect(di.tryCallArgument('hello word')).to.be.equal('hello word')
+
+		it 'should return service by its name', ->
+			di.addService('date', Date)
+			expect(di.tryCallArgument('@date')).to.be.an.instanceof(Date)
+
+		it 'should return service by its path', ->
+			di.addService('callsite', 'callsite').setInstantiate(false)
+			expect(di.tryCallArgument('$callsite')).to.be.equal(require('callsite'))
+
+		it 'should return factory by its name', ->
+			di.addService('date', Date)
+			factory = di.tryCallArgument('factory:@date')
+			expect(factory).to.be.an.instanceof(Function)
+			expect(factory()).to.be.an.instanceof(Date)
+
+		it 'should return factory by its path', ->
+			di.addService('callsite', 'callsite').setInstantiate(false)
+			factory = di.tryCallArgument('factory:$callsite')
+			expect(factory).to.be.an.instanceof(Function)
+			expect(factory()).to.be.equal(require('callsite'))
+
+		it 'should return result from method in service', ->
+			di.addService('obj',
+				doSomething: -> return 'hello'
+			).setInstantiate(false)
+			expect(di.tryCallArgument('@obj::doSomething')).to.be.equal('hello')
+
+		it 'should return result from method with arguments', ->
+			di.addService('obj',
+				doSomething: (one, two, three) -> return one + two + three
+			).setInstantiate(false)
+			expect(di.tryCallArgument('@obj::doSomething("hello", " ", "word")')).to.be.equal('hello word')
+
+		it 'should return result from method with arguments with sub calls to di', ->
+			di.addService('obj',
+				complete: -> {callMe: (greetings, name) -> return greetings + ' ' + name}
+			).setInstantiate(false)
+			expect(di.tryCallArgument('@obj::complete::callMe("hello", "David")')).to.be.equal('hello David')
 
 	describe '#createInstance()', ->
 
@@ -101,6 +146,10 @@ describe 'DI', ->
 
 			it 'should return always the same instance of Application', ->
 				expect(di.get('application')).to.be.equal(di.get('application'))
+
+			it 'should add service from node_modules', ->
+				di.addService('callsite', 'callsite').setInstantiate(false)
+				expect(di.get('callsite')).to.be.equal(require('callsite'))
 
 			it 'should return info array without instantiating it', ->
 				expect(di.get('info')).to.be.eql(['hello'])

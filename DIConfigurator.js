@@ -1,1 +1,3 @@
-module.exports = require('./lib/DIConfigurator');
+console.log('DIConfigurator is deprecated, please use DIFactory instead.');
+
+module.exports = require('./lib/DIFactory');

@@ -19,6 +19,8 @@ class DI
 
 	basePath: null
 
+	instantiate: true
+
 
 	constructor: ->
 		@services = {}
@@ -30,7 +32,7 @@ class DI
 
 	getParameter: (parameter) ->
 		if @config == null
-			throw new Error 'DI container was not created with DIConfigurator.'
+			throw new Error 'DI container was not created with DIFactory.'
 
 		return @config.getParameter(parameter)
 
@@ -43,12 +45,84 @@ class DI
 		if name in @reserved && typeof @services[name] != 'undefined'
 			throw new Error "DI: name '#{name}' is reserved by DI."
 
+		originalService = service
+
 		if typeof service == 'string'
-			service = require.resolve(@getPath(service))
-			@paths[service] = name
+			if service.match(/^(factory\:)?[@$]/)
+				service = @tryCallArgument(service)
+			else
+				service = @resolveModulePath(service)
+				if service == null
+					throw new Error "Service '#{originalService}' can not be found."
+
+				@paths[service] = name
 
 		@services[name] = new Service(@, name, service, args)
+		@services[name].setInstantiate(@instantiate)
 		return @services[name]
+
+
+	resolveModulePath: (_path) ->
+		get = (p) ->
+			try return require.resolve(p)
+			catch err then return null
+
+		return get(_path) || get(@getPath(_path)) || get(Helpers.normalizePath(_path)) || get(Helpers.normalizePath(@getPath(_path)))
+
+
+	tryCallArgument: (arg) ->
+		if typeof arg != 'string'
+			return arg
+
+		if !arg.match(/^(factory\:)?[@$]/)
+			return arg
+
+		factory = false
+		if arg.match(/^factory\:/)
+			factory = true
+			arg = arg.substr(8)
+
+		type = if arg[0] == '@' then 'service' else 'path'
+		original = arg
+		arg = arg.substr(1)
+		service = null
+		after = []
+
+		if (pos = arg.indexOf('::')) != -1
+			after = arg.substr(pos + 2).split('::')
+			arg = arg.substr(0, pos)
+
+		if type == 'service'
+			service = if factory then @getFactory(arg) else @get(arg)
+		else if type == 'path'
+			service = if factory then @getFactoryByPath(arg) else @getByPath(arg)
+
+		if service == null
+			throw new Error "Service '#{arg}' can not be found."
+
+		if after.length > 0
+			args = []
+			while after.length > 0
+				sub = after.shift()
+				if (match = sub.match(/^(.+)\((.*)\)$/)) != null
+					sub = match[1]
+					args = match[2].split(',')
+					for a, i in args
+						a = a.trim()
+						if (match = a.match(/'(.*)'/)) || (match = a.match(/"(.*)"/))
+							args[i] = match[1]
+						else
+							args[i] = @tryCallArgument(a)		# todo
+
+				if typeof service[sub] == 'undefined'
+					throw new Error "Can not access '#{sub}' in '#{original}'."
+
+				if Object.prototype.toString.call(service[sub]) == '[object Function]'
+					service = @inject(service[sub], args, service)
+				else
+					service = service[sub]
+
+		return service
 
 
 	# deprecated
@@ -96,26 +170,16 @@ class DI
 
 
 	getByPath: (path) ->
-		error = false
-		try
-			path = require.resolve(@getPath(path))
-		catch e
-			error = true
-
-		if typeof @paths[path] != 'undefined' && !error
+		path = @resolveModulePath(path)
+		if path != null && typeof @paths[path] != 'undefined'
 			return @get(@paths[path])
 
 		return null
 
 
 	getFactoryByPath: (path) ->
-		error = false
-		try
-			path = require.resolve(@getPath(path))
-		catch e
-			error = true
-
-		if typeof @paths[path] != 'undefined' && !error
+		path = @resolveModulePath(path)
+		if path != null && typeof @paths[path] != 'undefined'
 			return @getFactory(@paths[path])
 
 		return null

@@ -56,6 +56,64 @@
         return expect(di.get('app').array).to.not.exists;
       });
     });
+    describe('#tryCallArgument()', function() {
+      it('should just return argument if it is not string', function() {
+        return expect(di.tryCallArgument(new Date)).to.be.an["instanceof"](Date);
+      });
+      it('should just return argument if it is not in right format', function() {
+        return expect(di.tryCallArgument('hello word')).to.be.equal('hello word');
+      });
+      it('should return service by its name', function() {
+        di.addService('date', Date);
+        return expect(di.tryCallArgument('@date')).to.be.an["instanceof"](Date);
+      });
+      it('should return service by its path', function() {
+        di.addService('callsite', 'callsite').setInstantiate(false);
+        return expect(di.tryCallArgument('$callsite/index.js')).to.be.equal(require('callsite'));
+      });
+      it('should return factory by its name', function() {
+        var factory;
+        di.addService('date', Date);
+        factory = di.tryCallArgument('factory:@date');
+        expect(factory).to.be.an["instanceof"](Function);
+        return expect(factory()).to.be.an["instanceof"](Date);
+      });
+      it('should return factory by its path', function() {
+        var factory;
+        di.addService('callsite', 'callsite').setInstantiate(false);
+        factory = di.tryCallArgument('factory:$callsite/index.js');
+        expect(factory).to.be.an["instanceof"](Function);
+        return expect(factory()).to.be.equal(require('callsite'));
+      });
+      it('should return result from method in service', function() {
+        di.addService('obj', {
+          doSomething: function() {
+            return 'hello';
+          }
+        }).setInstantiate(false);
+        return expect(di.tryCallArgument('@obj::doSomething')).to.be.equal('hello');
+      });
+      it('should return result from method with arguments', function() {
+        di.addService('obj', {
+          doSomething: function(one, two, three) {
+            return one + two + three;
+          }
+        }).setInstantiate(false);
+        return expect(di.tryCallArgument('@obj::doSomething("hello", " ", "word")')).to.be.equal('hello word');
+      });
+      return it('should return result from method with arguments with sub calls to di', function() {
+        di.addService('obj', {
+          complete: function() {
+            return {
+              callMe: function(greetings, name) {
+                return greetings + ' ' + name;
+              }
+            };
+          }
+        }).setInstantiate(false);
+        return expect(di.tryCallArgument('@obj::complete::callMe("hello", "David")')).to.be.equal('hello David');
+      });
+    });
     describe('#createInstance()', function() {
       beforeEach(function() {
         di.addService('array', Array);
@@ -107,6 +165,10 @@
         });
         it('should return always the same instance of Application', function() {
           return expect(di.get('application')).to.be.equal(di.get('application'));
+        });
+        it('should add service from node_modules', function() {
+          di.addService('callsite', 'callsite').setInstantiate(false);
+          return expect(di.get('callsite')).to.be.equal(require('callsite'));
         });
         it('should return info array without instantiating it', function() {
           return expect(di.get('info')).to.be.eql(['hello']);

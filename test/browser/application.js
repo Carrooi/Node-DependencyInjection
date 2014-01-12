@@ -660,7 +660,7 @@
 	    };
 	
 	    DI.prototype.tryCallArgument = function(arg) {
-	      var factory, service, type;
+	      var a, after, args, factory, i, match, original, pos, service, sub, type, _i, _len;
 	      if (typeof arg !== 'string') {
 	        return arg;
 	      }
@@ -673,8 +673,14 @@
 	        arg = arg.substr(8);
 	      }
 	      type = arg[0] === '@' ? 'service' : 'path';
+	      original = arg;
 	      arg = arg.substr(1);
 	      service = null;
+	      after = [];
+	      if ((pos = arg.indexOf('::')) !== -1) {
+	        after = arg.substr(pos + 2).split('::');
+	        arg = arg.substr(0, pos);
+	      }
 	      if (type === 'service') {
 	        service = factory ? this.getFactory(arg) : this.get(arg);
 	      } else if (type === 'path') {
@@ -682,6 +688,33 @@
 	      }
 	      if (service === null) {
 	        throw new Error("Service '" + arg + "' can not be found.");
+	      }
+	      if (after.length > 0) {
+	        args = [];
+	        while (after.length > 0) {
+	          sub = after.shift();
+	          if ((match = sub.match(/^(.+)\((.*)\)$/)) !== null) {
+	            sub = match[1];
+	            args = match[2].split(',');
+	            for (i = _i = 0, _len = args.length; _i < _len; i = ++_i) {
+	              a = args[i];
+	              a = a.trim();
+	              if ((match = a.match(/'(.*)'/)) || (match = a.match(/"(.*)"/))) {
+	                args[i] = match[1];
+	              } else {
+	                args[i] = this.tryCallArgument(a);
+	              }
+	            }
+	          }
+	          if (typeof service[sub] === 'undefined') {
+	            throw new Error("Can not access '" + sub + "' in '" + original + "'.");
+	          }
+	          if (Object.prototype.toString.call(service[sub]) === '[object Function]') {
+	            service = this.inject(service[sub], args, service);
+	          } else {
+	            service = service[sub];
+	          }
+	        }
 	      }
 	      return service;
 	    };
@@ -1611,12 +1644,40 @@
 	        expect(factory).to.be.an["instanceof"](Function);
 	        return expect(factory()).to.be.an["instanceof"](Date);
 	      });
-	      return it('should return factory by its path', function() {
+	      it('should return factory by its path', function() {
 	        var factory;
 	        di.addService('callsite', 'callsite').setInstantiate(false);
 	        factory = di.tryCallArgument('factory:$callsite');
 	        expect(factory).to.be.an["instanceof"](Function);
 	        return expect(factory()).to.be.equal(require('callsite'));
+	      });
+	      it('should return result from method in service', function() {
+	        di.addService('obj', {
+	          doSomething: function() {
+	            return 'hello';
+	          }
+	        }).setInstantiate(false);
+	        return expect(di.tryCallArgument('@obj::doSomething')).to.be.equal('hello');
+	      });
+	      it('should return result from method with arguments', function() {
+	        di.addService('obj', {
+	          doSomething: function(one, two, three) {
+	            return one + two + three;
+	          }
+	        }).setInstantiate(false);
+	        return expect(di.tryCallArgument('@obj::doSomething("hello", " ", "word")')).to.be.equal('hello word');
+	      });
+	      return it('should return result from method with arguments with sub calls to di', function() {
+	        di.addService('obj', {
+	          complete: function() {
+	            return {
+	              callMe: function(greetings, name) {
+	                return greetings + ' ' + name;
+	              }
+	            };
+	          }
+	        }).setInstantiate(false);
+	        return expect(di.tryCallArgument('@obj::complete::callMe("hello", "David")')).to.be.equal('hello David');
 	      });
 	    });
 	    describe('#createInstance()', function() {
@@ -1844,10 +1905,18 @@
 	      });
 	    });
 	    return describe('#get()', function() {
-	      return it('should load service defined with relative path', function() {
+	      it('should load service defined with relative path', function() {
 	        factory = new DIFactory(dir + '/relative.json');
 	        di = factory.create();
 	        return expect(di.get('http')).to.be.an["instanceof"](Http);
+	      });
+	      return it('should create services with derived arguments', function() {
+	        var application;
+	        factory = new DIFactory(dir + '/derivedArguments.json');
+	        di = factory.create();
+	        application = di.get('application');
+	        expect(application.data).to.be.equal('hello David');
+	        return expect(application.namespace).to.be["false"];
 	      });
 	    });
 	  });
@@ -2187,6 +2256,12 @@
 	  Http = (function() {
 	    function Http() {}
 	
+	    Http.prototype.async = false;
+	
+	    Http.prototype.greetings = function(name) {
+	      return 'hello ' + name;
+	    };
+	
 	    return Http;
 	
 	  })();
@@ -2219,6 +2294,37 @@
 			"database": {
 				"user": "admin",
 				"password": "%users.admin%"
+			}
+		}
+	}
+	}).call(this);
+	
+
+}, '/test/data/derivedArguments.json': function(exports, module) {
+
+	/** node globals **/
+	var require = function(name) {return window.require(name, '/test/data/derivedArguments.json');};
+	require.resolve = function(name, parent) {if (parent === null) {parent = '/test/data/derivedArguments.json';} return window.require.resolve(name, parent);};
+	require.define = function(bundle) {window.require.define(bundle);};
+	require.cache = window.require.cache;
+	var __filename = '/test/data/derivedArguments.json';
+	var __dirname = '/test/data';
+	var process = {cwd: function() {return '/';}, argv: ['node', '/test/data/derivedArguments.json'], env: {}};
+
+	/** code **/
+	module.exports = (function() {
+	return {
+		"services": {
+			"application": {
+				"service": "./Application",
+				"arguments": ["application"],
+				"setup": {
+					"setData": ["@http::greetings('David')"],
+					"prepare": ["@http::async", "test"]
+				}
+			},
+			"http": {
+				"service": "./Http"
 			}
 		}
 	}
@@ -2366,7 +2472,7 @@
 		"scripts": {
 			"test": "npm run test-node && npm run test-browser",
 			"build-and-test": "npm run test-build && npm run test",
-			"test-build": "coffee -co ./test/node/lib ./test/node/src; cd ./test/browser; simq build;",
+			"test-build": "coffee -co ./test/data ./test/data; coffee -co ./test/node/lib ./test/node/src; cd ./test/browser; simq build;",
 			"test-node": "mocha ./test/node/index.js --reporter spec",
 			"test-browser": "mocha-phantomjs ./test/browser/index.html"
 		}
@@ -2455,7 +2561,7 @@
 , 'callsite': function(exports, module) { module.exports = window.require('callsite/index.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1389474447000,"mtime":1389474205000,"ctime":1389474205000},"/lib/Helpers.js":{"atime":1389524439000,"mtime":1389524436000,"ctime":1389524436000},"/lib/Defaults.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/DI.js":{"atime":1389526788000,"mtime":1389526785000,"ctime":1389526785000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1389471395000,"mtime":1389106575000,"ctime":1389113763000},"recursive-merge/lib/Merge.js":{"atime":1389471642000,"mtime":1385409966000,"ctime":1389113764000},"easy-configuration/lib/Extension.js":{"atime":1389471395000,"mtime":1389093412000,"ctime":1389113763000},"easy-configuration/lib/Helpers.js":{"atime":1389471396000,"mtime":1389093412000,"ctime":1389113763000},"callsite/index.js":{"atime":1389471642000,"mtime":1359062982000,"ctime":1389113763000},"/lib/DIFactory.js":{"atime":1389521212000,"mtime":1389520197000,"ctime":1389520197000},"/test/browser/tests/DI.coffee":{"atime":1389526940000,"mtime":1389526937000,"ctime":1389526937000},"/test/browser/tests/DIFactory.coffee":{"atime":1389520197000,"mtime":1389520197000,"ctime":1389520197000},"/test/browser/tests/Helpers.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/DI.js":{"atime":1389519060000,"mtime":1385309217000,"ctime":1385309217000},"/DIFactory.js":{"atime":1389520197000,"mtime":1389520197000,"ctime":1389520197000},"/Configuration.js":{"atime":1389520197000,"mtime":1389520197000,"ctime":1389520197000},"/test/data/Application.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1389471642000,"mtime":1385309217000,"ctime":1385309217000},"/test/data/config.json":{"atime":1389471642000,"mtime":1388272273000,"ctime":1388272273000},"/test/data/relative.json":{"atime":1389480333000,"mtime":1389480333000,"ctime":1389480333000},"/test/data/sections.json":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"callsite/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000},"/package.json":{"atime":1389472454000,"mtime":1389472454000,"ctime":1389472454000},"easy-configuration/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000}});
+require.__setStats({"/lib/Service.js":{"atime":1389474447000,"mtime":1389474205000,"ctime":1389474205000},"/lib/Helpers.js":{"atime":1389524439000,"mtime":1389524436000,"ctime":1389524436000},"/lib/Defaults.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/DI.js":{"atime":1389543119000,"mtime":1389543117000,"ctime":1389543117000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1389471395000,"mtime":1389106575000,"ctime":1389113763000},"recursive-merge/lib/Merge.js":{"atime":1389471642000,"mtime":1385409966000,"ctime":1389113764000},"easy-configuration/lib/Extension.js":{"atime":1389471395000,"mtime":1389093412000,"ctime":1389113763000},"easy-configuration/lib/Helpers.js":{"atime":1389471396000,"mtime":1389093412000,"ctime":1389113763000},"callsite/index.js":{"atime":1389471642000,"mtime":1359062982000,"ctime":1389113763000},"/lib/DIFactory.js":{"atime":1389521212000,"mtime":1389520197000,"ctime":1389520197000},"/test/browser/tests/DI.coffee":{"atime":1389543371000,"mtime":1389543363000,"ctime":1389543363000},"/test/browser/tests/DIFactory.coffee":{"atime":1389545113000,"mtime":1389545106000,"ctime":1389545106000},"/test/browser/tests/Helpers.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/DI.js":{"atime":1389519060000,"mtime":1385309217000,"ctime":1385309217000},"/DIFactory.js":{"atime":1389520197000,"mtime":1389520197000,"ctime":1389520197000},"/Configuration.js":{"atime":1389520197000,"mtime":1389520197000,"ctime":1389520197000},"/test/data/Application.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1389544796000,"mtime":1389544230000,"ctime":1389544230000},"/test/data/config.json":{"atime":1389471642000,"mtime":1388272273000,"ctime":1388272273000},"/test/data/derivedArguments.json":{"atime":1389544939000,"mtime":1389544933000,"ctime":1389544933000},"/test/data/relative.json":{"atime":1389480333000,"mtime":1389480333000,"ctime":1389480333000},"/test/data/sections.json":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"callsite/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000},"/package.json":{"atime":1389544858000,"mtime":1389544843000,"ctime":1389544843000},"easy-configuration/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000}});
 require.version = '5.5.1';
 
 /** run section **/

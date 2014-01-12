@@ -76,6 +76,24 @@ describe 'DI', ->
 			expect(factory).to.be.an.instanceof(Function)
 			expect(factory()).to.be.equal(require('callsite'))
 
+		it 'should return result from method in service', ->
+			di.addService('obj',
+				doSomething: -> return 'hello'
+			).setInstantiate(false)
+			expect(di.tryCallArgument('@obj::doSomething')).to.be.equal('hello')
+
+		it 'should return result from method with arguments', ->
+			di.addService('obj',
+				doSomething: (one, two, three) -> return one + two + three
+			).setInstantiate(false)
+			expect(di.tryCallArgument('@obj::doSomething("hello", " ", "word")')).to.be.equal('hello word')
+
+		it 'should return result from method with arguments with sub calls to di', ->
+			di.addService('obj',
+				complete: -> {callMe: (greetings, name) -> return greetings + ' ' + name}
+			).setInstantiate(false)
+			expect(di.tryCallArgument('@obj::complete::callMe("hello", "David")')).to.be.equal('hello David')
+
 	describe '#createInstance()', ->
 
 		beforeEach( ->

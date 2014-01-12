@@ -346,6 +346,21 @@ or with full module path:
 }
 ```
 
+you can even access properties or methods from other services:
+```
+{
+	"services": {
+		"foreignLibrary": {
+			"service": "path/to/service",
+			"arguments": [
+				"@translator::getLanguage('en')",			// en can be default language
+				"@http::basePath"
+			]
+		}
+	}
+}
+```
+
 Now this `foreignLibrary` will gets your `translator` service in constructor.
 
 ## Default settings

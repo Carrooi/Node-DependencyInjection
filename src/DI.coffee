@@ -79,8 +79,14 @@ class DI
 			arg = arg.substr(8)
 
 		type = if arg[0] == '@' then 'service' else 'path'
+		original = arg
 		arg = arg.substr(1)
 		service = null
+		after = []
+
+		if (pos = arg.indexOf('::')) != -1
+			after = arg.substr(pos + 2).split('::')
+			arg = arg.substr(0, pos)
 
 		if type == 'service'
 			service = if factory then @getFactory(arg) else @get(arg)
@@ -89,6 +95,28 @@ class DI
 
 		if service == null
 			throw new Error "Service '#{arg}' can not be found."
+
+		if after.length > 0
+			args = []
+			while after.length > 0
+				sub = after.shift()
+				if (match = sub.match(/^(.+)\((.*)\)$/)) != null
+					sub = match[1]
+					args = match[2].split(',')
+					for a, i in args
+						a = a.trim()
+						if (match = a.match(/'(.*)'/)) || (match = a.match(/"(.*)"/))
+							args[i] = match[1]
+						else
+							args[i] = @tryCallArgument(a)		# todo
+
+				if typeof service[sub] == 'undefined'
+					throw new Error "Can not access '#{sub}' in '#{original}'."
+
+				if Object.prototype.toString.call(service[sub]) == '[object Function]'
+					service = @inject(service[sub], args, service)
+				else
+					service = service[sub]
 
 		return service
 

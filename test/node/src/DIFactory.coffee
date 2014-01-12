@@ -64,3 +64,15 @@ describe 'DIFactory', ->
 			factory = new DIFactory(dir + '/relative.json')
 			di = factory.create()
 			expect(di.get('http')).to.be.an.instanceof(Http)
+
+		it 'should create services with derived arguments', ->
+			factory = new DIFactory(dir + '/derivedArguments.json')
+			di = factory.create()
+			application = di.get('application')
+			expect(application.data).to.be.equal('hello David')
+			expect(application.namespace).to.be.false
+
+		it 'should create service derived from other service', ->
+			factory = new DIFactory(dir + '/derivedService.json')
+			di = factory.create()
+			expect(di.get('http')).to.be.an.instanceof(Http)

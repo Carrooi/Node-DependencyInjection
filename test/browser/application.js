@@ -228,7 +228,6 @@
 	      this.service = service;
 	      this["arguments"] = _arguments != null ? _arguments : [];
 	      this.setup = {};
-	      this.instantiate = this.di.instantiate;
 	    }
 	
 	    Service.prototype.getInstance = function() {
@@ -490,27 +489,7 @@
 	          }
 	          previousDots = true;
 	        } else {
-	          if (args[0] !== null && typeof args[0] === 'string' && args[0].match(/^factory:/) !== null) {
-	            args[0] = args[0].substr(8);
-	            factory = true;
-	          }
-	          if (args[0] !== null && typeof args[0] === 'string' && args[0].match(/^@/) !== null) {
-	            args[0] = args[0].substr(1);
-	            if (factory) {
-	              result.push(container.getFactory(args[0]));
-	            } else {
-	              result.push(container.get(args[0]));
-	            }
-	          } else if (args[0] !== null && typeof args[0] === 'string' && args[0].match(/^\$/) !== null) {
-	            args[0] = args[0].substr(1);
-	            if (factory) {
-	              result.push(container.getFactoryByPath(args[0]));
-	            } else {
-	              result.push(container.getByPath(args[0]));
-	            }
-	          } else {
-	            result.push(args[0]);
-	          }
+	          result.push(container.tryCallArgument(args[0]));
 	          previousDots = false;
 	          args.shift();
 	        }
@@ -655,13 +634,18 @@
 	      }
 	      originalService = service;
 	      if (typeof service === 'string') {
-	        service = this.resolveModulePath(service);
-	        if (service === null) {
-	          throw new Error("Service '" + originalService + "' can not be found.");
+	        if (service.match(/^(factory\:)?[@$]/)) {
+	          service = this.tryCallArgument(service);
+	        } else {
+	          service = this.resolveModulePath(service);
+	          if (service === null) {
+	            throw new Error("Service '" + originalService + "' can not be found.");
+	          }
+	          this.paths[service] = name;
 	        }
-	        this.paths[service] = name;
 	      }
 	      this.services[name] = new Service(this, name, service, args);
+	      this.services[name].setInstantiate(this.instantiate);
 	      return this.services[name];
 	    };
 	
@@ -677,6 +661,66 @@
 	        }
 	      };
 	      return get(_path) || get(this.getPath(_path)) || get(Helpers.normalizePath(_path)) || get(Helpers.normalizePath(this.getPath(_path)));
+	    };
+	
+	    DI.prototype.tryCallArgument = function(arg) {
+	      var a, after, args, factory, i, match, original, pos, service, sub, type, _i, _len;
+	      if (typeof arg !== 'string') {
+	        return arg;
+	      }
+	      if (!arg.match(/^(factory\:)?[@$]/)) {
+	        return arg;
+	      }
+	      factory = false;
+	      if (arg.match(/^factory\:/)) {
+	        factory = true;
+	        arg = arg.substr(8);
+	      }
+	      type = arg[0] === '@' ? 'service' : 'path';
+	      original = arg;
+	      arg = arg.substr(1);
+	      service = null;
+	      after = [];
+	      if ((pos = arg.indexOf('::')) !== -1) {
+	        after = arg.substr(pos + 2).split('::');
+	        arg = arg.substr(0, pos);
+	      }
+	      if (type === 'service') {
+	        service = factory ? this.getFactory(arg) : this.get(arg);
+	      } else if (type === 'path') {
+	        service = factory ? this.getFactoryByPath(arg) : this.getByPath(arg);
+	      }
+	      if (service === null) {
+	        throw new Error("Service '" + arg + "' can not be found.");
+	      }
+	      if (after.length > 0) {
+	        args = [];
+	        while (after.length > 0) {
+	          sub = after.shift();
+	          if ((match = sub.match(/^(.+)\((.*)\)$/)) !== null) {
+	            sub = match[1];
+	            args = match[2].split(',');
+	            for (i = _i = 0, _len = args.length; _i < _len; i = ++_i) {
+	              a = args[i];
+	              a = a.trim();
+	              if ((match = a.match(/'(.*)'/)) || (match = a.match(/"(.*)"/))) {
+	                args[i] = match[1];
+	              } else {
+	                args[i] = this.tryCallArgument(a);
+	              }
+	            }
+	          }
+	          if (typeof service[sub] === 'undefined') {
+	            throw new Error("Can not access '" + sub + "' in '" + original + "'.");
+	          }
+	          if (Object.prototype.toString.call(service[sub]) === '[object Function]') {
+	            service = this.inject(service[sub], args, service);
+	          } else {
+	            service = service[sub];
+	          }
+	        }
+	      }
+	      return service;
 	    };
 	
 	    DI.prototype.autowireArguments = function(method, args) {
@@ -742,30 +786,16 @@
 	    };
 	
 	    DI.prototype.getByPath = function(path) {
-	      var e, error;
-	      error = false;
-	      try {
-	        path = require.resolve(this.getPath(path));
-	      } catch (_error) {
-	        e = _error;
-	        error = true;
-	      }
-	      if (typeof this.paths[path] !== 'undefined' && !error) {
+	      path = this.resolveModulePath(path);
+	      if (path !== null && typeof this.paths[path] !== 'undefined') {
 	        return this.get(this.paths[path]);
 	      }
 	      return null;
 	    };
 	
 	    DI.prototype.getFactoryByPath = function(path) {
-	      var e, error;
-	      error = false;
-	      try {
-	        path = require.resolve(this.getPath(path));
-	      } catch (_error) {
-	        e = _error;
-	        error = true;
-	      }
-	      if (typeof this.paths[path] !== 'undefined' && !error) {
+	      path = this.resolveModulePath(path);
+	      if (path !== null && typeof this.paths[path] !== 'undefined') {
 	        return this.getFactory(this.paths[path]);
 	      }
 	      return null;
@@ -1416,7 +1446,7 @@
 	    DIFactory.prototype.defaultService = {
 	      service: null,
 	      "arguments": [],
-	      instantiate: true,
+	      instantiate: null,
 	      autowired: true,
 	      run: false,
 	      setup: {}
@@ -1497,6 +1527,13 @@
 	      for (name in _ref) {
 	        service = _ref[name];
 	        if (configuration.services.hasOwnProperty(name) && (name !== '__proto__')) {
+	          if (service.instantiate === null) {
+	            if (service.service.match(/^(factory\:)?[@$]/)) {
+	              service.instantiate = false;
+	            } else {
+	              service.instantiate = true;
+	            }
+	          }
 	          s = di.addService(name, service.service, service["arguments"]);
 	          s.setInstantiate(service.instantiate);
 	          s.setAutowired(service.autowired);
@@ -1594,6 +1631,64 @@
 	        di.addService('http', "" + dir + "/Http");
 	        di.addService('app', "" + dir + "/Application", [null]);
 	        return expect(di.get('app').array).to.not.exists;
+	      });
+	    });
+	    describe('#tryCallArgument()', function() {
+	      it('should just return argument if it is not string', function() {
+	        return expect(di.tryCallArgument(new Date)).to.be.an["instanceof"](Date);
+	      });
+	      it('should just return argument if it is not in right format', function() {
+	        return expect(di.tryCallArgument('hello word')).to.be.equal('hello word');
+	      });
+	      it('should return service by its name', function() {
+	        di.addService('date', Date);
+	        return expect(di.tryCallArgument('@date')).to.be.an["instanceof"](Date);
+	      });
+	      it('should return service by its path', function() {
+	        di.addService('callsite', 'callsite').setInstantiate(false);
+	        return expect(di.tryCallArgument('$callsite')).to.be.equal(require('callsite'));
+	      });
+	      it('should return factory by its name', function() {
+	        var factory;
+	        di.addService('date', Date);
+	        factory = di.tryCallArgument('factory:@date');
+	        expect(factory).to.be.an["instanceof"](Function);
+	        return expect(factory()).to.be.an["instanceof"](Date);
+	      });
+	      it('should return factory by its path', function() {
+	        var factory;
+	        di.addService('callsite', 'callsite').setInstantiate(false);
+	        factory = di.tryCallArgument('factory:$callsite');
+	        expect(factory).to.be.an["instanceof"](Function);
+	        return expect(factory()).to.be.equal(require('callsite'));
+	      });
+	      it('should return result from method in service', function() {
+	        di.addService('obj', {
+	          doSomething: function() {
+	            return 'hello';
+	          }
+	        }).setInstantiate(false);
+	        return expect(di.tryCallArgument('@obj::doSomething')).to.be.equal('hello');
+	      });
+	      it('should return result from method with arguments', function() {
+	        di.addService('obj', {
+	          doSomething: function(one, two, three) {
+	            return one + two + three;
+	          }
+	        }).setInstantiate(false);
+	        return expect(di.tryCallArgument('@obj::doSomething("hello", " ", "word")')).to.be.equal('hello word');
+	      });
+	      return it('should return result from method with arguments with sub calls to di', function() {
+	        di.addService('obj', {
+	          complete: function() {
+	            return {
+	              callMe: function(greetings, name) {
+	                return greetings + ' ' + name;
+	              }
+	            };
+	          }
+	        }).setInstantiate(false);
+	        return expect(di.tryCallArgument('@obj::complete::callMe("hello", "David")')).to.be.equal('hello David');
 	      });
 	    });
 	    describe('#createInstance()', function() {
@@ -1821,8 +1916,21 @@
 	      });
 	    });
 	    return describe('#get()', function() {
-	      return it('should load service defined with relative path', function() {
+	      it('should load service defined with relative path', function() {
 	        factory = new DIFactory(dir + '/relative.json');
+	        di = factory.create();
+	        return expect(di.get('http')).to.be.an["instanceof"](Http);
+	      });
+	      it('should create services with derived arguments', function() {
+	        var application;
+	        factory = new DIFactory(dir + '/derivedArguments.json');
+	        di = factory.create();
+	        application = di.get('application');
+	        expect(application.data).to.be.equal('hello David');
+	        return expect(application.namespace).to.be["false"];
+	      });
+	      return it('should create service derived from other service', function() {
+	        factory = new DIFactory(dir + '/derivedService.json');
 	        di = factory.create();
 	        return expect(di.get('http')).to.be.an["instanceof"](Http);
 	      });
@@ -2164,11 +2272,50 @@
 	  Http = (function() {
 	    function Http() {}
 	
+	    Http.prototype.async = false;
+	
+	    Http.prototype.greetings = function(name) {
+	      return 'hello ' + name;
+	    };
+	
 	    return Http;
 	
 	  })();
 	
 	  module.exports = Http;
+	
+	}).call(this);
+	
+
+}, '/test/data/HttpFactory.coffee': function(exports, module) {
+
+	/** node globals **/
+	var require = function(name) {return window.require(name, '/test/data/HttpFactory.coffee');};
+	require.resolve = function(name, parent) {if (parent === null) {parent = '/test/data/HttpFactory.coffee';} return window.require.resolve(name, parent);};
+	require.define = function(bundle) {window.require.define(bundle);};
+	require.cache = window.require.cache;
+	var __filename = '/test/data/HttpFactory.coffee';
+	var __dirname = '/test/data';
+	var process = {cwd: function() {return '/';}, argv: ['node', '/test/data/HttpFactory.coffee'], env: {}};
+
+	/** code **/
+	(function() {
+	  var Http, HttpFactory;
+	
+	  Http = require('./Http');
+	
+	  HttpFactory = (function() {
+	    function HttpFactory() {}
+	
+	    HttpFactory.prototype.createHttp = function() {
+	      return new Http;
+	    };
+	
+	    return HttpFactory;
+	
+	  })();
+	
+	  module.exports = HttpFactory;
 	
 	}).call(this);
 	
@@ -2196,6 +2343,63 @@
 			"database": {
 				"user": "admin",
 				"password": "%users.admin%"
+			}
+		}
+	}
+	}).call(this);
+	
+
+}, '/test/data/derivedArguments.json': function(exports, module) {
+
+	/** node globals **/
+	var require = function(name) {return window.require(name, '/test/data/derivedArguments.json');};
+	require.resolve = function(name, parent) {if (parent === null) {parent = '/test/data/derivedArguments.json';} return window.require.resolve(name, parent);};
+	require.define = function(bundle) {window.require.define(bundle);};
+	require.cache = window.require.cache;
+	var __filename = '/test/data/derivedArguments.json';
+	var __dirname = '/test/data';
+	var process = {cwd: function() {return '/';}, argv: ['node', '/test/data/derivedArguments.json'], env: {}};
+
+	/** code **/
+	module.exports = (function() {
+	return {
+		"services": {
+			"application": {
+				"service": "./Application",
+				"arguments": ["application"],
+				"setup": {
+					"setData": ["@http::greetings('David')"],
+					"prepare": ["@http::async", "test"]
+				}
+			},
+			"http": {
+				"service": "./Http"
+			}
+		}
+	}
+	}).call(this);
+	
+
+}, '/test/data/derivedService.json': function(exports, module) {
+
+	/** node globals **/
+	var require = function(name) {return window.require(name, '/test/data/derivedService.json');};
+	require.resolve = function(name, parent) {if (parent === null) {parent = '/test/data/derivedService.json';} return window.require.resolve(name, parent);};
+	require.define = function(bundle) {window.require.define(bundle);};
+	require.cache = window.require.cache;
+	var __filename = '/test/data/derivedService.json';
+	var __dirname = '/test/data';
+	var process = {cwd: function() {return '/';}, argv: ['node', '/test/data/derivedService.json'], env: {}};
+
+	/** code **/
+	module.exports = (function() {
+	return {
+		"services": {
+			"httpFactory": {
+				"service": "./HttpFactory"
+			},
+			"http": {
+				"service": "@httpFactory::createHttp()"
 			}
 		}
 	}
@@ -2343,7 +2547,7 @@
 		"scripts": {
 			"test": "npm run test-node && npm run test-browser",
 			"build-and-test": "npm run test-build && npm run test",
-			"test-build": "coffee -co ./test/node/lib ./test/node/src; cd ./test/browser; simq build;",
+			"test-build": "coffee -co ./test/data ./test/data; coffee -co ./test/node/lib ./test/node/src; cd ./test/browser; simq build;",
 			"test-node": "mocha ./test/node/index.js --reporter spec",
 			"test-browser": "mocha-phantomjs ./test/browser/index.html"
 		}
@@ -2432,7 +2636,7 @@
 , 'callsite': function(exports, module) { module.exports = window.require('callsite/index.js'); }
 
 });
-require.__setStats({"/lib/Service.js":{"atime":1389474447000,"mtime":1389474205000,"ctime":1389474205000},"/lib/Helpers.js":{"atime":1389480427000,"mtime":1389480333000,"ctime":1389480333000},"/lib/Defaults.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/DI.js":{"atime":1389517920000,"mtime":1389517752000,"ctime":1389517752000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1389471395000,"mtime":1389106575000,"ctime":1389113763000},"recursive-merge/lib/Merge.js":{"atime":1389471642000,"mtime":1385409966000,"ctime":1389113764000},"easy-configuration/lib/Extension.js":{"atime":1389471395000,"mtime":1389093412000,"ctime":1389113763000},"easy-configuration/lib/Helpers.js":{"atime":1389471396000,"mtime":1389093412000,"ctime":1389113763000},"callsite/index.js":{"atime":1389471642000,"mtime":1359062982000,"ctime":1389113763000},"/lib/DIFactory.js":{"atime":1389517920000,"mtime":1389517730000,"ctime":1389517730000},"/test/browser/tests/DI.coffee":{"atime":1389480333000,"mtime":1389480333000,"ctime":1389480333000},"/test/browser/tests/DIFactory.coffee":{"atime":1389519516000,"mtime":1389519512000,"ctime":1389519512000},"/test/browser/tests/Helpers.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/DI.js":{"atime":1389519060000,"mtime":1385309217000,"ctime":1385309217000},"/DIFactory.js":{"atime":1389517823000,"mtime":1389517823000,"ctime":1389517823000},"/Configuration.js":{"atime":1389518937000,"mtime":1389518868000,"ctime":1389518937000},"/test/data/Application.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1389471642000,"mtime":1385309217000,"ctime":1385309217000},"/test/data/config.json":{"atime":1389471642000,"mtime":1388272273000,"ctime":1388272273000},"/test/data/relative.json":{"atime":1389480333000,"mtime":1389480333000,"ctime":1389480333000},"/test/data/sections.json":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"callsite/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000},"/package.json":{"atime":1389472454000,"mtime":1389472454000,"ctime":1389472454000},"easy-configuration/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000}});
+require.__setStats({"/lib/Service.js":{"atime":1389546266000,"mtime":1389546243000,"ctime":1389546243000},"/lib/Helpers.js":{"atime":1389524439000,"mtime":1389524436000,"ctime":1389524436000},"/lib/Defaults.js":{"atime":1389471498000,"mtime":1389471491000,"ctime":1389471491000},"/lib/DI.js":{"atime":1389547195000,"mtime":1389547074000,"ctime":1389547074000},"easy-configuration/lib/EasyConfiguration.js":{"atime":1389471395000,"mtime":1389106575000,"ctime":1389113763000},"recursive-merge/lib/Merge.js":{"atime":1389471642000,"mtime":1385409966000,"ctime":1389113764000},"easy-configuration/lib/Extension.js":{"atime":1389471395000,"mtime":1389093412000,"ctime":1389113763000},"easy-configuration/lib/Helpers.js":{"atime":1389471396000,"mtime":1389093412000,"ctime":1389113763000},"callsite/index.js":{"atime":1389471642000,"mtime":1359062982000,"ctime":1389113763000},"/lib/DIFactory.js":{"atime":1389547195000,"mtime":1389547189000,"ctime":1389547189000},"/test/browser/tests/DI.coffee":{"atime":1389543371000,"mtime":1389543363000,"ctime":1389543363000},"/test/browser/tests/DIFactory.coffee":{"atime":1389547225000,"mtime":1389547221000,"ctime":1389547221000},"/test/browser/tests/Helpers.coffee":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"/DI.js":{"atime":1389519060000,"mtime":1385309217000,"ctime":1385309217000},"/DIFactory.js":{"atime":1389520197000,"mtime":1389520197000,"ctime":1389520197000},"/Configuration.js":{"atime":1389520197000,"mtime":1389520197000,"ctime":1389520197000},"/test/data/Application.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/AutowirePath.coffee":{"atime":1389471642000,"mtime":1388270225000,"ctime":1388270225000},"/test/data/Http.coffee":{"atime":1389544796000,"mtime":1389544230000,"ctime":1389544230000},"/test/data/HttpFactory.coffee":{"atime":1389545973000,"mtime":1389545972000,"ctime":1389545972000},"/test/data/config.json":{"atime":1389471642000,"mtime":1388272273000,"ctime":1388272273000},"/test/data/derivedArguments.json":{"atime":1389544939000,"mtime":1389544933000,"ctime":1389544933000},"/test/data/derivedService.json":{"atime":1389547328000,"mtime":1389547328000,"ctime":1389547328000},"/test/data/relative.json":{"atime":1389480333000,"mtime":1389480333000,"ctime":1389480333000},"/test/data/sections.json":{"atime":1389471642000,"mtime":1389113676000,"ctime":1389113676000},"callsite/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000},"/package.json":{"atime":1389544858000,"mtime":1389544843000,"ctime":1389544843000},"easy-configuration/package.json":{"atime":1389471642000,"mtime":1389113763000,"ctime":1389113763000}});
 require.version = '5.5.1';
 
 /** run section **/

@@ -70,8 +70,21 @@
       });
     });
     return describe('#get()', function() {
-      return it('should load service defined with relative path', function() {
+      it('should load service defined with relative path', function() {
         factory = new DIFactory(dir + '/relative.json');
+        di = factory.create();
+        return expect(di.get('http')).to.be.an["instanceof"](Http);
+      });
+      it('should create services with derived arguments', function() {
+        var application;
+        factory = new DIFactory(dir + '/derivedArguments.json');
+        di = factory.create();
+        application = di.get('application');
+        expect(application.data).to.be.equal('hello David');
+        return expect(application.namespace).to.be["false"];
+      });
+      return it('should create service derived from other service', function() {
+        factory = new DIFactory(dir + '/derivedService.json');
         di = factory.create();
         return expect(di.get('http')).to.be.an["instanceof"](Http);
       });

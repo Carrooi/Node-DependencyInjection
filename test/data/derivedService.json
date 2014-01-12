@@ -1,0 +1,10 @@
+{
+	"services": {
+		"httpFactory": {
+			"service": "./HttpFactory"
+		},
+		"http": {
+			"service": "@httpFactory::createHttp()"
+		}
+	}
+}

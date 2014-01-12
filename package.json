@@ -34,7 +34,7 @@
 	"scripts": {
 		"test": "npm run test-node && npm run test-browser",
 		"build-and-test": "npm run test-build && npm run test",
-		"test-build": "coffee -co ./test/node/lib ./test/node/src; cd ./test/browser; simq build;",
+		"test-build": "coffee -co ./test/data ./test/data; coffee -co ./test/node/lib ./test/node/src; cd ./test/browser; simq build;",
 		"test-node": "mocha ./test/node/index.js --reporter spec",
 		"test-browser": "mocha-phantomjs ./test/browser/index.html"
 	}

@@ -24,5 +24,8 @@
 				"/test/browser/tests/DIFactory"
 			]
 		}
+	},
+	"debugger": {
+		"minify": false
 	}
 }

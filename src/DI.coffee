@@ -111,8 +111,10 @@ class DI
 						a = a.trim()
 						if (match = a.match(/'(.*)'/)) || (match = a.match(/"(.*)"/))
 							args[i] = match[1]
+						else if (@config != null && (match = a.match(/^%([a-zA-Z.-_]+)%$/)))
+							args[i] = @getParameter(match[1])
 						else
-							args[i] = @tryCallArgument(a)		# todo
+							args[i] = @tryCallArgument(a)
 
 				if typeof service[sub] == 'undefined'
 					throw new Error "Can not access '#{sub}' in '#{original}'."

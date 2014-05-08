@@ -7,6 +7,7 @@ Configuration = require '../../../Configuration'
 
 Http = require '../../data/Http'
 Database = require '../../data/MySql'
+Mail = require '../../data/Mail'
 
 dir = path.resolve(__dirname + '/../../data')
 
@@ -37,7 +38,7 @@ describe 'DIFactory', ->
 			expect(di).to.be.an.instanceof(DI)
 			expect(di.parameters.users.david).to.be.equal('divad')
 
-		it 'should create database service with list of parameters', ->
+		it 'should create database service from factory with list of parameters', ->
 			factory = new DIFactory(dir + '/database.json')
 			di = factory.create()
 			db = di.get('database')
@@ -47,6 +48,18 @@ describe 'DIFactory', ->
 				user: 'root'
 				password: 'toor'
 				database: 'application'
+			)
+
+		it 'should create service with list of parameters', ->
+			factory = new DIFactory(dir + '/mail.json')
+			di = factory.create()
+			mail = di.get('mail')
+			expect(mail).to.be.an.instanceof(Mail)
+			expect(mail.setup).to.be.eql(
+				type: 'SMTP'
+				auth:
+					user: 'root'
+					pass: 'toor'
 			)
 
 	describe '#parameters', ->

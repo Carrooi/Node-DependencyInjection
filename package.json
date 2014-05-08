@@ -22,7 +22,7 @@
 	},
 	"main": "./lib/DI",
 	"dependencies": {
-		"easy-configuration": "~2.0.0",
+		"easy-configuration": "~2.0.1",
 		"callsite": "~1.0.0"
 	},
 	"devDependencies": {

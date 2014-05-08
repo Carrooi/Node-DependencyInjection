@@ -6,6 +6,7 @@ DIFactory = require '../../../DIFactory'
 Configuration = require '../../../Configuration'
 
 Http = require '../../data/Http'
+Database = require '../../data/MySql'
 
 dir = path.resolve(__dirname + '/../../data')
 
@@ -35,6 +36,18 @@ describe 'DIFactory', ->
 			di = factory.create()
 			expect(di).to.be.an.instanceof(DI)
 			expect(di.parameters.users.david).to.be.equal('divad')
+
+		it 'should create database service with list of parameters', ->
+			factory = new DIFactory(dir + '/database.json')
+			di = factory.create()
+			db = di.get('database')
+			expect(db).to.be.an.instanceof(Database)
+			expect(db.parameters).to.be.eql(
+				host: 'localhost'
+				user: 'root'
+				password: 'toor'
+				database: 'application'
+			)
 
 	describe '#parameters', ->
 

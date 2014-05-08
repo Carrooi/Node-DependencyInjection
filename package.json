@@ -1,7 +1,7 @@
 {
 	"name": "dependency-injection",
 	"description": "Dependency injection with configuration and autowire for node js and browser",
-	"version": "2.3.0",
+	"version": "2.3.1",
 	"author": {
 		"name": "David Kudera",
 		"email": "sakren@gmail.com"

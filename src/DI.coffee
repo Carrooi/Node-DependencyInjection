@@ -57,6 +57,9 @@ class DI
 
 				@paths[service] = name
 
+		for arg, i in args
+			args[i] = @tryCallArgument(arg)
+
 		@services[name] = new Service(@, name, service, args)
 		@services[name].setInstantiate(@instantiate)
 		return @services[name]
@@ -73,6 +76,9 @@ class DI
 	tryCallArgument: (arg) ->
 		if typeof arg != 'string'
 			return arg
+
+		if (@config != null && (match = arg.match(/^%([a-zA-Z.-_]+)%$/)))
+			return @getParameter(match[1])
 
 		if !arg.match(/^(factory\:)?[@$]/)
 			return arg

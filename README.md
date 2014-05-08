@@ -519,6 +519,9 @@ $ npm test
 
 ## Changelog
 
+* 2.3.1
+	+ Fixed bug with passing list of parameters in method calls [https://github.com/sakren/node-dependency-injection/issues/7](#7)
+
 * 2.3.0
 	+ Added option for services derived from other services
 	+ Support for calling methods from other services in config

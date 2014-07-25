@@ -57,9 +57,6 @@ class DI
 
 				@paths[service] = name
 
-		for arg, i in args
-			args[i] = @tryCallArgument(arg)
-
 		@services[name] = new Service(@, name, service, args)
 		@services[name].setInstantiate(@instantiate)
 		return @services[name]

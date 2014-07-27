@@ -9,7 +9,7 @@
 	},
 	"services": {
 		"databaseFactory": {
-			"service": "./MySql",
+			"service": "../MySql",
 			"instantiate": false
 		},
 		"database": {

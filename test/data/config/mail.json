@@ -10,7 +10,7 @@
 	},
 	"services": {
 		"mail": {
-			"service": "./Mail",
+			"service": "../Mail",
 			"arguments": [
 				"%mail%"
 			]

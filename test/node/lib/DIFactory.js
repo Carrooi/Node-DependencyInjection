@@ -25,21 +25,21 @@
 
   describe('DIFactory', function() {
     beforeEach(function() {
-      factory = new DIFactory(dir + '/config.json');
+      factory = new DIFactory(dir + '/config/config.json');
       di = factory.create();
       return di.basePath = dir;
     });
     describe('#constructor()', function() {
       it('should resolve relative path to absolute path', function() {
-        factory = new DIFactory('../../data/config.json');
-        expect(factory.path).to.be.equal(dir + '/config.json');
+        factory = new DIFactory('../../data/config/config.json');
+        expect(factory.path).to.be.equal(dir + '/config/config.json');
         return expect(factory.create().parameters.language).to.be.equal('en');
       });
       it('should create di with custom config object', function() {
         var config;
         config = new Configuration;
-        config.addConfig('../../data/config.json');
-        config.addConfig('../../data/sections.json', 'local');
+        config.addConfig('../../data/config/config.json');
+        config.addConfig('../../data/config/sections.json', 'local');
         factory = new DIFactory(config);
         di = factory.create();
         expect(di).to.be.an["instanceof"](DI);
@@ -47,7 +47,7 @@
       });
       it('should create database service from factory with list of parameters', function() {
         var db;
-        factory = new DIFactory(dir + '/database.json');
+        factory = new DIFactory(dir + '/config/database.json');
         di = factory.create();
         db = di.get('database');
         expect(db).to.be.an["instanceof"](Database);
@@ -60,7 +60,7 @@
       });
       return it('should create service with list of parameters', function() {
         var mail;
-        factory = new DIFactory(dir + '/mail.json');
+        factory = new DIFactory(dir + '/config/mail.json');
         di = factory.create();
         mail = di.get('mail');
         expect(mail).to.be.an["instanceof"](Mail);
@@ -101,20 +101,20 @@
     });
     return describe('#get()', function() {
       it('should load service defined with relative path', function() {
-        factory = new DIFactory(dir + '/relative.json');
+        factory = new DIFactory(dir + '/config/relative.json');
         di = factory.create();
         return expect(di.get('http')).to.be.an["instanceof"](Http);
       });
       it('should create services with derived arguments', function() {
         var application;
-        factory = new DIFactory(dir + '/derivedArguments.json');
+        factory = new DIFactory(dir + '/config/derivedArguments.json');
         di = factory.create();
         application = di.get('application');
         expect(application.data).to.be.equal('hello David');
         return expect(application.namespace).to.be["false"];
       });
       return it('should create service derived from other service', function() {
-        factory = new DIFactory(dir + '/derivedService.json');
+        factory = new DIFactory(dir + '/config/derivedService.json');
         di = factory.create();
         return expect(di.get('http')).to.be.an["instanceof"](Http);
       });

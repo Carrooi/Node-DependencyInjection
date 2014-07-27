@@ -17,7 +17,7 @@ factory = null
 describe 'DIFactory', ->
 
 	beforeEach( ->
-		factory = new DIFactory(dir + '/config.json')
+		factory = new DIFactory(dir + '/config/config.json')
 		di = factory.create()
 		di.basePath = dir
 	)
@@ -25,21 +25,21 @@ describe 'DIFactory', ->
 	describe '#constructor()', ->
 
 		it 'should resolve relative path to absolute path', ->
-			factory = new DIFactory('../../data/config.json')
-			expect(factory.path).to.be.equal(dir + '/config.json')
+			factory = new DIFactory('../../data/config/config.json')
+			expect(factory.path).to.be.equal(dir + '/config/config.json')
 			expect(factory.create().parameters.language).to.be.equal('en')
 
 		it 'should create di with custom config object', ->
 			config = new Configuration
-			config.addConfig('../../data/config.json')
-			config.addConfig('../../data/sections.json', 'local')
+			config.addConfig('../../data/config/config.json')
+			config.addConfig('../../data/config/sections.json', 'local')
 			factory = new DIFactory(config)
 			di = factory.create()
 			expect(di).to.be.an.instanceof(DI)
 			expect(di.parameters.users.david).to.be.equal('divad')
 
 		it 'should create database service from factory with list of parameters', ->
-			factory = new DIFactory(dir + '/database.json')
+			factory = new DIFactory(dir + '/config/database.json')
 			di = factory.create()
 			db = di.get('database')
 			expect(db).to.be.an.instanceof(Database)
@@ -51,7 +51,7 @@ describe 'DIFactory', ->
 			)
 
 		it 'should create service with list of parameters', ->
-			factory = new DIFactory(dir + '/mail.json')
+			factory = new DIFactory(dir + '/config/mail.json')
 			di = factory.create()
 			mail = di.get('mail')
 			expect(mail).to.be.an.instanceof(Mail)
@@ -87,18 +87,18 @@ describe 'DIFactory', ->
 	describe '#get()', ->
 
 		it 'should load service defined with relative path', ->
-			factory = new DIFactory(dir + '/relative.json')
+			factory = new DIFactory(dir + '/config/relative.json')
 			di = factory.create()
 			expect(di.get('http')).to.be.an.instanceof(Http)
 
 		it 'should create services with derived arguments', ->
-			factory = new DIFactory(dir + '/derivedArguments.json')
+			factory = new DIFactory(dir + '/config/derivedArguments.json')
 			di = factory.create()
 			application = di.get('application')
 			expect(application.data).to.be.equal('hello David')
 			expect(application.namespace).to.be.false
 
 		it 'should create service derived from other service', ->
-			factory = new DIFactory(dir + '/derivedService.json')
+			factory = new DIFactory(dir + '/config/derivedService.json')
 			di = factory.create()
 			expect(di.get('http')).to.be.an.instanceof(Http)

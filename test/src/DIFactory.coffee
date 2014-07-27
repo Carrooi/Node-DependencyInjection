@@ -1,5 +1,6 @@
 expect = require('chai').expect
 path = require 'path'
+callsite = require 'callsite'
 
 DI = require '../../lib/DI'
 DIFactory = require '../../DIFactory'
@@ -115,3 +116,14 @@ describe 'DIFactory', ->
 					pass: 'toor'
 			)
 			expect(mail.http).to.be.an.instanceof(Http)
+
+		it 'should create npm service', ->
+			factory = new DIFactory(dir + '/config/nodeModules.json')
+			di = factory.create()
+			expect(di.get('callsite')).to.be.equal(callsite)
+			expect(di.get('setup').callsite).to.be.equal(callsite)
+
+		it 'should create npm service from function factory', ->
+			factory = new DIFactory(dir + '/config/nodeModules.json')
+			di = factory.create()
+			expect(di.get('callsiteFactory')).to.be.equal(callsite)

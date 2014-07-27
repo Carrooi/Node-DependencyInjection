@@ -1,2 +1,5 @@
-module.exports = ->
-	return new (require './Mail')('test mail')
+module.exports = (config, http) ->
+	mail = new (require './Mail')(config)
+	mail.http = http
+
+	return mail

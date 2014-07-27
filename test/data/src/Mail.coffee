@@ -3,6 +3,8 @@ class Mail
 
 	setup: null
 
+	http: null
+
 
 	constructor: (@setup) ->
 

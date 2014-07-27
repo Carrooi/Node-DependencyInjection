@@ -4,6 +4,8 @@
   Mail = (function() {
     Mail.prototype.setup = null;
 
+    Mail.prototype.http = null;
+
     function Mail(setup) {
       this.setup = setup;
     }

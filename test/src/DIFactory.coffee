@@ -106,4 +106,12 @@ describe 'DIFactory', ->
 		it 'should create service from exported factory function', ->
 			factory = new DIFactory(dir + '/config/factory.json')
 			di = factory.create()
-			expect(di.get('mail')).to.be.an.instanceof(Mail)
+			mail = di.get('mail')
+			expect(mail).to.be.an.instanceof(Mail)
+			expect(mail.setup).to.be.eql(
+				type: 'SMTP'
+				auth:
+					user: 'root'
+					pass: 'toor'
+			)
+			expect(mail.http).to.be.an.instanceof(Http)

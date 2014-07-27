@@ -113,10 +113,15 @@
         expect(application.data).to.be.equal('hello David');
         return expect(application.namespace).to.be["false"];
       });
-      return it('should create service derived from other service', function() {
+      it('should create service derived from other service', function() {
         factory = new DIFactory(dir + '/config/derivedService.json');
         di = factory.create();
         return expect(di.get('http')).to.be.an["instanceof"](Http);
+      });
+      return it('should create service from exported factory function', function() {
+        factory = new DIFactory(dir + '/config/factory.json');
+        di = factory.create();
+        return expect(di.get('mail')).to.be.an["instanceof"](Mail);
       });
     });
   });

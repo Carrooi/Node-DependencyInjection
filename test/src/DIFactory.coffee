@@ -102,3 +102,8 @@ describe 'DIFactory', ->
 			factory = new DIFactory(dir + '/config/derivedService.json')
 			di = factory.create()
 			expect(di.get('http')).to.be.an.instanceof(Http)
+
+		it 'should create service from exported factory function', ->
+			factory = new DIFactory(dir + '/config/factory.json')
+			di = factory.create()
+			expect(di.get('mail')).to.be.an.instanceof(Mail)

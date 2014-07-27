@@ -5,26 +5,26 @@
 
   path = require('path');
 
-  DI = require('../../../lib/DI');
+  DI = require('../../lib/DI');
 
-  Service = require('../../../lib/Service');
+  Service = require('../../lib/Service');
 
-  Helpers = require('../../../lib/Helpers');
+  Helpers = require('../../lib/Helpers');
 
-  Application = require('../../data/lib/Application');
+  Application = require('../data/lib/Application');
 
-  Http = require('../../data/lib/Http');
+  Http = require('../data/lib/Http');
 
-  AutowirePath = require('../../data/lib/AutowirePath');
+  AutowirePath = require('../data/lib/AutowirePath');
 
   di = null;
 
-  dir = path.resolve(__dirname + '/../../data/lib');
+  dir = path.resolve(__dirname + '/../data/lib');
 
   describe('Helpers', function() {
     beforeEach(function() {
       di = new DI;
-      return di.basePath = path.resolve(__dirname + '/../..');
+      return di.basePath = path.resolve(__dirname + '/..');
     });
     describe('#createInstance()', function() {
       return it('should create new instance of object with given arguments', function() {

@@ -5,19 +5,19 @@
 
   path = require('path');
 
-  DI = require('../../../lib/DI');
+  DI = require('../../lib/DI');
 
-  DIFactory = require('../../../DIFactory');
+  DIFactory = require('../../DIFactory');
 
-  Configuration = require('../../../Configuration');
+  Configuration = require('../../Configuration');
 
-  Http = require('../../data/lib/Http');
+  Http = require('../data/lib/Http');
 
-  Database = require('../../data/lib/MySql');
+  Database = require('../data/lib/MySql');
 
-  Mail = require('../../data/lib/Mail');
+  Mail = require('../data/lib/Mail');
 
-  dir = path.resolve(__dirname + '/../../data');
+  dir = path.resolve(__dirname + '/../data');
 
   di = null;
 
@@ -31,15 +31,15 @@
     });
     describe('#constructor()', function() {
       it('should resolve relative path to absolute path', function() {
-        factory = new DIFactory('../../data/config/config.json');
+        factory = new DIFactory('../data/config/config.json');
         expect(factory.path).to.be.equal(dir + '/config/config.json');
         return expect(factory.create().parameters.language).to.be.equal('en');
       });
       it('should create di with custom config object', function() {
         var config;
         config = new Configuration;
-        config.addConfig('../../data/config/config.json');
-        config.addConfig('../../data/config/sections.json', 'local');
+        config.addConfig('../data/config/config.json');
+        config.addConfig('../data/config/sections.json', 'local');
         factory = new DIFactory(config);
         di = factory.create();
         expect(di).to.be.an["instanceof"](DI);

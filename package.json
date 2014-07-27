@@ -32,12 +32,12 @@
 		"gulp-coffee": "~2.1.1"
 	},
 	"scripts": {
-		"test": "mocha ./test/node/index.js --reporter spec",
+		"test": "mocha ./test/index.js --reporter spec",
 
 		"compile": "gulp compile",
 		"compile-source": "gulp compile-source",
 		"compile-test": "gulp compile-test",
-		"compile-test-node": "gulp compile-test-node",
+		"compile-test-source": "gulp compile-test-source",
 		"compile-test-data": "gulp compile-test-data"
 	}
 }

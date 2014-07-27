@@ -7,10 +7,10 @@ gulp.task('compile-source', function() {
 		.pipe(gulp.dest('./lib'));
 });
 
-gulp.task('compile-test-node', function() {
-	gulp.src('./test/node/src/**/*.coffee')
+gulp.task('compile-test-source', function() {
+	gulp.src('./test/src/**/*.coffee')
 		.pipe(coffee())
-		.pipe(gulp.dest('./test/node/lib'));
+		.pipe(gulp.dest('./test/lib'));
 });
 
 gulp.task('compile-test-data', function() {
@@ -19,5 +19,5 @@ gulp.task('compile-test-data', function() {
 		.pipe(gulp.dest('./test/data/lib'));
 });
 
-gulp.task('compile-test', ['compile-test-node', 'compile-test-browser', 'compile-test-data']);
-gulp.task('compile', ['compile-source', 'compile-test-node', 'compile-test-data']);
+gulp.task('compile-test', ['compile-test-source', 'compile-test-data']);
+gulp.task('compile', ['compile-source', 'compile-test']);

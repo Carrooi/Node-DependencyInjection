@@ -1,9 +1,11 @@
 (function() {
-  var Configuration, DI, DIFactory, Database, Http, Mail, di, dir, expect, factory, path;
+  var Configuration, DI, DIFactory, Database, Http, Mail, callsite, di, dir, expect, factory, path;
 
   expect = require('chai').expect;
 
   path = require('path');
+
+  callsite = require('callsite');
 
   DI = require('../../lib/DI');
 
@@ -118,7 +120,7 @@
         di = factory.create();
         return expect(di.get('http')).to.be.an["instanceof"](Http);
       });
-      return it('should create service from exported factory function', function() {
+      it('should create service from exported factory function', function() {
         var mail;
         factory = new DIFactory(dir + '/config/factory.json');
         di = factory.create();
@@ -132,6 +134,17 @@
           }
         });
         return expect(mail.http).to.be.an["instanceof"](Http);
+      });
+      it('should create npm service', function() {
+        factory = new DIFactory(dir + '/config/nodeModules.json');
+        di = factory.create();
+        expect(di.get('callsite')).to.be.equal(callsite);
+        return expect(di.get('setup').callsite).to.be.equal(callsite);
+      });
+      return it('should create npm service from function factory', function() {
+        factory = new DIFactory(dir + '/config/nodeModules.json');
+        di = factory.create();
+        return expect(di.get('callsiteFactory')).to.be.equal(callsite);
       });
     });
   });

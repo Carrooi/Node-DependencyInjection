@@ -1,0 +1,14 @@
+{
+	"services": {
+		"callsite": {
+			"service": "callsite",
+			"instantiate": false
+		},
+		"setup": {
+			"service": "../lib/Setup"
+		},
+		"callsiteFactory": {
+			"factory": "../lib/CallsiteFactory"
+		}
+	}
+}

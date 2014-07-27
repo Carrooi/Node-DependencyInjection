@@ -29,6 +29,7 @@ class DIFactory
 
 	defaultService:
 		service: null
+		factory: null
 		arguments: []
 		instantiate: null
 		autowired: true
@@ -105,15 +106,17 @@ class DIFactory
 
 		for name, service of configuration.services
 			if configuration.services.hasOwnProperty(name) && name not in ['__proto__']
+				serviceName = service.service || service.factory
+
 				if service.instantiate == null
-					if service.service.match(/^(factory\:)?[@$]/)
+					if serviceName.match(/^(factory\:)?[@$]/) || service.factory != null
 						service.instantiate = false
 					else
 						service.instantiate = true
 
-				s = di.addService(name, service.service, service.arguments)
-				s.setInstantiate(service.instantiate)
-				s.setAutowired(service.autowired)
+				s = di.addService(name, serviceName, service.arguments, service.factory != null)
+					.setAutowired(service.autowired)
+					.setInstantiate(service.instantiate)
 
 				for method, arguments of service.setup
 					if service.setup.hasOwnProperty(method)

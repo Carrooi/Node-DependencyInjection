@@ -17,6 +17,8 @@ class Service
 
 	factory: false
 
+	factoryArguments: []
+
 	setup: null
 
 	instance: null
@@ -46,7 +48,7 @@ class Service
 			service = require(service)
 
 		if @factory
-			service = service.apply(service, Helpers.autowireArguments(service, [], @di))
+			service = service.apply(service, Helpers.autowireArguments(service, @di.tryCallStringArguments(@factoryArguments), @di))
 
 		try
 			service = @di.createInstance(service, @arguments, @instantiate)
@@ -75,7 +77,7 @@ class Service
 		return @
 
 
-	setFactory: (@factory) ->
+	setFactory: (@factory, @factoryArguments) ->
 		return @
 
 

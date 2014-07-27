@@ -119,9 +119,19 @@
         return expect(di.get('http')).to.be.an["instanceof"](Http);
       });
       return it('should create service from exported factory function', function() {
+        var mail;
         factory = new DIFactory(dir + '/config/factory.json');
         di = factory.create();
-        return expect(di.get('mail')).to.be.an["instanceof"](Mail);
+        mail = di.get('mail');
+        expect(mail).to.be.an["instanceof"](Mail);
+        expect(mail.setup).to.be.eql({
+          type: 'SMTP',
+          auth: {
+            user: 'root',
+            pass: 'toor'
+          }
+        });
+        return expect(mail.http).to.be.an["instanceof"](Http);
       });
     });
   });

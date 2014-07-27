@@ -1,7 +1,7 @@
 {
 	"services": {
 		"http": {
-			"service": "../Http"
+			"service": "../lib/Http"
 		}
 	}
 }

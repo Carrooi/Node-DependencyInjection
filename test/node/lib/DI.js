@@ -9,11 +9,11 @@
 
   Service = require('../../../lib/Service');
 
-  Application = require('../../data/Application');
+  Application = require('../../data/lib/Application');
 
-  Http = require('../../data/Http');
+  Http = require('../../data/lib/Http');
 
-  dir = path.resolve(__dirname + '/../../data');
+  dir = path.resolve(__dirname + '/../../data/lib');
 
   di = null;
 

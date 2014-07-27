@@ -14,9 +14,9 @@ gulp.task('compile-test-node', function() {
 });
 
 gulp.task('compile-test-data', function() {
-	gulp.src('./test/data/**/*.coffee')
+	gulp.src('./test/data/src/**/*.coffee')
 		.pipe(coffee())
-		.pipe(gulp.dest('./test/data'));
+		.pipe(gulp.dest('./test/data/lib'));
 });
 
 gulp.task('compile-test', ['compile-test-node', 'compile-test-browser', 'compile-test-data']);

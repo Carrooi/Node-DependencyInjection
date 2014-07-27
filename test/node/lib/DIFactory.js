@@ -11,11 +11,11 @@
 
   Configuration = require('../../../Configuration');
 
-  Http = require('../../data/Http');
+  Http = require('../../data/lib/Http');
 
-  Database = require('../../data/MySql');
+  Database = require('../../data/lib/MySql');
 
-  Mail = require('../../data/Mail');
+  Mail = require('../../data/lib/Mail');
 
   dir = path.resolve(__dirname + '/../../data');
 

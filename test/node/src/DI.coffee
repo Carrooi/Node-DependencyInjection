@@ -4,10 +4,10 @@ path = require 'path'
 DI = require '../../../lib/DI'
 Service = require '../../../lib/Service'
 
-Application = require '../../data/Application'
-Http = require '../../data/Http'
+Application = require '../../data/lib/Application'
+Http = require '../../data/lib/Http'
 
-dir = path.resolve(__dirname + '/../../data')
+dir = path.resolve(__dirname + '/../../data/lib')
 
 di = null
 

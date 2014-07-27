@@ -5,9 +5,9 @@ DI = require '../../../lib/DI'
 DIFactory = require '../../../DIFactory'
 Configuration = require '../../../Configuration'
 
-Http = require '../../data/Http'
-Database = require '../../data/MySql'
-Mail = require '../../data/Mail'
+Http = require '../../data/lib/Http'
+Database = require '../../data/lib/MySql'
+Mail = require '../../data/lib/Mail'
 
 dir = path.resolve(__dirname + '/../../data')
 

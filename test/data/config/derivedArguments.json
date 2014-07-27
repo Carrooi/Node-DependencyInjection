@@ -1,7 +1,7 @@
 {
 	"services": {
 		"application": {
-			"service": "../Application",
+			"service": "../lib/Application",
 			"arguments": ["application"],
 			"setup": {
 				"setData": ["@http::greetings('David')"],
@@ -9,7 +9,7 @@
 			}
 		},
 		"http": {
-			"service": "../Http"
+			"service": "../lib/Http"
 		}
 	}
 }

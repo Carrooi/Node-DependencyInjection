@@ -1,22 +1,22 @@
 expect = require('chai').expect
 path = require 'path'
 
-DI = require '../../../lib/DI'
-Service = require '../../../lib/Service'
-Helpers = require '../../../lib/Helpers'
+DI = require '../../lib/DI'
+Service = require '../../lib/Service'
+Helpers = require '../../lib/Helpers'
 
-Application = require '../../data/Application'
-Http = require '../../data/Http'
-AutowirePath = require '../../data/AutowirePath'
+Application = require '../data/lib/Application'
+Http = require '../data/lib/Http'
+AutowirePath = require '../data/lib/AutowirePath'
 
 di = null
-dir = '/test/data'
+dir = path.resolve(__dirname + '/../data/lib')
 
 describe 'Helpers', ->
 
 	beforeEach( ->
 		di = new DI
-		di.basePath = path.resolve(__dirname + '/../../..')
+		di.basePath = path.resolve(__dirname + '/..')
 	)
 
 	describe '#createInstance()', ->
@@ -64,20 +64,20 @@ describe 'Helpers', ->
 			expect(Helpers.autowireArguments(fn, ['@array'], di)).to.be.eql([[]])
 
 		it 'should inject service by full path', ->
-			fn = (something) -> {'@di:inject': ['$test/data/AutowirePath']}
-			di.addService('someRandomName', 'test/data/AutowirePath')
+			fn = (something) -> {'@di:inject': ['$data/lib/AutowirePath']}
+			di.addService('someRandomName', "#{dir}/AutowirePath")
 			expect(Helpers.autowireArguments(fn, null, di)[0]).to.be.an.instanceof(AutowirePath)
 
 		it 'should inject factory to service with hint and full path', ->
-			fn = (arg) -> {'@di:inject': ['factory:$test/data/AutowirePath']}
-			di.addService('greatService', 'test/data/AutowirePath')
+			fn = (arg) -> {'@di:inject': ["factory:$data/lib/AutowirePath"]}
+			di.addService('greatService', "#{dir}/AutowirePath")
 			args = Helpers.autowireArguments(fn, null, di)
 			expect(args[0]).to.be.a('function')
 			expect(args[0]()).to.be.an.instanceof(AutowirePath)
 
 		it 'should inject factory to service with hint and just name', ->
 			fn = (arg) -> {'@di:inject': ['factory:@greatService']}
-			di.addService('greatService', 'test/data/AutowirePath')
+			di.addService('greatService', "#{dir}/AutowirePath")
 			args = Helpers.autowireArguments(fn, null, di)
 			expect(args[0]).to.be.a('function')
 			expect(args[0]()).to.be.an.instanceof(AutowirePath)

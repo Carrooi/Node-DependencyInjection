@@ -1,7 +1,7 @@
 {
 	"services": {
 		"httpFactory": {
-			"service": "./HttpFactory"
+			"service": "../lib/HttpFactory"
 		},
 		"http": {
 			"service": "@httpFactory::createHttp()"

@@ -1,10 +1,13 @@
-DI = require '../../../src/DI'
-Service = require '../../../src/Service'
+expect = require('chai').expect
+path = require 'path'
 
-Application = require '../../data/Application'
-Http = require '../../data/Http'
+DI = require '../../lib/DI'
+Service = require '../../lib/Service'
 
-dir = '../../data'
+Application = require '../data/lib/Application'
+Http = require '../data/lib/Http'
+
+dir = path.resolve(__dirname + '/../data/lib')
 
 di = null
 
@@ -26,24 +29,21 @@ describe 'DI', ->
 				done()
 			, 100)
 
-		it 'should be added window object service', ->
-			expect(di.get('window')).to.be.equal(window)
-
-		it 'should be added document object service', ->
-			expect(di.get('document')).to.be.equal(window.document)
+		it 'should be added global object service', ->
+			expect(di.get('global')).to.be.equal(global)
 
 	describe '#addService()', ->
 
 		it 'should return instance of new Service class from object', ->
 			expect(di.addService('array', Array)).to.be.an.instanceof(Service)
 
-		it.skip 'should return instance of new Service class from path', ->
+		it 'should return instance of new Service class from path', ->
 			expect(di.addService('app', "#{dir}/Application")).to.be.an.instanceof(Service)
 
 		it 'should throw an error if you try to register service with reserved name', ->
 			expect( -> di.addService('di', DI)).to.throw(Error, "DI: name 'di' is reserved by DI.")
 
-		it.skip 'should create service with null as arguments', ->
+		it 'should create service with null as arguments', ->
 			di.addService('http', "#{dir}/Http")
 			di.addService('app', "#{dir}/Application", [null])
 			expect(di.get('app').array).to.not.exists
@@ -60,9 +60,9 @@ describe 'DI', ->
 			di.addService('date', Date)
 			expect(di.tryCallArgument('@date')).to.be.an.instanceof(Date)
 
-		it.skip 'should return service by its path', ->
+		it 'should return service by its path', ->
 			di.addService('callsite', 'callsite').setInstantiate(false)
-			expect(di.tryCallArgument('$callsite')).to.be.equal(require('callsite'))
+			expect(di.tryCallArgument('$callsite/index.js')).to.be.equal(require('callsite'))
 
 		it 'should return factory by its name', ->
 			di.addService('date', Date)
@@ -70,9 +70,9 @@ describe 'DI', ->
 			expect(factory).to.be.an.instanceof(Function)
 			expect(factory()).to.be.an.instanceof(Date)
 
-		it.skip 'should return factory by its path', ->
+		it 'should return factory by its path', ->
 			di.addService('callsite', 'callsite').setInstantiate(false)
-			factory = di.tryCallArgument('factory:$callsite')
+			factory = di.tryCallArgument('factory:$callsite/index.js')
 			expect(factory).to.be.an.instanceof(Function)
 			expect(factory()).to.be.equal(require('callsite'))
 
@@ -127,12 +127,12 @@ describe 'DI', ->
 			di.addService('array', Array)
 			di.addService('http', Http)
 			di.addService('info', ['hello'])
-			.setInstantiate(false)
+				.setInstantiate(false)
 			di.addService('noArray', ['not this one'])
-			.setInstantiate(false)
-			.setAutowired(false)
+				.setInstantiate(false)
+				.setAutowired(false)
 			di.addService('application', Application)
-			.addSetup('prepare', ['simq', '...'])
+				.addSetup('prepare', ['simq', '...'])
 		)
 
 		describe '#get()', ->
@@ -147,7 +147,7 @@ describe 'DI', ->
 			it 'should return always the same instance of Application', ->
 				expect(di.get('application')).to.be.equal(di.get('application'))
 
-			it.skip 'should add service from node_modules', ->
+			it 'should add service from node_modules', ->
 				di.addService('callsite', 'callsite').setInstantiate(false)
 				expect(di.get('callsite')).to.be.equal(require('callsite'))
 
@@ -156,24 +156,24 @@ describe 'DI', ->
 
 			it 'should not set services which are not autowired', ->
 				di.findDefinitionByName('application')
-				.addSetup('setData')
+					.addSetup('setData')
 				expect( -> di.get('application')).to.throw(Error, "DI: Service 'noArray' in not autowired.")
 
 			it 'should autowire di container into Application instance', ->
 				di.findDefinitionByName('application')
-				.addSetup('setDi')
+					.addSetup('setDi')
 				expect(di.get('application').di).to.be.equal(di)
 
 			it 'should autowire di container factory into Application instance', ->
 				di.findDefinitionByName('application')
-				.addSetup('setDiFactory')
+					.addSetup('setDiFactory')
 				factory = di.get('application').diFactory
 				expect(factory).to.be.an.instanceof(Function)
 				expect(factory()).to.be.equal(di)
 
 			it 'should set info property directly', ->
 				di.findDefinitionByName('application')
-				.addSetup('info', 'by property')
+					.addSetup('info', 'by property')
 				expect(di.get('application').info).to.be.equal('by property')
 
 			it 'should throw an error if circular reference was found', ->
@@ -194,7 +194,7 @@ describe 'DI', ->
 
 		describe '#getByPath()', ->
 
-			it.skip 'should return service by require path', ->
+			it 'should return service by require path', ->
 				di.addService('app', "#{dir}/Application")
 				expect(di.getByPath("#{dir}/Application")).to.be.an.instanceof(Application)
 

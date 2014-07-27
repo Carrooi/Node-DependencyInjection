@@ -5,26 +5,26 @@
 
   path = require('path');
 
-  DI = require('../../../lib/DI');
+  DI = require('../../lib/DI');
 
-  Service = require('../../../lib/Service');
+  Service = require('../../lib/Service');
 
-  Helpers = require('../../../lib/Helpers');
+  Helpers = require('../../lib/Helpers');
 
-  Application = require('../../data/Application');
+  Application = require('../data/lib/Application');
 
-  Http = require('../../data/Http');
+  Http = require('../data/lib/Http');
 
-  AutowirePath = require('../../data/AutowirePath');
+  AutowirePath = require('../data/lib/AutowirePath');
 
   di = null;
 
-  dir = '/test/data';
+  dir = path.resolve(__dirname + '/../data/lib');
 
   describe('Helpers', function() {
     beforeEach(function() {
       di = new DI;
-      return di.basePath = path.resolve(__dirname + '/../../..');
+      return di.basePath = path.resolve(__dirname + '/..');
     });
     describe('#createInstance()', function() {
       return it('should create new instance of object with given arguments', function() {
@@ -82,20 +82,20 @@
         var fn;
         fn = function(something) {
           return {
-            '@di:inject': ['$test/data/AutowirePath']
+            '@di:inject': ['$data/lib/AutowirePath']
           };
         };
-        di.addService('someRandomName', 'test/data/AutowirePath');
+        di.addService('someRandomName', "" + dir + "/AutowirePath");
         return expect(Helpers.autowireArguments(fn, null, di)[0]).to.be.an["instanceof"](AutowirePath);
       });
       it('should inject factory to service with hint and full path', function() {
         var args, fn;
         fn = function(arg) {
           return {
-            '@di:inject': ['factory:$test/data/AutowirePath']
+            '@di:inject': ["factory:$data/lib/AutowirePath"]
           };
         };
-        di.addService('greatService', 'test/data/AutowirePath');
+        di.addService('greatService', "" + dir + "/AutowirePath");
         args = Helpers.autowireArguments(fn, null, di);
         expect(args[0]).to.be.a('function');
         return expect(args[0]()).to.be.an["instanceof"](AutowirePath);
@@ -107,7 +107,7 @@
             '@di:inject': ['factory:@greatService']
           };
         };
-        di.addService('greatService', 'test/data/AutowirePath');
+        di.addService('greatService', "" + dir + "/AutowirePath");
         args = Helpers.autowireArguments(fn, null, di);
         expect(args[0]).to.be.a('function');
         return expect(args[0]()).to.be.an["instanceof"](AutowirePath);

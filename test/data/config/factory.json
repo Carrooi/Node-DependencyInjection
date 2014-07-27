@@ -1,0 +1,7 @@
+{
+	"services": {
+		"mail": {
+			"service": "../lib/MailFactoryFunction"
+		}
+	}
+}

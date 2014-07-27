@@ -15,6 +15,8 @@ class Service
 
 	autowired: true
 
+	factory: false
+
 	setup: null
 
 	instance: null
@@ -43,6 +45,9 @@ class Service
 		if Object.prototype.toString.call(service) == '[object String]'
 			service = require(service)
 
+		if @factory
+			service = service.apply(service, Helpers.autowireArguments(service, [], @di))
+
 		try
 			service = @di.createInstance(service, @arguments, @instantiate)
 
@@ -67,6 +72,10 @@ class Service
 
 
 	setInstantiate: (@instantiate) ->
+		return @
+
+
+	setFactory: (@factory) ->
 		return @
 
 

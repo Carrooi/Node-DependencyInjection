@@ -46,11 +46,18 @@ class DI
 			throw new Error "DI: name '#{name}' is reserved by DI."
 
 		originalService = service
+		instantiate = @instantiate
+		factory = false
 
 		if typeof service == 'string'
 			if service.match(/^(factory\:)?[@$]/)
 				service = @tryCallArgument(service)
 			else
+				if match = service.match(/^(.+)\(.*\)$/)
+					service = match[1]
+					instantiate = false
+					factory = true
+
 				service = @resolveModulePath(service)
 				if service == null
 					throw new Error "Service '#{originalService}' can not be found."
@@ -60,8 +67,10 @@ class DI
 		for arg, i in args
 			args[i] = @tryCallArgument(arg)
 
-		@services[name] = new Service(@, name, service, args)
-		@services[name].setInstantiate(@instantiate)
+		@services[name] = (new Service(@, name, service, args))
+			.setInstantiate(instantiate)
+			.setFactory(factory)
+
 		return @services[name]
 
 

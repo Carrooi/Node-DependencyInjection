@@ -29,13 +29,23 @@
 		"chai": "~1.9.0",
 		"mocha": "~1.18.0",
 		"mocha-phantomjs": "~3.3.1",
-		"phantomjs": "~1.9.2-6"
+		"phantomjs": "~1.9.2-6",
+		"gulp": "~3.8.6",
+		"gulp-coffee": "~2.1.1",
+		"gulp-browserify": "~0.5.0",
+		"gulp-rename": "~1.2.0",
+		"coffeeify": "~0.7.0"
 	},
 	"scripts": {
 		"test": "npm run test-node && npm run test-browser",
-		"build-and-test": "npm run test-build && npm run test",
-		"test-build": "coffee -co ./test/data ./test/data; coffee -co ./test/node/lib ./test/node/src; cd ./test/browser; simq build;",
 		"test-node": "mocha ./test/node/index.js --reporter spec",
-		"test-browser": "mocha-phantomjs ./test/browser/index.html"
+		"test-browser": "mocha-phantomjs ./test/browser/index.html",
+
+		"compile": "gulp compile",
+		"compile-source": "gulp compile-source",
+		"compile-test": "gulp compile-test",
+		"compile-test-node": "gulp compile-test-node",
+		"compile-test-browser": "gulp compile-test-browser",
+		"compile-test-data": "gulp compile-test-data"
 	}
 }

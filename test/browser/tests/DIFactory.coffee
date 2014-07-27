@@ -1,15 +1,15 @@
-DI = require 'dependency-injection'
-DIFactory = require 'dependency-injection/DIFactory'
-Configuration = require 'dependency-injection/Configuration'
+DI = require '../../../src/DI'
+DIFactory = require '../../../src/DIFactory'
+Configuration = require '../../../Configuration'
 
-dir = '/test/data'
+dir = '../../data'
 
-Http = require '/test/data/Http'
+Http = require '../../data/Http'
 
 di = null
 factory = null
 
-describe 'DIFactory', ->
+describe.skip 'DIFactory', ->
 
 	beforeEach( ->
 		factory = new DIFactory(dir + '/config.json')

@@ -433,7 +433,7 @@ Or you can access these parameters from di object.
 
 ```
 console.log(di.parameters);							// whole object of expanded parameters
-console.log(di.getParameter('database.user');		// root
+console.log(di.getParameter('database.user'));		// root
 ```
 
 `getParameter()` method is just shortcut to [getParameter](https://github.com/sakren/node-easy-configuration/blob/master/src/EasyConfiguration.coffee#L173)

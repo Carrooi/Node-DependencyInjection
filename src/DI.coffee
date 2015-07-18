@@ -41,16 +41,25 @@ class DI
 		return (if @basePath == null then '' else @basePath + '/') + name
 
 
-	addService: (name, service, args = []) ->
+	addService: (name, service, args = [], factory = false) ->
 		if name in @reserved && typeof @services[name] != 'undefined'
 			throw new Error "DI: name '#{name}' is reserved by DI."
 
 		originalService = service
+		instantiate = @instantiate
+		factoryArguments = []
+
+		if factory
+			instantiate = false
 
 		if typeof service == 'string'
 			if service.match(/^(factory\:)?[@$]/)
 				service = @tryCallArgument(service)
 			else
+				if match = service.match(/^(.+)\((.*)\)$/)
+					service = match[1]
+					factoryArguments = match[2]
+
 				service = @resolveModulePath(service)
 				if service == null
 					throw new Error "Service '#{originalService}' can not be found."
@@ -60,8 +69,10 @@ class DI
 		for arg, i in args
 			args[i] = @tryCallArgument(arg)
 
-		@services[name] = new Service(@, name, service, args)
-		@services[name].setInstantiate(@instantiate)
+		@services[name] = (new Service(@, name, service, args))
+			.setInstantiate(instantiate)
+			.setFactory(factory, factoryArguments)
+
 		return @services[name]
 
 
@@ -71,6 +82,24 @@ class DI
 			catch err then return null
 
 		return get(_path) || get(@getPath(_path)) || get(Helpers.normalizePath(_path)) || get(Helpers.normalizePath(@getPath(_path)))
+
+
+	tryCallStringArguments: (args) ->
+		if typeof args != 'string'
+			return args
+
+		args = args.split(',')
+
+		for a, i in args
+			a = a.trim()
+			if (match = a.match(/'(.*)'/)) || (match = a.match(/"(.*)"/))
+				args[i] = match[1]
+			else if (@config != null && (match = a.match(/^%([a-zA-Z.-_]+)%$/)))
+				args[i] = @getParameter(match[1])
+			else
+				args[i] = @tryCallArgument(a)
+
+		return args
 
 
 	tryCallArgument: (arg) ->
@@ -112,15 +141,7 @@ class DI
 				sub = after.shift()
 				if (match = sub.match(/^(.+)\((.*)\)$/)) != null
 					sub = match[1]
-					args = match[2].split(',')
-					for a, i in args
-						a = a.trim()
-						if (match = a.match(/'(.*)'/)) || (match = a.match(/"(.*)"/))
-							args[i] = match[1]
-						else if (@config != null && (match = a.match(/^%([a-zA-Z.-_]+)%$/)))
-							args[i] = @getParameter(match[1])
-						else
-							args[i] = @tryCallArgument(a)
+					args = @tryCallStringArguments(match[2])
 
 				if typeof service[sub] == 'undefined'
 					throw new Error "Can not access '#{sub}' in '#{original}'."

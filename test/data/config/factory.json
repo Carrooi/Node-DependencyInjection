@@ -1,0 +1,19 @@
+{
+	"parameters": {
+		"mail": {
+			"type": "SMTP",
+			"auth": {
+				"user": "root",
+				"pass": "toor"
+			}
+		}
+	},
+	"services": {
+		"mail": {
+			"factory": "../lib/MailFactoryFunction(%mail%)"
+		},
+		"http": {
+			"service": "../lib/Http"
+		}
+	}
+}

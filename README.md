@@ -1,6 +1,6 @@
-[![NPM version](https://badge.fury.io/js/dependency-injection.png)](http://badge.fury.io/js/dependency-injection)
-[![Dependency Status](https://gemnasium.com/sakren/node-dependency-injection.png)](https://gemnasium.com/sakren/node-dependency-injection)
-[![Build Status](https://travis-ci.org/sakren/node-dependency-injection.png?branch=master)](https://travis-ci.org/sakren/node-dependency-injection)
+[![NPM version](https://img.shields.io/npm/v/dependency-injection.svg?style=flat-square)](http://badge.fury.io/js/dependency-injection)
+[![Dependency Status](https://img.shields.io/gemnasium/Carrooi/Node-DependencyInjection.svg?style=flat-square)](https://gemnasium.com/Carrooi/Node-DependencyInjection)
+[![Build Status](https://img.shields.io/travis/Carrooi/Node-DependencyInjection.svg?style=flat-square)](https://travis-ci.org/Carrooi/Node-DependencyInjection)
 
 # Dependency injection
 
@@ -16,6 +16,14 @@ is instanced? Than you will have to change these setups at every place.
 But with this package, you can configure your classes at one place and then let's just "ask" for them. (not service locator).
 
 This package is inspired by dependency injection in [Nette framework](http://doc.nette.org/en/dependency-injection).
+
+## Help
+
+Unfortunately I don't have any more time to maintain this repository :-( 
+
+Don't you want to save me and this project by taking over it?
+
+![sad cat](https://raw.githubusercontent.com/sakren/sakren.github.io/master/images/sad-kitten.jpg)
 
 ## Installation
 
@@ -433,7 +441,7 @@ Or you can access these parameters from di object.
 
 ```
 console.log(di.parameters);							// whole object of expanded parameters
-console.log(di.getParameter('database.user');		// root
+console.log(di.getParameter('database.user'));		// root
 ```
 
 `getParameter()` method is just shortcut to [getParameter](https://github.com/sakren/node-easy-configuration/blob/master/src/EasyConfiguration.coffee#L173)
@@ -518,6 +526,10 @@ $ npm test
 ```
 
 ## Changelog
+
+* 2.3.3
+	+ Move under Carrooi organization
+	+ Abandon package
 
 * 2.3.1 - 2.3.2
 	+ Fixed bug with passing list of parameters in method calls [https://github.com/sakren/node-dependency-injection/issues/7](#7)
